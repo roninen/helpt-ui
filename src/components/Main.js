@@ -7,7 +7,7 @@ class AppComponent extends React.Component {
   render() {
     return (
       <div className="index">
-            test
+            {this.props.children}
       </div>
     );
   }
