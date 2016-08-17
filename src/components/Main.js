@@ -3,8 +3,6 @@ require('styles/App.scss');
 
 
 import React from 'react';
-import DayView from './DayView';
-import TasksView from './TasksView';
 
 class AppComponent extends React.Component {
   render() {
@@ -30,10 +28,10 @@ class AppComponent extends React.Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-sm-8 hours-panel">
-            <DayView />
+            {this.props.main}
           </div>
           <div className="col-sm-4 tasks-panel">
-            <TasksView />
+            {this.props.sidebar}
           </div>
         </div>
       </div>
