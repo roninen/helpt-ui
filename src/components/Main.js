@@ -1,10 +1,16 @@
 require('normalize.css/normalize.css');
 require('styles/App.scss');
 
-
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { fetchUser, fetchUsers } from '../actions/index';
 
 class AppComponent extends React.Component {
+  componentWillMount() {
+    this.props.onInitialize();
+    console.log('component will mount');
+  }
   render() {
     return (
       <div className="index">
@@ -39,8 +45,19 @@ class AppComponent extends React.Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return { };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onInitialize: () => {
+      dispatch(fetchUser('callec'));
+    }
+  };
+};
 
 AppComponent.defaultProps = {
 };
 
-export default AppComponent;
+export default connect(mapStateToProps, mapDispatchToProps)(AppComponent);
