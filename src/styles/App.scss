@@ -1,50 +1,54 @@
-/* Base Application Styles */
+// Base Application Styles
 @import 'bootstrap-variables';
 @import 'bootstrap-custom';
 
-
-html {
-  height: 100%;
-}
-
 body {
-  color: #222;
-  background: #eee;
+  background: $gray-lighter;
   padding-top: 70px;
-  margin-bottom: 60px;
-  min-height: 100%;
-}
-
-.index img {
-  margin: 40px auto;
-  border-radius: 4px;
-  background: #fff;
-  display: block;
 }
 
 .index .notice {
-  a { text-decoration: none; }
+  background: #666;
+  border: 1px solid #000;
+  border-width: 1px 0;
   margin: 20px auto;
   padding: 15px 0;
   text-align: center;
-  border: 1px solid #000;
-  border-width: 1px 0;
-  background: #666;
+
+  a {
+    text-decoration: none;
+  }
 }
 
-.hours-panel {
-  //background: #efefef;
+// Task Listing View
 
+.task-listing-view {
+  background: #cdcdcd;
 }
 
-.tasks-panel {
-  //background: #dddddd;
+.task-listing-item-actions {
+  .time-task-button {
+    color: #6ec97f;
+  }
 }
+
+.task-source {
+  a {
+    @extend small;
+    color: $gray-light;
+  }
+
+  .task-source-header {
+    margin-left: .5em;
+  }
+}
+
+// Day View
 
 .current-date {
   h4 {
     margin: 0;
-    padding: 0;
+    padding: 6px 0 0;
     text-align: center;
   }
 }
@@ -53,40 +57,41 @@ body {
   input {
     text-align: center;
   }
+
+  .glyphicon-plus,
+  .glyphicon-minus {
+    color: $brand-primary;
+  }
+
+  .glyphicon-trash {
+    color: #c94646;
+  }
 }
 
 .add-task-prompt {
-  text-align: center;
   color: $gray-light;
+  text-align: center;
 }
 
 .day-footer {
   background-color: $gray;
-  color: #FFF;
+  color: #fff;
+
   .day-total {
-    text-align: center;
+    border: 1px solid $gray-light;
     font-weight: 600;
+    padding: 6px;
+    text-align: center;
   }
 }
 
-.task-listing-item {
-  @extend .clearfix;
-
-  .add-task {
-    float: left;
-  }
-
-  .task-description {
-    float: left;
-  }
-}
-
-/* Do not collapse Bootstrap navbar */
+// Do not collapse Bootstrap navbar
 .navbar-collapse.collapse {
-  display: block!important;
+  display: block !important;
 }
 
-.navbar-nav>li, .navbar-nav {
+.navbar-nav>li,
+.navbar-nav {
   float: left !important;
 }
 
@@ -100,6 +105,6 @@ body {
 
 .navbar-header {
   float: left !important;
-  margin-right: 0;
   margin-left: 0;
+  margin-right: 0;
 }
