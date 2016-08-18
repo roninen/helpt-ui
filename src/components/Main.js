@@ -11,7 +11,7 @@ class AppComponent extends React.Component {
       <nav className="navbar navbar-inverse navbar-fixed-top">
         <div className="container-fluid">
           <div className="navbar-header">
-            <a className="navbar-brand" href="#">Hours manager</a>
+            <a className="navbar-brand" href="#">Helpt</a>
           </div>
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
@@ -27,10 +27,10 @@ class AppComponent extends React.Component {
       </nav>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-sm-8 hours-panel">
+          <div className="col-sm-7 hours-panel">
             {this.props.main}
           </div>
-          <div className="col-sm-4 tasks-panel">
+          <div className="col-sm-5 tasks-panel">
             {this.props.sidebar}
           </div>
         </div>
