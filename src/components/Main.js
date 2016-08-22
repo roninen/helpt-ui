@@ -4,12 +4,11 @@ require('styles/App.scss');
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchUser, fetchUsers } from '../actions/index';
+import { fetchResource } from '../actions/index';
 
 class AppComponent extends React.Component {
   componentWillMount() {
-    this.props.onInitialize();
-    console.log('component will mount');
+    this.props.onInitialize(this.props.user);
   }
   render() {
     return (
@@ -21,7 +20,9 @@ class AppComponent extends React.Component {
           </div>
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
-                <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Calle Coodari <span className="caret"></span></a>
+                <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    { this.props.user.name }
+                    <span className="caret"></span></a>
                 <ul className="dropdown-menu">
                   <li><a href="#">Reports</a></li>
                   <li role="separator" className="divider"></li>
@@ -45,14 +46,23 @@ class AppComponent extends React.Component {
     );
   }
 }
+
+import { loggedInUser } from '../reducers/index';
+
 const mapStateToProps = (state) => {
-  return { };
+  const user = loggedInUser(state);
+  if (!user) {
+    return { user: {name: '<not logged in>'} };
+  }
+  return { user };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    onInitialize: () => {
-      dispatch(fetchUser('callec'));
+    onInitialize: (user) => {
+      if (user.id) {
+        dispatch(fetchResource('user', user.id));
+      }
     }
   };
 };

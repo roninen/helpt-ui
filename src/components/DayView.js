@@ -43,10 +43,10 @@ var DayFooter = () => {
 }
 
 var TimedTask = (props) => {
-  var sourceServiceIcon = "glyphicon glyphicon-tree-deciduous task-source-icon"; //using this as default and placemarker for github
-  if (props.source == "Trello") sourceServiceIcon = "glyphicon glyphicon-signal task-source-icon";
-  var removeIcon = "glyphicon glyphicon-minus";
-  if (props.hours == 0) removeIcon = "glyphicon glyphicon-trash";
+  var sourceServiceIcon = 'glyphicon glyphicon-tree-deciduous task-source-icon'; //using this as default and placemarker for github
+  if (props.source == 'Trello') sourceServiceIcon = 'glyphicon glyphicon-signal task-source-icon';
+  var removeIcon = 'glyphicon glyphicon-minus';
+  if (props.hours == 0) removeIcon = 'glyphicon glyphicon-trash';
   return (
     <div className="panel panel-default">
       <div className="panel-body">

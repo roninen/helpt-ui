@@ -76,6 +76,7 @@
     "redux": "^3.5.2",
     "redux-api-middleware": "^1.0.2",
     "sass-loader": "^4.0.0",
-    "seamless-immutable": "^6.1.1"
+    "seamless-immutable": "^6.1.1",
+    "urijs": "^1.18.1"
   }
 }

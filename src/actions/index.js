@@ -1,4 +1,5 @@
 import { CALL_API } from 'redux-api-middleware';
+import URI from 'urijs';
 
 const API_BASE_URL = 'http://localhost:3000';
 
@@ -10,30 +11,29 @@ function getEndPoint(resourceType, id) {
   return base;
 }
 
-export function fetch(resourceType, id) {
+function shouldBailOut(state, endpoint) {
+  return state.data._apiEndpoints[endpoint];
+};
+
+export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceType, id)) {
   return {
     [CALL_API]: {
-      endpoint: getEndPoint(resourceType, id),
+      endpoint: endpoint,
       method: 'GET',
       types: [
-        {type: 'REQUEST', meta: { resourceType }},
-        {type: 'SUCCESS', meta: { resourceType, multiple: false}},
-        'FAILURE'
-      ]
+        {type: 'REQUEST', meta: { resourceType, endpoint }},
+        {type: 'SUCCESS', meta: { resourceType, multiple: !id, endpoint}},
+        {type: 'FAILURE', meta: { resourceType, endpoint }}
+      ],
+      bailout: (state) => {
+        return shouldBailOut(state, endpoint);
+      }
     }
   };
 }
 
-export function fetchUsers() {
-  return {
-    [CALL_API]: {
-      endpoint: `${API_BASE_URL}/user/`,
-      method: 'GET',
-      types: [
-        {type: 'REQUEST', meta: { resourceType: 'user' }},
-        {type: 'SUCCESS', meta: { resourceType: 'user', multiple: true}},
-        'FAILURE'
-      ]
-    }
-  };
+export function fetchResourceFiltered(resourceType, filters) {
+  var uri = new URI(getEndPoint(resourceType));
+  uri.search(filters);
+  return fetchResource(resourceType, null, uri.toString());
 }
