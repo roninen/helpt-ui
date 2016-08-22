@@ -1,0 +1,118 @@
+{
+  "user": [
+    {
+      "id": "callec",
+      "name": "Calle Coodari",
+      "organisation": "ape-is-company"
+    },
+    {
+      "id": "viola",
+      "name": "Viola Paddington",
+      "organisation": "ape-is-company"
+    },
+    {
+      "id": "jack",
+      "name": "Jack Johnson",
+      "organisation": "city-of-helsinki"
+    }
+  ],
+  "organisation": [
+    {
+      "id": "ape-is-company",
+      "name": "Ape is Company, Inc."
+    }
+  ],
+  "project": [
+    {
+      "id": "city-dsl",
+      "name": "City DSL"
+    }
+  ],
+  "system": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "url": "https://github.com"
+    }
+  ],
+  "workspace": [
+    {
+      "system": "github",
+      "id": "city-dsl-compiler"
+    }
+  ],
+  "task": [
+    {
+      "origin_id": "1",
+      "workspace": "city-dsl-compiler",
+      "description": "Update readme.md",
+      "assigned": "callec"
+    },
+    {
+      "origin_id": "2",
+      "workspace": "city-dsl-compiler",
+      "description": "Add license",
+      "assigned": null
+    },
+    {
+      "origin_id": "3",
+      "workspace": "city-dsl-compiler",
+      "description": "Write compiler frontend",
+      "assigned": "callec"
+    },
+    {
+      "origin_id": "4",
+      "workspace": "city-dsl-compiler",
+      "description": "Write compiler backend",
+      "assigned": null
+    },
+    {
+      "origin_id": "5",
+      "workspace": "city-dsl-compiler",
+      "description": "Write compiler backend documentation",
+      "assigned": "callec"
+    }
+  ],
+  "entry": [
+    {
+      "id": "1",
+      "user": "callec",
+      "workspace": "city-dsl-compiler",
+      "task": "1",
+      "date": "2016-08-01",
+      "minutes": "360"
+    },
+    {
+      "id": "2",
+      "user": "callec",
+      "workspace": "city-dsl-compiler",
+      "task": "1",
+      "date": "2016-08-01",
+      "minutes": "360"
+    },
+    {
+      "id": "3",
+      "user": "callec",
+      "workspace": "city-dsl-compiler",
+      "task": "3",
+      "date": "2016-08-02",
+      "minutes": "120"
+    },
+    {
+      "id": "4",
+      "user": "callec",
+      "workspace": "city-dsl-compiler",
+      "task": "2",
+      "date": "2016-08-02",
+      "minutes": "360"
+    },
+    {
+      "id": "5",
+      "user": "callec",
+      "workspace": "city-dsl-compiler",
+      "task": "1",
+      "date": "2016-08-02",
+      "minutes": "360"
+    }
+  ]
+}
