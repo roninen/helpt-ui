@@ -61,7 +61,7 @@ var TimedTask = (props) => {
         </div>
         <div className="input-group input-group-lg col-sm-4 hours-entry">
           <span className="input-group-btn"><button className="btn btn-default" type="button"><span className={removeIcon}></span></button></span>
-          <input type="text" className="form-control" placeholder="0" value={props.hours} />
+          <input type="text" className="form-control" placeholder="0" defaultValue={props.hours} />
           <span className="input-group-btn"><button className="btn btn-default" type="button"><span className="glyphicon glyphicon-plus"></span></button></span>
         </div>
       </div>
