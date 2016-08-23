@@ -66,7 +66,6 @@ function dataReducer(state = initialDataState, action) {
     case 'FAILURE':
     case 'REQUEST':
       const { resourceType, endpoint } = action.meta;
-      console.log(`received ${action.type} for ${resourceType}`);
       return state.setIn(['_apiEndpoints', endpoint], action.type);
       break;
     case 'SUCCESS':
