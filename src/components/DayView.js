@@ -1,18 +1,26 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-var DayView = () => {
-  return (
-    <div className="panel panel-primary">
-      <div className="panel-heading"><DayNavigation /></div>
-      <div className="panel-body">
-        <TimedTask source="Github" hours="2.5" />
-        <TimedTask source="Trello" hours="2.5" />
-        <TimedTask source="Github" hours="0" />
-        <EmptyTaskPrompt />
+import { mapUserResourceDispatchToProps } from '../actions/index';
+
+class DayView extends React.Component {
+  componentWillReceiveProps(props) {
+    props.fetchUpdatedResourceForUser('entry', props.user);
+  }
+  render() {
+    return (
+      <div className="panel panel-primary">
+          <div className="panel-heading"><DayNavigation /></div>
+          <div className="panel-body">
+              <TimedTask source="Github" hours="2.5" />
+              <TimedTask source="Trello" hours="2.5" />
+              <TimedTask source="Github" hours="0" />
+              <EmptyTaskPrompt />
+          </div>
+          <div className="panel-footer day-footer"><DayFooter /></div>
       </div>
-      <div className="panel-footer day-footer"><DayFooter /></div>
-    </div>
-  );
+    );
+  }
 }
 
 var DayNavigation = () => {
@@ -67,7 +75,10 @@ var TimedTask = (props) => {
       </div>
     </div>
   );
+};
+
+function mapStateToProps() {
+  return {};
 }
 
-
-export default DayView;
+export default connect(mapStateToProps, mapUserResourceDispatchToProps)(DayView);

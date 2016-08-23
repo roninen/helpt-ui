@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { fetchResource, fetchResourceFiltered } from '../actions/index';
+import { fetchResource, fetchResourceFiltered, mapUserResourceDispatchToProps } from '../actions/index';
 
 class TasksView extends React.Component {
   componentWillReceiveProps(props) {
-    props.fetchUpdatedTasks(props.user);
+    props.fetchUpdatedResourceForUser('task', props.user);
   }
   render() {
     let { tasks } = this.props;
@@ -48,10 +48,8 @@ export const TaskItem = ({task}) => {
   );
 };
 
-import { loggedInUser, getDataObject  } from '../reducers/index';
-
-function mapStateToProps(state) {
-  const user = loggedInUser(state);
+function mapStateToProps(state, ownProps) {
+  const { user } = ownProps;
   if (!user) {
     return {tasks: []};
   }
@@ -63,12 +61,4 @@ function mapStateToProps(state) {
   };
 };
 
-function mapDispatchToProps(dispatch, ownProps) {
-  return {
-    fetchUpdatedTasks: (user) => {
-      dispatch(fetchResourceFiltered('task', {user: user.id}));
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TasksView);
+export default connect(mapStateToProps, mapUserResourceDispatchToProps)(TasksView);
