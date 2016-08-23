@@ -37,3 +37,11 @@ export function fetchResourceFiltered(resourceType, filters) {
   uri.search(filters);
   return fetchResource(resourceType, null, uri.toString());
 }
+
+export function mapUserResourceDispatchToProps(dispatch, ownProps) {
+  return {
+    fetchUpdatedResourceForUser: (resource, user) => {
+      dispatch(fetchResourceFiltered(resource, {user: user.id}));
+    }
+  };
+};
