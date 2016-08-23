@@ -1,20 +1,31 @@
+import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { mapUserResourceDispatchToProps } from '../actions/index';
+
+function minutesToHours (minutes) {
+  return minutes / 60;
+}
+
+function hoursToMinutes (hours) {
+  return hours * 60;
+}
 
 class DayView extends React.Component {
   componentWillReceiveProps(props) {
     props.fetchUpdatedResourceForUser('entry', props.user);
   }
   render() {
+    const { entries } = this.props;
+    const entryComponents = _.map(entries, (entry) => {
+      return <TimedTask key={entry.id} source={entry.workspace} hours={minutesToHours(entry.minutes)} />;
+    });
     return (
       <div className="panel panel-primary">
           <div className="panel-heading"><DayNavigation /></div>
           <div className="panel-body">
-              <TimedTask source="Github" hours="2.5" />
-              <TimedTask source="Trello" hours="2.5" />
-              <TimedTask source="Github" hours="0" />
+              { entryComponents }
               <EmptyTaskPrompt />
           </div>
           <div className="panel-footer day-footer"><DayFooter /></div>
@@ -77,8 +88,18 @@ var TimedTask = (props) => {
   );
 };
 
-function mapStateToProps() {
-  return {};
+function mapStateToProps(state, ownProps) {
+  const { user } = ownProps;
+  if (!user) {
+    return {entries: []};
+  }
+  return {
+    entries: _.pickBy(state.data.entry, (entry) => {
+      return (
+        entry.user == user.id &&
+        entry.date == "2016-08-02");
+    })
+  };
 }
 
 export default connect(mapStateToProps, mapUserResourceDispatchToProps)(DayView);
