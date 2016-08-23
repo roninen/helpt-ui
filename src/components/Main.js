@@ -8,9 +8,15 @@ import { fetchResource } from '../actions/index';
 
 class AppComponent extends React.Component {
   componentWillMount() {
-    this.props.onInitialize(this.props.user);
+    this.props.fetchUser(this.props.user);
   }
   render() {
+    const mainComponent = React.cloneElement(
+      this.props.main,
+      {user: this.props.user});
+    const sidebarComponent = React.cloneElement(
+      this.props.sidebar,
+      {user: this.props.user});
     return (
       <div className="index">
       <nav className="navbar navbar-inverse navbar-fixed-top">
@@ -35,10 +41,10 @@ class AppComponent extends React.Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-sm-7 hours-panel">
-            {this.props.main}
+            { mainComponent }
           </div>
           <div className="col-sm-5 tasks-panel">
-            {this.props.sidebar}
+            { sidebarComponent }
           </div>
         </div>
       </div>
@@ -59,7 +65,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    onInitialize: (user) => {
+    fetchUser: (user) => {
       if (user.id) {
         dispatch(fetchResource('user', user.id));
       }
