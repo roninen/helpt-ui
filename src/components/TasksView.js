@@ -56,8 +56,7 @@ function mapStateToProps(state, ownProps) {
   return {
     tasks: _.pickBy(state.data.task, (task) => {
       return task.assigned == user.id;
-    }),
-    user
+    })
   };
 };
 
