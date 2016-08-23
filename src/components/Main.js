@@ -22,11 +22,11 @@ class AppComponent extends React.Component {
       <nav className="navbar navbar-inverse navbar-fixed-top">
         <div className="container-fluid">
           <div className="navbar-header">
-            <a className="navbar-brand" href="#">Helpt</a>
+            <div className="navbar-brand" href="#">Helpt</div>
           </div>
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
-                <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" tabIndex="-1">
                     { this.props.user.name }
                     <span className="caret"></span></a>
                 <ul className="dropdown-menu">

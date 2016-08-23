@@ -34,7 +34,7 @@ export const TaskItem = ({task}) => {
     <div className="task-listing-item row">
       <div className="task-listing-item-content col-xs-10">
         <div className="task-source">
-          <a href="#link-to-service">
+          <a href="#link-to-service" tabIndex="-1">
             <span className="glyphicon glyphicon-tree-deciduous task-source-icon"></span>
             <span className="task-source-header">Github/City-of-Helsinki/{ task.workspace } issue#{ task.origin_id }</span>
           </a>

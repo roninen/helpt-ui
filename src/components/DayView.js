@@ -3,6 +3,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
+import ReactDOM from 'react-dom';
+
 import { mapUserResourceDispatchToProps } from '../actions/index';
 import moment from 'moment';
 import * as timeUtils from '../util/time';
@@ -13,9 +15,17 @@ class DayView extends React.Component {
   }
   render() {
     const { entries, momentDate } = this.props;
-    const entryComponents = _.map(entries, (entry) => {
-      return <TimedTask key={entry.id} source={entry.workspace.source || 'github'} entry={entry} tasks={this.props.tasks} hours={timeUtils.minutesToHours(entry.minutes)} />;
+    const entryComponents = _.map(_.values(entries), (entry, index) => {
+      return (
+        <TimedTask
+             key={entry.id}
+             entryIndex={index}
+             source={entry.workspace.source || 'github'}
+             entry={entry}
+             tasks={this.props.tasks}
+             hours={timeUtils.minutesToHours(entry.minutes)} />);
     });
+    const totalMinutes = _.reduce(entries, (sum, entry) => { return sum + entry.minutes; }, 0);
     return (
       <div className="panel panel-primary">
           <div className="panel-heading"><DayNavigation momentDate={momentDate} /></div>
@@ -23,7 +33,7 @@ class DayView extends React.Component {
               { entryComponents }
               <EmptyTaskPrompt />
           </div>
-          <div className="panel-footer day-footer"><DayFooter /></div>
+          <div className="panel-footer day-footer"><DayFooter totalMinutes={totalMinutes} /></div>
       </div>
     );
   }
@@ -32,7 +42,7 @@ class DayView extends React.Component {
 var DateLink = ({to, direction}) => {
   const iconClass = `glyphicon glyphicon-triangle-${direction == 'past' ? 'left' : 'right'}`;
   return (
-    <Link to={to} className="btn btn-primary"><span className={iconClass}></span></Link>
+    <Link to={to} className="btn btn-primary" tabIndex="-1"><span className={iconClass}></span></Link>
   );
 };
 
@@ -74,11 +84,11 @@ var EmptyTaskPrompt = () => {
   );
 };
 
-var DayFooter = () => {
+var DayFooter = ({totalMinutes}) => {
   return (
     <div className="day-footer panel-body">
       <div className="col-sm-8">Total of the day</div>
-      <div className="col-sm-4"><div className="day-total">7.5h</div></div>
+      <div className="col-sm-4"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} hours</div></div>
     </div>
   );
 };
@@ -89,18 +99,31 @@ function sourceSystemIcon(source) {
   return 'glyphicon glyphicon-tree-deciduous task-source-icon';
 }
 
-var TimedTask = ({source, hours, entry, tasks}) => {
+function autoFocus(predicate) {
+  return function (element) {
+    if (predicate()) {
+      if (element != null) {
+        element.focus();
+      }
+    }
+  };
+}
+
+var TimedTask = ({source, hours, entry, tasks, entryIndex}) => {
   var sourceServiceIcon = sourceSystemIcon(source);
   var removeIcon = 'glyphicon glyphicon-minus';
   if (hours == 0) removeIcon = 'glyphicon glyphicon-trash';
   const currentTask = tasks[`${entry.workspace}:${entry.task}`];
   const taskDescription = currentTask ? currentTask.description : null;
+  // Uncoditionally disable autofocus for now.
+  // Could be enabled when entryIndex == 0, if desired.
+  const autoFocusPredicate = () => {return false;};
   return (
     <div className="panel panel-default">
       <div className="panel-body">
         <div className="col-sm-8">
         <div className="task-source">
-          <a href="#link-to-service">
+          <a href="#link-to-service" tabIndex="-1">
             <span className={sourceServiceIcon}></span>
             <span className="task-source-header">{source}/City-of-Helsinki/servicemap issue#514</span>
           </a>
@@ -108,9 +131,17 @@ var TimedTask = ({source, hours, entry, tasks}) => {
         { taskDescription }
         </div>
         <div className="input-group input-group-lg col-sm-4 hours-entry">
-          <span className="input-group-btn"><button className="btn btn-default" type="button"><span className={removeIcon}></span></button></span>
-          <input type="text" className="form-control" placeholder="0" defaultValue={hours} />
-          <span className="input-group-btn"><button className="btn btn-default" type="button"><span className="glyphicon glyphicon-plus"></span></button></span>
+          <span className="input-group-btn">
+              <button className="btn btn-default" type="button" tabIndex="-1">
+                  <span className={removeIcon} />
+              </button>
+          </span>
+          <input type="text" className="form-control" placeholder="0" defaultValue={hours} ref={autoFocus(autoFocusPredicate)} />
+          <span className="input-group-btn">
+              <button className="btn btn-default" type="button" tabIndex="-1">
+                  <span className="glyphicon glyphicon-plus" />
+              </button>
+          </span>
         </div>
       </div>
     </div>
