@@ -59,6 +59,21 @@ function mergeData(state, newData, meta, actionType) {
   }
 }
 
+function modifyEntry(state, {entryId, operation, amount}) {
+  if (operation == 'subtract') {
+    amount = -amount;
+    operation = 'add';
+  }
+  if (operation == 'add') {
+    const val = state.entry[entryId].minutes;
+    return state.setIn(['entry', entryId, 'minutes'], val + amount);
+  }
+  else if (operation == 'remove') {
+    return state.setIn(['entry', entryId, 'removed'], true);
+  }
+  return state;
+}
+
 // Reducers
 
 function dataReducer(state = initialDataState, action) {
@@ -67,10 +82,10 @@ function dataReducer(state = initialDataState, action) {
     case 'REQUEST':
       const { resourceType, endpoint } = action.meta;
       return state.setIn(['_apiEndpoints', endpoint], action.type);
-      break;
     case 'SUCCESS':
       return mergeData(state, action.payload, action.meta, action.type);
-      break;
+    case 'MODIFY_ENTRY':
+      return modifyEntry(state, action);
     default:
       break;
   }

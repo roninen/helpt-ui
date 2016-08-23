@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import ReactDOM from 'react-dom';
 
-import { mapUserResourceDispatchToProps } from '../actions/index';
+import { fetchUpdatedResourceForUser, modifyEntry } from '../actions/index';
 import moment from 'moment';
 import * as timeUtils from '../util/time';
 
@@ -14,12 +14,13 @@ class DayView extends React.Component {
     props.fetchUpdatedResourceForUser('entry', props.user);
   }
   render() {
-    const { entries, momentDate } = this.props;
+    const { entries, momentDate, modifyEntry } = this.props;
     const entryComponents = _.map(_.values(entries), (entry, index) => {
       return (
         <TimedTask
              key={entry.id}
              entryIndex={index}
+             modifyEntry={modifyEntry}
              source={entry.workspace.source || 'github'}
              entry={entry}
              tasks={this.props.tasks}
@@ -109,7 +110,29 @@ function autoFocus(predicate) {
   };
 }
 
-var TimedTask = ({source, hours, entry, tasks, entryIndex}) => {
+const NumberChangeButton = ({operation, currentValue, modifyEntry, entryId, amount}) => {
+  let iconClass = 'glyphicon ';
+  if (operation == 'subtract' && currentValue == 0) {
+    operation = 'remove';
+  }
+  switch (operation) {
+    case 'add': iconClass += 'glyphicon-plus'; break;
+    case 'subtract': iconClass += 'glyphicon-minus'; break;
+    case 'remove': iconClass += 'glyphicon-trash'; break;
+  }
+  function execute() {
+    modifyEntry(entryId, operation, amount);
+  }
+  return (
+    <span className="input-group-btn">
+        <button className="btn btn-default" type="button" tabIndex="-1" onClick={execute}>
+            <span className={iconClass} />
+        </button>
+    </span>
+  );
+};
+
+var TimedTask = ({source, hours, entry, tasks, entryIndex, modifyEntry}) => {
   var sourceServiceIcon = sourceSystemIcon(source);
   var removeIcon = 'glyphicon glyphicon-minus';
   if (hours == 0) removeIcon = 'glyphicon glyphicon-trash';
@@ -131,17 +154,9 @@ var TimedTask = ({source, hours, entry, tasks, entryIndex}) => {
         { taskDescription }
         </div>
         <div className="input-group input-group-lg col-sm-4 hours-entry">
-          <span className="input-group-btn">
-              <button className="btn btn-default" type="button" tabIndex="-1">
-                  <span className={removeIcon} />
-              </button>
-          </span>
-          <input type="text" className="form-control" placeholder="0" defaultValue={hours} ref={autoFocus(autoFocusPredicate)} />
-          <span className="input-group-btn">
-              <button className="btn btn-default" type="button" tabIndex="-1">
-                  <span className="glyphicon glyphicon-plus" />
-              </button>
-          </span>
+          <NumberChangeButton entryId={entry.id} operation="subtract" amount="30" modifyEntry={modifyEntry} currentValue={hours} />
+          <input type="text" className="form-control" placeholder="0" value={hours} readOnly ref={autoFocus(autoFocusPredicate)} />
+          <NumberChangeButton entryId={entry.id} operation="add" amount="30" currentValue={hours} modifyEntry={modifyEntry} />
         </div>
       </div>
     </div>
@@ -165,4 +180,9 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, mapUserResourceDispatchToProps)(DayView);
+const mapDispatchToProps = {
+  fetchUpdatedResourceForUser,
+  modifyEntry
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DayView);

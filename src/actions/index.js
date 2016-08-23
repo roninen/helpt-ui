@@ -1,4 +1,5 @@
 import { CALL_API } from 'redux-api-middleware';
+import { bindActionCreators } from 'redux';
 import URI from 'urijs';
 
 const API_BASE_URL = 'http://localhost:3000';
@@ -38,10 +39,19 @@ export function fetchResourceFiltered(resourceType, filters) {
   return fetchResource(resourceType, null, uri.toString());
 }
 
+export function fetchUpdatedResourceForUser (resource, user) {
+  return fetchResourceFiltered(resource, {user: user.id});
+}
+
 export function mapUserResourceDispatchToProps(dispatch, ownProps) {
+  return bindActionCreators({fetchUpdatedResourceForUser}, dispatch);
+};
+
+export function modifyEntry(entryId, operation, amount) {
   return {
-    fetchUpdatedResourceForUser: (resource, user) => {
-      dispatch(fetchResourceFiltered(resource, {user: user.id}));
-    }
+    type: 'MODIFY_ENTRY',
+    entryId,
+    operation,
+    amount: parseInt(amount)
   };
 };
