@@ -28,7 +28,7 @@ export function hoursToMinutes (hours) {
   if (typeof hours !== 'number') {
     hours = parseFloat(hours);
   }
-  return hours * 60;
+  return Math.floor(hours * 60);
 }
 
 export function formatHours (hours) {

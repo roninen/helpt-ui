@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import TimedTask from './TimedTask';
 
-import { fetchUpdatedResourceForUser, modifyEntry } from '../actions/index';
+import { fetchUpdatedResourceForUser, modifyResource, deleteEntry } from '../actions/index';
 import moment from 'moment';
 import * as timeUtils from '../util/time';
 
@@ -15,17 +15,17 @@ class DayView extends React.Component {
     props.fetchUpdatedResourceForUser('entry', props.user);
   }
   render() {
-    const { entries, momentDate, modifyEntry } = this.props;
-    const entryComponents = _.map(_.values(entries), (entry, index) => {
-      return (
-        <TimedTask
-             key={entry.id}
-             entryIndex={index}
-             modifyEntry={modifyEntry}
-             source={entry.workspace.source || 'github'}
-             entry={entry}
-             tasks={this.props.tasks}
-             persistedMinutes={entry.minutes} />);
+    const { entries, momentDate, modifyResource, deleteEntry } = this.props;
+    const entryComponents = _.map(_.filter(_.values(entries), (entry) => { return entry.state != 'deleted'; }), (entry, index) => {
+      return (<TimedTask
+              key={entry.id}
+              entryIndex={index}
+              modifyResource={modifyResource}
+              deleteEntry={deleteEntry}
+              source={entry.workspace.source || 'github'}
+              entry={entry}
+              tasks={this.props.tasks}
+              persistedMinutes={entry.minutes} />);
     });
     const totalMinutes = _.reduce(entries, (sum, entry) => { return sum + entry.minutes; }, 0);
     return (
@@ -114,7 +114,8 @@ function mapStateToProps(state, ownProps) {
 
 const mapDispatchToProps = {
   fetchUpdatedResourceForUser,
-  modifyEntry
+  modifyResource,
+  deleteEntry
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DayView);

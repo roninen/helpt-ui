@@ -50,28 +50,13 @@ function mergeData(state, newData, meta, actionType) {
         {_apiEndpoints: {[endpoint]: actionType}});
     }
     return state.merge(
-      {[resourceType]: {[newData.id]: newData}},
+      {[resourceType]: state[resourceType].merge({[newData.id]: newData})},
       {_apiEndpoints: {[endpoint]: actionType}}
     );
   }
   else {
     throw new TypeError('The received resource type is not part of the newData model.');
   }
-}
-
-function modifyEntry(state, {entryId, operation, amount}) {
-  if (operation == 'subtract') {
-    amount = -amount;
-    operation = 'add';
-  }
-  if (operation == 'add') {
-    const val = state.entry[entryId].minutes;
-    return state.setIn(['entry', entryId, 'minutes'], val + amount);
-  }
-  else if (operation == 'remove') {
-    return state.setIn(['entry', entryId, 'removed'], true);
-  }
-  return state;
 }
 
 // Reducers
@@ -84,8 +69,6 @@ function dataReducer(state = initialDataState, action) {
       return state.setIn(['_apiEndpoints', endpoint], action.type);
     case 'SUCCESS':
       return mergeData(state, action.payload, action.meta, action.type);
-    case 'MODIFY_ENTRY':
-      return modifyEntry(state, action);
     default:
       break;
   }

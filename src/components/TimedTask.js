@@ -47,9 +47,11 @@ export default class TimedTask extends React.Component {
     // change to the data is posted to the server via an action
     // after which it is verified that the new persisted value
     // from the redux store equals the local state.
+    this.cancelFn = null;
     this.state = {
       hourString: this.roundAndNormalize(
-        timeUtils.minutesToHours(this.props.persistedMinutes))
+        timeUtils.minutesToHours(this.props.persistedMinutes)),
+      previousMinutes: null
     };
   }
   // Called before persisting and after incrementing with button
@@ -90,17 +92,39 @@ export default class TimedTask extends React.Component {
     const retVal = `${spl[0]}.${spl.slice(1).join('')}`;
     return retVal;
   }
-  setHours (newValue) {
-    this.setState({desiHours: newValue});
-  }
   onChange (event) {
     this.setState({hourString: this.ensureValidHourString(event.target.value)});
   }
+  componentWillReceiveProps (nextProps) {
+    const { entry: oldEntry } = this.props;
+    const { entry: newEntry } = nextProps;
+    if (oldEntry.minutes != newEntry.minutes) {
+      if (newEntry.minutes != timeUtils.hoursToMinutes(this.state.hourString)) {
+        this.props.displayMessageToUser(
+          'Error: entry minutes were unexpectedly updated in the database.');
+        return;
+      }
+    }
+  }
+  componentWillUpdate (nextProps, nextState) {
+    const { entry } = this.nextProps || this.props;
+    const newMinutes = timeUtils.hoursToMinutes(nextState.hourString);
+    if (newMinutes == entry.minutes) {
+      return;
+    }
+    const modifyResource = () => {
+      const newEntry = entry.merge({minutes: newMinutes});
+      this.props.modifyResource('entry', entry.id, newEntry);
+    };
+    if (this.cancelFn) {
+      this.cancelFn();
+    }
+    const throttled = _.throttle(modifyResource, 1000, {leading: false, trailing: true});
+    this.cancelFn = throttled.cancel;
+    throttled();
+  }
   validateAndPersist (event) {
-    const { entry } = this.props;
     this.setState({hourString: this.roundAndNormalize(event.target.value)});
-    this.props.modifyEntry(entry.id, timeUtils.hoursToMinutes(this.state.hourString));
-    
   }
   onKeyUp (event) {
     if (event.keyCode == KEY_ENTER) {
@@ -108,17 +132,24 @@ export default class TimedTask extends React.Component {
     }
   }
   incrementButtonClickListener (amount) {
+    const fn = () => {
+    };
     return () => {
-      const newHours = timeUtils.round(
+      const roundedHours = timeUtils.round(
         parseFloat(this.state.hourString), 0.5);
-      const delta = newHours - parseFloat(this.state.hourString);
+      const delta = roundedHours - parseFloat(this.state.hourString);
       if (Math.sign(delta) == Math.sign(amount)) {
         // Rounding already incremented the number to the desired direction
-        this.setState({ hourString: this.roundAndNormalize(newHours) });
+        this.setState({ hourString: this.roundAndNormalize(roundedHours) });
         return;
       }
       const hoursFloat = parseFloat(this.state.hourString) + amount;
-      this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}) });
+      if (hoursFloat < 0) {
+        this.props.deleteEntry(this.props.entry);
+      }
+      else {
+        this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}) });
+      }
     };
   }
   render () {
