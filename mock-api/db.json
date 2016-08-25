@@ -96,7 +96,7 @@
       "workspace": "city-dsl-compiler",
       "task": 3,
       "date": "2016-08-02",
-      "minutes": 330
+      "minutes": 60
     },
     {
       "id": 4,
@@ -104,7 +104,8 @@
       "workspace": "city-dsl-compiler",
       "task": 2,
       "date": "2016-08-02",
-      "minutes": 120
+      "minutes": 0,
+      "state": "deleted"
     },
     {
       "id": 5,
@@ -112,7 +113,7 @@
       "workspace": "city-dsl-compiler",
       "task": 1,
       "date": "2016-08-02",
-      "minutes": 60
+      "minutes": 150
     }
   ]
 }
