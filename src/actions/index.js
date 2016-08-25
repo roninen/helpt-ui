@@ -14,7 +14,7 @@ function getEndPoint(resourceType, id) {
 
 function shouldBailOut(state, endpoint) {
   return state.data._apiEndpoints[endpoint];
-};
+}
 
 export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceType, id)) {
   return {
@@ -43,15 +43,14 @@ export function fetchUpdatedResourceForUser (resource, user) {
   return fetchResourceFiltered(resource, {user: user.id});
 }
 
-export function mapUserResourceDispatchToProps(dispatch, ownProps) {
+export function mapUserResourceDispatchToProps(dispatch) {
   return bindActionCreators({fetchUpdatedResourceForUser}, dispatch);
-};
+}
 
-export function modifyEntry(entryId, operation, amount) {
+export function modifyEntry(entryId, value) {
   return {
     type: 'MODIFY_ENTRY',
     entryId,
-    operation,
-    amount: parseInt(amount)
+    amount: parseInt(value)
   };
-};
+}

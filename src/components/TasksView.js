@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { fetchResource, fetchResourceFiltered, mapUserResourceDispatchToProps } from '../actions/index';
+import { mapUserResourceDispatchToProps } from '../actions/index';
 
 class TasksView extends React.Component {
   componentWillReceiveProps(props) {
@@ -27,7 +27,7 @@ class TasksView extends React.Component {
       </div>
     );
   }
-};
+}
 
 export const TaskItem = ({task}) => {
   return (
@@ -58,6 +58,6 @@ function mapStateToProps(state, ownProps) {
       return task.assigned == user.id;
     })
   };
-};
+}
 
 export default connect(mapStateToProps, mapUserResourceDispatchToProps)(TasksView);

@@ -80,7 +80,7 @@ function dataReducer(state = initialDataState, action) {
   switch (action.type) {
     case 'FAILURE':
     case 'REQUEST':
-      const { resourceType, endpoint } = action.meta;
+      const { endpoint } = action.meta;
       return state.setIn(['_apiEndpoints', endpoint], action.type);
     case 'SUCCESS':
       return mergeData(state, action.payload, action.meta, action.type);

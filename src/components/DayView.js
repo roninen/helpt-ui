@@ -1,9 +1,10 @@
 import _ from 'lodash';
+
 import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
-import ReactDOM from 'react-dom';
+import TimedTask from './TimedTask';
 
 import { fetchUpdatedResourceForUser, modifyEntry } from '../actions/index';
 import moment from 'moment';
@@ -24,7 +25,7 @@ class DayView extends React.Component {
              source={entry.workspace.source || 'github'}
              entry={entry}
              tasks={this.props.tasks}
-             hours={timeUtils.minutesToHours(entry.minutes)} />);
+             persistedMinutes={entry.minutes} />);
     });
     const totalMinutes = _.reduce(entries, (sum, entry) => { return sum + entry.minutes; }, 0);
     return (
@@ -90,75 +91,6 @@ var DayFooter = ({totalMinutes}) => {
     <div className="day-footer panel-body">
       <div className="col-sm-8">Total of the day</div>
       <div className="col-sm-4"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} hours</div></div>
-    </div>
-  );
-};
-
-function sourceSystemIcon(source) {
-  //using this as default and placemarker for github
-  if (source == 'Trello') return 'glyphicon glyphicon-signal task-source-icon';
-  return 'glyphicon glyphicon-tree-deciduous task-source-icon';
-}
-
-function autoFocus(predicate) {
-  return function (element) {
-    if (predicate()) {
-      if (element != null) {
-        element.focus();
-      }
-    }
-  };
-}
-
-const NumberChangeButton = ({operation, currentValue, modifyEntry, entryId, amount}) => {
-  let iconClass = 'glyphicon ';
-  if (operation == 'subtract' && currentValue == 0) {
-    operation = 'remove';
-  }
-  switch (operation) {
-    case 'add': iconClass += 'glyphicon-plus'; break;
-    case 'subtract': iconClass += 'glyphicon-minus'; break;
-    case 'remove': iconClass += 'glyphicon-trash'; break;
-  }
-  function execute() {
-    modifyEntry(entryId, operation, amount);
-  }
-  return (
-    <span className="input-group-btn">
-        <button className="btn btn-default" type="button" tabIndex="-1" onClick={execute}>
-            <span className={iconClass} />
-        </button>
-    </span>
-  );
-};
-
-var TimedTask = ({source, hours, entry, tasks, entryIndex, modifyEntry}) => {
-  var sourceServiceIcon = sourceSystemIcon(source);
-  var removeIcon = 'glyphicon glyphicon-minus';
-  if (hours == 0) removeIcon = 'glyphicon glyphicon-trash';
-  const currentTask = tasks[`${entry.workspace}:${entry.task}`];
-  const taskDescription = currentTask ? currentTask.description : null;
-  // Uncoditionally disable autofocus for now.
-  // Could be enabled when entryIndex == 0, if desired.
-  const autoFocusPredicate = () => {return false;};
-  return (
-    <div className="panel panel-default">
-      <div className="panel-body">
-        <div className="col-sm-8">
-        <div className="task-source">
-          <a href="#link-to-service" tabIndex="-1">
-            <span className={sourceServiceIcon}></span>
-            <span className="task-source-header">{source}/City-of-Helsinki/servicemap issue#514</span>
-          </a>
-        </div>
-        { taskDescription }
-        </div>
-        <div className="input-group input-group-lg col-sm-4 hours-entry">
-          <NumberChangeButton entryId={entry.id} operation="subtract" amount="30" modifyEntry={modifyEntry} currentValue={hours} />
-          <input type="text" className="form-control" placeholder="0" value={hours} readOnly ref={autoFocus(autoFocusPredicate)} />
-          <NumberChangeButton entryId={entry.id} operation="add" amount="30" currentValue={hours} modifyEntry={modifyEntry} />
-        </div>
-      </div>
     </div>
   );
 };

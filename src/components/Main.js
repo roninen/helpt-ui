@@ -63,7 +63,7 @@ const mapStateToProps = (state) => {
   return { user };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
   return {
     fetchUser: (user) => {
       if (user.id) {
