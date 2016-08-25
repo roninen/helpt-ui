@@ -1,4 +1,5 @@
 import moment from 'moment';
+import _ from 'underscore';
 
 export const K_DATEFORMAT = 'YYYY-MM-DD';
 
@@ -43,3 +44,31 @@ export function formatHours (hours) {
   }
   return `${full}${fractString}`;
 }
+
+
+export function round (floatVal, stepOption) {
+    const step = (stepOption || 0.25);
+    if (1 % step != 0) {
+      return floatVal;
+    }
+
+    const num = floatVal.toFixed(2);
+    const whole = Math.floor(floatVal);
+    const fract = num - whole;
+
+    let returnValue = null;
+    const steps = _.range(step/2, 1, step);
+    for (let i = 0; i < steps.length; i++) {
+      if (fract < steps[i]) {
+        returnValue = whole + step * i;
+        break;
+      }
+    }
+    if (returnValue == null) {
+      returnValue = whole + 1;
+    }
+    if (returnValue > 18) {
+      returnValue = 18;
+    }
+    return returnValue;
+  }

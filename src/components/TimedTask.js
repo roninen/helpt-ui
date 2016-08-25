@@ -20,7 +20,7 @@ function autoFocus(predicate) {
   };
 }
 
-const NumberChangeButton = ({operation, onClick, amount, currentValue}) => {
+const NumberChangeButton = ({operation, onClick, currentValue}) => {
   if (operation == 'subtract' && currentValue == 0) {
     operation = 'remove';
   }
@@ -43,40 +43,25 @@ export default class TimedTask extends React.Component {
   constructor (props) {
     super(props);
     // This component is the master source of an entry hours data
-    // for the duration of this component's lifetime.
+    // for the duration of this component's lifetime. Any
+    // change to the data is posted to the server via an action
+    // after which it is verified that the new persisted value
+    // from the redux store equals the local state.
     this.state = {
       hourString: this.roundAndNormalize(
         timeUtils.minutesToHours(this.props.persistedMinutes))
     };
   }
-  round (strVal) {
-    const floatVal = parseFloat(strVal);
-    const num = floatVal.toFixed(2);
-    const whole = Math.floor(floatVal);
-    const fract = num - whole;
-    if (fract < 0.125) {
-      return whole;
-    }
-    else if (fract < 0.375) {
-      return whole + 0.25;
-    }
-    else if (fract < 0.625) {
-      return whole + 0.5;
-    }
-    else if (fract < 0.875) {
-      return whole + 0.75;
-    }
-    return whole + 1;
-  }
-  // Called on blur: before persisting, that is
-  roundAndNormalize (strVal) {
+  // Called before persisting and after incrementing with button
+  roundAndNormalize (strVal, options = {step: 0.25}) {
+    const { step } = options;
     if (typeof strVal !== 'string') {
       strVal = '' + strVal;
     }
     if (strVal.length == 0 || strVal == '.') {
       return '0';
     }
-    strVal = '' + this.round(strVal);
+    strVal = '' + timeUtils.round(parseFloat(strVal), step);
     let [whole, fract] = strVal.split('.');
     if (fract === undefined) {
       return whole;
@@ -102,7 +87,8 @@ export default class TimedTask extends React.Component {
     if (spl[0].length == 0) {
       spl[0] = '0';
     }
-    return `${spl[0]}.${spl.slice(1).join('')}`;
+    const retVal = `${spl[0]}.${spl.slice(1).join('')}`;
+    return retVal;
   }
   setHours (newValue) {
     this.setState({desiHours: newValue});
@@ -110,7 +96,7 @@ export default class TimedTask extends React.Component {
   onChange (event) {
     this.setState({hourString: this.ensureValidHourString(event.target.value)});
   }
-  onBlur (event) {
+  validateAndPersist (event) {
     const { entry } = this.props;
     this.setState({hourString: this.roundAndNormalize(event.target.value)});
     this.props.modifyEntry(entry.id, timeUtils.hoursToMinutes(this.state.hourString));
@@ -123,8 +109,16 @@ export default class TimedTask extends React.Component {
   }
   incrementButtonClickListener (amount) {
     return () => {
+      const newHours = timeUtils.round(
+        parseFloat(this.state.hourString), 0.5);
+      const delta = newHours - parseFloat(this.state.hourString);
+      if (Math.sign(delta) == Math.sign(amount)) {
+        // Rounding already incremented the number to the desired direction
+        this.setState({ hourString: this.roundAndNormalize(newHours) });
+        return;
+      }
       const hoursFloat = parseFloat(this.state.hourString) + amount;
-      this.setState({ hourString: new String(hoursFloat) });
+      this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}) });
     };
   }
   render () {
@@ -159,7 +153,7 @@ export default class TimedTask extends React.Component {
                          value={this.state.hourString}
                          onChange={this.onChange.bind(this)}
                          onKeyUp={this.onKeyUp.bind(this)}
-                         onBlur={this.onBlur.bind(this)}
+                         onBlur={this.validateAndPersist.bind(this)}
                          ref={autoFocus(autoFocusPredicate)} />
                   <NumberChangeButton
                        operation="add"
