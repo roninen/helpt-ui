@@ -75,7 +75,7 @@
   ],
   "entry": [
     {
-      "id": "1",
+      "id": 1,
       "user": "callec",
       "workspace": "city-dsl-compiler",
       "task": "1",
@@ -83,7 +83,7 @@
       "minutes": 90
     },
     {
-      "id": "2",
+      "id": 2,
       "user": "callec",
       "workspace": "city-dsl-compiler",
       "task": "1",
@@ -91,28 +91,28 @@
       "minutes": 135
     },
     {
-      "id": "3",
+      "id": 3,
       "user": "callec",
       "workspace": "city-dsl-compiler",
-      "task": "3",
+      "task": 3,
+      "date": "2016-08-02",
+      "minutes": 330
+    },
+    {
+      "id": 4,
+      "user": "callec",
+      "workspace": "city-dsl-compiler",
+      "task": 2,
       "date": "2016-08-02",
       "minutes": 120
     },
     {
-      "id": "4",
+      "id": 5,
       "user": "callec",
       "workspace": "city-dsl-compiler",
-      "task": "2",
+      "task": 1,
       "date": "2016-08-02",
       "minutes": 60
-    },
-    {
-      "id": "5",
-      "user": "callec",
-      "workspace": "city-dsl-compiler",
-      "task": "1",
-      "date": "2016-08-02",
-      "minutes": 90
     }
   ]
 }
