@@ -51,7 +51,8 @@ export default class TimedTask extends React.Component {
     this.state = {
       hourString: this.roundAndNormalize(
         timeUtils.minutesToHours(this.props.persistedMinutes)),
-      deleted: false
+      deleted: false,
+      persistState: 'persisted'
     };
   }
   // Called before persisting and after incrementing with button
@@ -96,19 +97,36 @@ export default class TimedTask extends React.Component {
     this.setState({hourString: this.ensureValidHourString(event.target.value)});
   }
   componentWillReceiveProps (nextProps) {
-    const { entry: oldEntry } = this.props;
-    const { entry: newEntry } = nextProps;
-    if (oldEntry.minutes != newEntry.minutes) {
-      if (newEntry.minutes != timeUtils.hoursToMinutes(this.state.hourString)) {
-        this.props.displayMessageToUser(
-          'Error: entry minutes were unexpectedly updated in the database.');
+    const oldEntry = this.props.entry;
+    const newEntry = nextProps.entry;
+    if (this.arePropsUpdated(nextProps)) {
+      if (!this.propsAndStateMatch(nextProps))  {
+        alert(
+          'Error: entry was unexpectedly updated in the database.');
         return;
       }
+      console.log('Setting persiststate to persisted.');
+      this.setState({persistState: 'persisted'});
     }
+  }
+  arePropsUpdated (nextProps) {
+    return (
+      nextProps.entry.minutes != this.props.entry.minutes ||
+      nextProps.entry.state != this.props.entry.state);
+  }
+  propsAndStateMatch (props) {
+    return (
+      props.entry.minutes == timeUtils.hoursToMinutes(this.state.hourString) &&
+      (props.entry.state != 'deleted' || this.state.deleted == true)
+    );
   }
   isStateUpdated (nextState) {
     return (nextState.hourString != this.state.hourString ||
             nextState.deleted != this.state.deleted);
+  }
+  modifyResource (entry, newAttributes) {
+    const newEntry = entry.merge(newAttributes);
+    this.props.modifyResource('entry', entry.id, newEntry);
   }
   componentWillUpdate (nextProps, nextState) {
     if (!this.isStateUpdated(nextState)) {
@@ -120,25 +138,31 @@ export default class TimedTask extends React.Component {
       newAttributes = {state: 'deleted'};
     }
     else {
-      const newMinutes = timeUtils.hoursToMinutes(nextState.hourString);
+      const newMinutes = timeUtils.hoursToMinutes(timeUtils.round(parseFloat(nextState.hourString)));
       if (newMinutes == entry.minutes) {
         return;
       }
       newAttributes = {minutes: newMinutes};
     }
     const modifyResource = () => {
-      const newEntry = entry.merge(newAttributes);
-      this.props.modifyResource('entry', entry.id, newEntry);
     };
     if (this.cancelFn) {
       this.cancelFn();
     }
-    const throttled = _.throttle(modifyResource, 1000, {leading: false, trailing: true});
+    const throttled = _.throttle(
+      this.modifyResource.bind(this, entry, newAttributes),
+      1000,
+      {leading: false, trailing: true});
     this.cancelFn = throttled.cancel;
     throttled();
   }
   validateAndPersist (event) {
-    this.setState({hourString: this.roundAndNormalize(event.target.value)});
+    const rounded = this.roundAndNormalize(event.target.value, {step: 0.25});
+    console.log(rounded);
+    this.setState({
+      hourString: rounded,
+      persistState: 'pending'
+    });
   }
   onKeyUp (event) {
     if (event.keyCode == KEY_ENTER) {
@@ -146,8 +170,6 @@ export default class TimedTask extends React.Component {
     }
   }
   incrementButtonClickListener (amount) {
-    const fn = () => {
-    };
     return () => {
       const roundedHours = timeUtils.round(
         parseFloat(this.state.hourString), 0.5);
@@ -159,10 +181,10 @@ export default class TimedTask extends React.Component {
       }
       const hoursFloat = parseFloat(this.state.hourString) + amount;
       if (hoursFloat < 0) {
-        this.setState({ deleted: true });
+        this.setState({ deleted: true, persistState: 'pending'});
       }
       else {
-        this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}) });
+        this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}), persistState: 'pending' });
       }
     };
   }
@@ -173,7 +195,10 @@ export default class TimedTask extends React.Component {
     const autoFocusPredicate = () => {return false;};
     var sourceServiceIcon = sourceSystemIcon(source);
     const currentTask = tasks[`${entry.workspace}:${entry.task}`];
-    const taskDescription = currentTask ? currentTask.description : null;
+    let taskDescription = currentTask ? currentTask.description : null;
+    if (this.state.persistState != 'persisted') {
+      taskDescription += ' *';
+    }
     const INCREMENT_STEP_HOURS = 0.5;
     const currentValue = parseFloat(this.state.hourString);
     let innerContents;
