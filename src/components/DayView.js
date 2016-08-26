@@ -16,7 +16,8 @@ class DayView extends React.Component {
   }
   render() {
     const { entries, momentDate, modifyResource, deleteEntry } = this.props;
-    const entryComponents = _.map(_.filter(_.values(entries), (entry) => { return entry.state != 'deleted'; }), (entry, index) => {
+    const filteredEntries = _.filter(_.values(entries), (entry) => { return entry.state != 'deleted'; });
+    const entryComponents = _.map(filteredEntries, (entry, index) => {
       return (<TimedTask
               key={entry.id}
               entryIndex={index}
@@ -27,7 +28,7 @@ class DayView extends React.Component {
               tasks={this.props.tasks}
               persistedMinutes={entry.minutes} />);
     });
-    const totalMinutes = _.reduce(entries, (sum, entry) => { return sum + entry.minutes; }, 0);
+    const totalMinutes = _.reduce(filteredEntries, (sum, entry) => { return sum + entry.minutes; }, 0);
     return (
       <div className="panel panel-primary">
           <div className="panel-heading"><DayNavigation momentDate={momentDate} /></div>
