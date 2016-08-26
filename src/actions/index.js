@@ -1,6 +1,7 @@
 import { CALL_API, getJSON } from 'redux-api-middleware';
 import { bindActionCreators } from 'redux';
 import URI from 'urijs';
+import * as timeUtils from '../util/time';
 
 const API_BASE_URL = 'http://localhost:3000';
 
@@ -72,4 +73,37 @@ export function modifyResource(resourceType, id, object) {
 export function deleteEntry(entry) {
   const deletedEntry = entry.merge({state: 'deleted'});
   return modifyResource('entry', entry.id, deletedEntry);
+}
+
+export function createResource(resourceType, object) {
+  const endpoint = getEndPoint(resourceType);
+  const body = JSON.stringify(object);
+  return {
+    [CALL_API]: {
+      endpoint: endpoint,
+      method: 'POST',
+      types: [
+        {type: 'REQUEST', meta: { resourceType, endpoint }},
+        {type: 'SUCCESS', meta: { resourceType, multiple: false, endpoint},
+         payload: (action, state, res) => {
+           return getJSON(res);
+        }},
+        {type: 'FAILURE', meta: { resourceType, endpoint }}
+      ],
+      body: body,
+      headers: { 'Content-Type': 'application/json' },
+      bailout: false
+    }
+  };
+}
+
+export function makeEntryFromTask(userId, task, momentDate) {
+  const newEntry = {
+    user: userId,
+    task: task.origin_id,
+    workspace: task.workspace,
+    date: momentDate.format(timeUtils.LINK_DATEFORMAT),
+    minutes: 0
+  };
+  return createResource('entry', newEntry);
 }

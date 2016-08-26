@@ -4,7 +4,9 @@ require('styles/App.scss');
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchResource } from '../actions/index';
+import {
+  fetchResource,
+  makeEntryFromTask } from '../actions/index';
 
 class AppComponent extends React.Component {
   componentWillMount() {
@@ -16,7 +18,7 @@ class AppComponent extends React.Component {
       {user: this.props.user});
     const sidebarComponent = React.cloneElement(
       this.props.sidebar,
-      {user: this.props.user});
+      {user: this.props.user, makeEntryFromTask: this.props.makeEntryFromTask});
     return (
       <div className="index">
       <nav className="navbar navbar-inverse navbar-fixed-top">
@@ -69,6 +71,9 @@ const mapDispatchToProps = (dispatch) => {
       if (user.id) {
         dispatch(fetchResource('user', user.id));
       }
+    },
+    makeEntryFromTask: (userId, entry, momentDate) => {
+      dispatch(makeEntryFromTask(userId, entry, momentDate));
     }
   };
 };
