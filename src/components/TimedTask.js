@@ -93,8 +93,19 @@ export default class TimedTask extends React.Component {
     const retVal = `${spl[0]}.${spl.slice(1).join('')}`;
     return retVal;
   }
+  setState (partialState, callback) {
+    if (typeof partialState === 'object') {
+      if (partialState.shouldPersist === undefined) {
+        partialState.shouldPersist = true;
+      }
+    }
+    super.setState(partialState, callback);
+  }
   onChange (event) {
-    this.setState({hourString: this.ensureValidHourString(event.target.value)});
+    this.setState({
+      hourString: this.ensureValidHourString(event.target.value),
+      shouldPersist: false
+    });
   }
   componentWillReceiveProps (nextProps) {
     const oldEntry = this.props.entry;
@@ -105,7 +116,6 @@ export default class TimedTask extends React.Component {
           'Error: entry was unexpectedly updated in the database.');
         return;
       }
-      console.log('Setting persiststate to persisted.');
       this.setState({persistState: 'persisted'});
     }
   }
@@ -114,24 +124,27 @@ export default class TimedTask extends React.Component {
       nextProps.entry.minutes != this.props.entry.minutes ||
       nextProps.entry.state != this.props.entry.state);
   }
-  propsAndStateMatch (props) {
+  propsAndStateMatch (props, state=this.state) {
     return (
-      props.entry.minutes == timeUtils.hoursToMinutes(this.state.hourString) &&
-      (props.entry.state != 'deleted' || this.state.deleted == true)
+      props.entry.minutes == timeUtils.hoursToMinutes(state.hourString) &&
+      (props.entry.state != 'deleted' || state.deleted == true)
     );
   }
   isStateUpdated (nextState) {
     return (nextState.hourString != this.state.hourString ||
-            nextState.deleted != this.state.deleted);
+            (nextState.deleted == true) != (this.state.deleted == true));
   }
   modifyResource (entry, newAttributes) {
     const newEntry = entry.merge(newAttributes);
     this.props.modifyResource('entry', entry.id, newEntry);
   }
   componentWillUpdate (nextProps, nextState) {
-    if (!this.isStateUpdated(nextState)) {
+    if (nextState.shouldPersist == false ||
+        (this.state.shouldPersist == nextState.shouldPersist) &&
+        !this.isStateUpdated(nextState)) {
       return;
     }
+
     const { entry } = this.nextProps || this.props;
     let newAttributes = null;
     if (nextState.deleted) {
@@ -144,8 +157,6 @@ export default class TimedTask extends React.Component {
       }
       newAttributes = {minutes: newMinutes};
     }
-    const modifyResource = () => {
-    };
     if (this.cancelFn) {
       this.cancelFn();
     }
@@ -157,12 +168,15 @@ export default class TimedTask extends React.Component {
     throttled();
   }
   validateAndPersist (event) {
-    const rounded = this.roundAndNormalize(event.target.value, {step: 0.25});
-    console.log(rounded);
-    this.setState({
-      hourString: rounded,
-      persistState: 'pending'
-    });
+    const rounded = this.roundAndNormalize(
+      event.target.value, {step: 0.25});
+    let newState = {
+      hourString: rounded
+    };
+    if (!this.propsAndStateMatch(this.props, newState)) {
+      newState.persistState = 'pending';
+    }
+    this.setState(newState);
   }
   onKeyUp (event) {
     if (event.keyCode == KEY_ENTER) {
@@ -176,7 +190,7 @@ export default class TimedTask extends React.Component {
       const delta = roundedHours - parseFloat(this.state.hourString);
       if (Math.sign(delta) == Math.sign(amount)) {
         // Rounding already incremented the number to the desired direction
-        this.setState({ hourString: this.roundAndNormalize(roundedHours) });
+        this.setState({ hourString: this.roundAndNormalize(roundedHours), persistState: 'pending'});
         return;
       }
       const hoursFloat = parseFloat(this.state.hourString) + amount;
@@ -184,7 +198,7 @@ export default class TimedTask extends React.Component {
         this.setState({ deleted: true, persistState: 'pending'});
       }
       else {
-        this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}), persistState: 'pending' });
+        this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}), persistState: 'pending'});
       }
     };
   }
