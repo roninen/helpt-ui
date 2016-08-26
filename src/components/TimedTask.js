@@ -51,7 +51,7 @@ export default class TimedTask extends React.Component {
     this.state = {
       hourString: this.roundAndNormalize(
         timeUtils.minutesToHours(this.props.persistedMinutes)),
-      previousMinutes: null
+      deleted: false
     };
   }
   // Called before persisting and after incrementing with button
@@ -106,14 +106,28 @@ export default class TimedTask extends React.Component {
       }
     }
   }
+  isStateUpdated (nextState) {
+    return (nextState.hourString != this.state.hourString ||
+            nextState.deleted != this.state.deleted);
+  }
   componentWillUpdate (nextProps, nextState) {
-    const { entry } = this.nextProps || this.props;
-    const newMinutes = timeUtils.hoursToMinutes(nextState.hourString);
-    if (newMinutes == entry.minutes) {
+    if (!this.isStateUpdated(nextState)) {
       return;
     }
+    const { entry } = this.nextProps || this.props;
+    let newAttributes = null;
+    if (nextState.deleted) {
+      newAttributes = {state: 'deleted'};
+    }
+    else {
+      const newMinutes = timeUtils.hoursToMinutes(nextState.hourString);
+      if (newMinutes == entry.minutes) {
+        return;
+      }
+      newAttributes = {minutes: newMinutes};
+    }
     const modifyResource = () => {
-      const newEntry = entry.merge({minutes: newMinutes});
+      const newEntry = entry.merge(newAttributes);
       this.props.modifyResource('entry', entry.id, newEntry);
     };
     if (this.cancelFn) {
@@ -145,7 +159,7 @@ export default class TimedTask extends React.Component {
       }
       const hoursFloat = parseFloat(this.state.hourString) + amount;
       if (hoursFloat < 0) {
-        this.props.deleteEntry(this.props.entry);
+        this.setState({ deleted: true });
       }
       else {
         this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}) });
@@ -162,6 +176,34 @@ export default class TimedTask extends React.Component {
     const taskDescription = currentTask ? currentTask.description : null;
     const INCREMENT_STEP_HOURS = 0.5;
     const currentValue = parseFloat(this.state.hourString);
+    let innerContents;
+    if (!this.state.deleted) {
+      innerContents = (
+        <div className="input-group input-group-lg col-sm-4 hours-entry">
+            <NumberChangeButton
+                 operation="subtract"
+                 currentValue={currentValue}
+                 onClick={this.incrementButtonClickListener(-INCREMENT_STEP_HOURS).bind(this)} />
+            <input type="text"
+                   className="form-control"
+                   value={this.state.hourString}
+                   onChange={this.onChange.bind(this)}
+                   onKeyUp={this.onKeyUp.bind(this)}
+                   onBlur={this.validateAndPersist.bind(this)}
+                   ref={autoFocus(autoFocusPredicate)} />
+            <NumberChangeButton
+                 operation="add"
+                 currentValue={currentValue}
+                 onClick={this.incrementButtonClickListener(INCREMENT_STEP_HOURS).bind(this)} />
+        </div>);
+    }
+    else {
+      innerContents = (
+        <div className="input-group input-group-lg col-sm-4 hours-entry">
+            <div className="alert alert-info" role="alert">Deleting entry</div>
+        </div>
+      );
+    }
     return (
       <div className="panel panel-default">
           <div className="panel-body">
@@ -174,23 +216,7 @@ export default class TimedTask extends React.Component {
                   </div>
                   { taskDescription }
               </div>
-              <div className="input-group input-group-lg col-sm-4 hours-entry">
-                  <NumberChangeButton
-                       operation="subtract"
-                       currentValue={currentValue}
-                       onClick={this.incrementButtonClickListener(-INCREMENT_STEP_HOURS).bind(this)} />
-                  <input type="text"
-                         className="form-control"
-                         value={this.state.hourString}
-                         onChange={this.onChange.bind(this)}
-                         onKeyUp={this.onKeyUp.bind(this)}
-                         onBlur={this.validateAndPersist.bind(this)}
-                         ref={autoFocus(autoFocusPredicate)} />
-                  <NumberChangeButton
-                       operation="add"
-                       currentValue={currentValue}
-                       onClick={this.incrementButtonClickListener(INCREMENT_STEP_HOURS).bind(this)} />
-              </div>
+              { innerContents }
           </div>
       </div>
     );
