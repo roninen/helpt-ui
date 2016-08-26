@@ -41,7 +41,7 @@ export const TaskItem = ({task}) => {
         </div>
         <div className="task-description">{ task.description }</div>
       </div>
-      <div className="task-listing-item-actions col-xs-2">
+      <div className="task-listing-item-actions col-xs-2 text-right">
         <a className="btn btn-default btn-lg time-task-button" href="#" role="button" data-toggle="tooltip" data-placement="left" title="Add to day"><span className="glyphicon glyphicon-time"></span></a>
       </div>
     </div>
