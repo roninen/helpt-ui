@@ -75,7 +75,7 @@ export function deleteEntry(entry) {
   return modifyResource('entry', entry.id, deletedEntry);
 }
 
-export function createResource(resourceType, object) {
+export function createResource(resourceType, object, bailout = false) {
   const endpoint = getEndPoint(resourceType);
   const body = JSON.stringify(object);
   return {
@@ -92,18 +92,29 @@ export function createResource(resourceType, object) {
       ],
       body: body,
       headers: { 'Content-Type': 'application/json' },
-      bailout: false
+      bailout
     }
   };
 }
 
 export function makeEntryFromTask(userId, task, momentDate) {
+  const date = momentDate.format(timeUtils.LINK_DATEFORMAT);
   const newEntry = {
     user: userId,
     task: task.origin_id,
     workspace: task.workspace,
-    date: momentDate.format(timeUtils.LINK_DATEFORMAT),
-    minutes: 0
+    minutes: 0,
+    date
   };
-  return createResource('entry', newEntry);
+  return createResource('entry', newEntry, (state) => {
+    // Bail out if matching entry already found
+    return _.find(state.data.entry, (entry) => {
+      return (entry.user == userId &&
+              entry.task == task.origin_id &&
+              entry.workspace == task.workspace &&
+              entry.date == date &&
+              entry.state != 'deleted'
+             );
+    }) !== undefined;
+  });
 }
