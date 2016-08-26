@@ -34,7 +34,7 @@ class DayView extends React.Component {
           <div className="panel-heading"><DayNavigation momentDate={momentDate} /></div>
           <div className="panel-body">
               { entryComponents }
-              <EmptyTaskPrompt />
+              <EmptyTaskPrompt taskCount={filteredEntries.length} />
           </div>
           <div className="panel-footer day-footer"><DayFooter totalMinutes={totalMinutes} /></div>
       </div>
@@ -79,10 +79,11 @@ var DayNavigation = ({momentDate}) => {
   );
 }
  
-var EmptyTaskPrompt = () => {
+var EmptyTaskPrompt = ({taskCount}) => {
+  const more = taskCount > 0 ? 'more' : '';
   return (
     <div className="well well-sm add-task-prompt">
-      Add tasks from your task list
+      Add {more} tasks from your list of assigned tasks
     </div>
   );
 };
