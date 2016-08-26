@@ -2,6 +2,7 @@ import { CALL_API, getJSON } from 'redux-api-middleware';
 import { bindActionCreators } from 'redux';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
+import { findEntryForTask } from '../util/data';
 
 const API_BASE_URL = 'http://localhost:3000';
 
@@ -108,13 +109,6 @@ export function makeEntryFromTask(userId, task, momentDate) {
   };
   return createResource('entry', newEntry, (state) => {
     // Bail out if matching entry already found
-    return _.find(state.data.entry, (entry) => {
-      return (entry.user == userId &&
-              entry.task == task.origin_id &&
-              entry.workspace == task.workspace &&
-              entry.date == date &&
-              entry.state != 'deleted'
-             );
-    }) !== undefined;
+    return findEntryForTask(state, userId, task, date);
   });
 }

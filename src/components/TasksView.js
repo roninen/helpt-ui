@@ -4,6 +4,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { mapUserResourceDispatchToProps } from '../actions/index';
 import * as timeUtils from '../util/time';
+import * as dataUtils from '../util/data';
 
 class TasksView extends React.Component {
   componentWillReceiveProps(props) {
@@ -20,8 +21,8 @@ class TasksView extends React.Component {
     return (
       <div className="panel panel-default task-listing-view">
           <div className="panel-body">
-              <h4>Your assigned tasks<br/>
-                  <small>You have { _.size(tasks) } active tasks</small></h4>
+              <h4>Tasks assigned to you<br/>
+                  <small>You have { _.size(tasks) } active tasks that can be selected for this date.</small></h4>
               <ul className="list-group">
                   { taskItems }
               </ul>
@@ -64,7 +65,9 @@ function mapStateToProps(state, ownProps) {
   return {
     user: user,
     tasks: _.pickBy(state.data.task, (task) => {
-      return task.assigned == user.id;
+      return (
+        task.assigned == user.id &&
+          !dataUtils.findEntryForTask(state, user.id, task, date));
     }),
     momentDate: moment(date)
   };
