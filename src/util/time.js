@@ -1,7 +1,7 @@
 import moment from 'moment';
 import _ from 'underscore';
 
-export const K_DATEFORMAT = 'YYYY-MM-DD';
+export const LINK_DATEFORMAT = 'YYYY-MM-DD';
 
 export function formatHumanDate(date) {
   return date.format('dddd LL');
