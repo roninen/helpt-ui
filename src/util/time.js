@@ -8,7 +8,7 @@ export function formatHumanDate(date) {
 }
 
 export function today() {
-  return '2016-08-02';
+  return moment().format(LINK_DATEFORMAT);
 }
 
 export function isFuture(momentDate) {
