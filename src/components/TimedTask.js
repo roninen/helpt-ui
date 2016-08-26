@@ -148,7 +148,7 @@ export default class TimedTask extends React.Component {
     const { entry } = this.nextProps || this.props;
     let newAttributes = null;
     if (nextState.deleted) {
-      newAttributes = {state: 'deleted'};
+      newAttributes = {state: 'deleted', minutes: 0};
     }
     else {
       const newMinutes = timeUtils.hoursToMinutes(timeUtils.round(parseFloat(nextState.hourString)));

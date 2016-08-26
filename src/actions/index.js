@@ -71,11 +71,6 @@ export function modifyResource(resourceType, id, object) {
   };
 }
 
-export function deleteEntry(entry) {
-  const deletedEntry = entry.merge({state: 'deleted'});
-  return modifyResource('entry', entry.id, deletedEntry);
-}
-
 export function createResource(resourceType, object, bailout = false) {
   const endpoint = getEndPoint(resourceType);
   const body = JSON.stringify(object);

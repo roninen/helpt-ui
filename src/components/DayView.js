@@ -8,22 +8,20 @@ import TimedTask from './TimedTask';
 
 import {
   fetchUpdatedResourceForUser,
-  modifyResource,
-  deleteEntry} from '../actions/index';
+  modifyResource } from '../actions/index';
 
 import moment from 'moment';
 import * as timeUtils from '../util/time';
 
 class DayView extends React.Component {
   render() {
-    const { entries, momentDate, modifyResource, deleteEntry } = this.props;
+    const { entries, momentDate, modifyResource } = this.props;
     const filteredEntries = _.filter(_.values(entries), (entry) => { return entry.state != 'deleted'; });
     const entryComponents = _.map(filteredEntries, (entry, index) => {
       return (<TimedTask
               key={entry.id}
               entryIndex={index}
               modifyResource={modifyResource}
-              deleteEntry={deleteEntry}
               source={entry.workspace.source || 'github'}
               entry={entry}
               tasks={this.props.tasks}
@@ -116,8 +114,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  modifyResource,
-  deleteEntry
+  modifyResource
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DayView);
