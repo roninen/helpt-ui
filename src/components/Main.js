@@ -1,16 +1,20 @@
 require('normalize.css/normalize.css');
 require('styles/App.scss');
 
+import _ from 'lodash';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
 import {
   fetchResource,
-  makeEntryFromTask } from '../actions/index';
+  fetchUpdatedResourceForUser,
+  makeEntryFromTask,
+  undeleteEntry } from '../actions/index';
 
 class AppComponent extends React.Component {
   componentWillMount() {
-    this.props.fetchUser(this.props.user);
+    this.props.fetchUserAndTasks(this.props.user);
   }
   render() {
     const mainComponent = React.cloneElement(
@@ -18,7 +22,11 @@ class AppComponent extends React.Component {
       {user: this.props.user});
     const sidebarComponent = React.cloneElement(
       this.props.sidebar,
-      {user: this.props.user, makeEntryFromTask: this.props.makeEntryFromTask});
+      {user: this.props.user,
+       makeEntryFromTask: this.props.makeEntryFromTask,
+       undeleteEntry: this.props.undeleteEntry,
+       entries: this.props.entries
+      });
     return (
       <div className="index">
       <nav className="navbar navbar-inverse navbar-fixed-top">
@@ -60,20 +68,28 @@ import { loggedInUser } from '../reducers/index';
 const mapStateToProps = (state) => {
   const user = loggedInUser(state);
   if (!user) {
-    return { user: {name: '<not logged in>'} };
+    return { user: {name: '<not logged in>'}, tasks: [] };
   }
-  return { user };
+  return {
+    user,
+    entries: state.data.entry
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchUser: (user) => {
+    fetchUserAndTasks: (user) => {
       if (user.id) {
         dispatch(fetchResource('user', user.id));
+        dispatch(fetchUpdatedResourceForUser('task', user));
+        dispatch(fetchUpdatedResourceForUser('entry', user));
       }
     },
     makeEntryFromTask: (userId, entry, momentDate) => {
       dispatch(makeEntryFromTask(userId, entry, momentDate));
+    },
+    undeleteEntry: (entry) => {
+      dispatch(undeleteEntry(entry));
     }
   };
 };

@@ -15,9 +15,6 @@ import moment from 'moment';
 import * as timeUtils from '../util/time';
 
 class DayView extends React.Component {
-  componentWillReceiveProps(props) {
-    props.fetchUpdatedResourceForUser('entry', props.user);
-  }
   render() {
     const { entries, momentDate, modifyResource, deleteEntry } = this.props;
     const filteredEntries = _.filter(_.values(entries), (entry) => { return entry.state != 'deleted'; });
@@ -119,7 +116,6 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  fetchUpdatedResourceForUser,
   modifyResource,
   deleteEntry
 };

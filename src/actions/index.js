@@ -109,6 +109,11 @@ export function makeEntryFromTask(userId, task, momentDate) {
   };
   return createResource('entry', newEntry, (state) => {
     // Bail out if matching entry already found
-    return findEntryForTask(state, userId, task, date);
+    return findEntryForTask(state.data.entry, userId, task, date);
   });
+}
+
+export function undeleteEntry(entry) {
+  const undeletedEntry = entry.merge({state: 'public'});
+  return modifyResource('entry', entry.id, undeletedEntry);
 }

@@ -7,15 +7,24 @@ import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
 
 class TasksView extends React.Component {
-  componentWillReceiveProps(props) {
-    props.fetchUpdatedResourceForUser('task', props.user);
-  }
   render() {
-    let { user, tasks, momentDate, makeEntryFromTask } = this.props;
+    let { user, entries, tasks, momentDate, makeEntryFromTask, undeleteEntry } = this.props;
+    const makeOrReuseEntryFromTask = (task) => {
+      const deletedEntry = dataUtils.findEntryForTask(
+        entries, user.id, task,
+        momentDate.format(timeUtils.LINK_DATEFORMAT),
+        {findDeleted: true});
+      if (deletedEntry) {
+        undeleteEntry(deletedEntry);
+      }
+      else {
+        makeEntryFromTask(user.id, task, momentDate);
+      }
+    };
     const taskItems = _.map(tasks, (task) => {
         return (
           <li key={task.workspace + ':' + task.origin_id} className="list-group-item">
-              <TaskItem task={task} makeEntryFromTask={makeEntryFromTask} momentDate={momentDate} user={user}/>
+              <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
           </li>);
     });
     return (
@@ -32,9 +41,9 @@ class TasksView extends React.Component {
   }
 }
 
-export const TaskItem = ({task, makeEntryFromTask, user, momentDate}) => {
+export const TaskItem = ({task, makeEntryFromTask}) => {
   const onClick = () => {
-    makeEntryFromTask(user.id, task, momentDate);
+    makeEntryFromTask(task);
   };
   return (
     <div className="task-listing-item row">
@@ -67,7 +76,7 @@ function mapStateToProps(state, ownProps) {
     tasks: _.pickBy(state.data.task, (task) => {
       return (
         task.assigned == user.id &&
-          !dataUtils.findEntryForTask(state, user.id, task, date));
+          !dataUtils.findEntryForTask(state.data.entry, user.id, task, date));
     }),
     momentDate: moment(date)
   };
