@@ -112,12 +112,14 @@ export default class TimedTask extends React.Component {
     const newEntry = nextProps.entry;
     if (this.arePropsUpdated(nextProps)) {
       if (!this.propsAndStateMatch(nextProps))  {
-        alert(
-          'Error: entry was unexpectedly updated in the database.');
+        console.log(
+          'Error: entry was unexpectedly updated in the database.',
+          this.props.entry, nextProps.entry, this.state
+        );
         return;
       }
-      this.setState({persistState: 'persisted'});
     }
+    this.setState({persistState: 'persisted'});
   }
   arePropsUpdated (nextProps) {
     return (
@@ -151,10 +153,9 @@ export default class TimedTask extends React.Component {
       newAttributes = {state: 'deleted', minutes: 0};
     }
     else {
-      const newMinutes = timeUtils.hoursToMinutes(timeUtils.round(parseFloat(nextState.hourString)));
-      if (newMinutes == entry.minutes) {
-        return;
-      }
+      const newMinutes = timeUtils.hoursToMinutes(
+        timeUtils.round(
+          parseFloat(nextState.hourString)));
       newAttributes = {minutes: newMinutes};
     }
     if (this.cancelFn) {
