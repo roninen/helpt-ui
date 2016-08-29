@@ -114,7 +114,6 @@ export default class TimedTask extends React.Component {
       if (!this.propsAndStateMatch(nextProps))  {
         throw new Error(
           'Error: entry was unexpectedly updated in the database.');
-        return;
       }
     }
     this.setState({persistState: 'persisted'});
