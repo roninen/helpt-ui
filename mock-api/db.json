@@ -38,7 +38,8 @@
   "workspace": [
     {
       "system": "github",
-      "id": "city-dsl-compiler"
+      "id": "city-dsl-compiler",
+      "organization": "City-of-Helsinki"
     }
   ],
   "task": [
