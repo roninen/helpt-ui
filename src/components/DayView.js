@@ -6,9 +6,7 @@ import { connect } from 'react-redux';
 
 import TimedTask from './TimedTask';
 
-import {
-  fetchUpdatedResourceForUser,
-  modifyResource } from '../actions/index';
+import {modifyResource } from '../actions/index';
 
 import moment from 'moment';
 import * as timeUtils from '../util/time';

@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 import * as timeUtils from '../util/time';
 import ExternalLinks from '../util/external-links';
@@ -109,14 +110,10 @@ export default class TimedTask extends React.Component {
     });
   }
   componentWillReceiveProps (nextProps) {
-    const oldEntry = this.props.entry;
-    const newEntry = nextProps.entry;
     if (this.arePropsUpdated(nextProps)) {
       if (!this.propsAndStateMatch(nextProps))  {
-        console.log(
-          'Error: entry was unexpectedly updated in the database.',
-          this.props.entry, nextProps.entry, this.state
-        );
+        throw new Error(
+          'Error: entry was unexpectedly updated in the database.');
         return;
       }
     }

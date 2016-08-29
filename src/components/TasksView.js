@@ -42,7 +42,7 @@ class TasksView extends React.Component {
   }
 }
 
-export const TaskItem = ({task, makeEntryFromTask, workspaces}) => {
+export const TaskItem = ({task, makeEntryFromTask}) => {
   const onClick = () => {
     makeEntryFromTask(task);
   };
@@ -88,8 +88,7 @@ function mapStateToProps(state, ownProps) {
       const workspace = state.data.workspace[task.workspace] || task.workspace;
       return task.merge({workspace});
     }),
-    momentDate: moment(date),
-    workspaces: state.data.workspace
+    momentDate: moment(date)
   };
 }
 
