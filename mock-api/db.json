@@ -44,31 +44,31 @@
   ],
   "task": [
     {
-      "origin_id": "1",
+      "origin_id": 1,
       "workspace": "city-dsl-compiler",
       "description": "Update readme.md",
       "assigned": "callec"
     },
     {
-      "origin_id": "2",
+      "origin_id": 2,
       "workspace": "city-dsl-compiler",
       "description": "Add license",
       "assigned": null
     },
     {
-      "origin_id": "3",
+      "origin_id": 3,
       "workspace": "city-dsl-compiler",
       "description": "Write compiler frontend",
       "assigned": "callec"
     },
     {
-      "origin_id": "4",
+      "origin_id": 4,
       "workspace": "city-dsl-compiler",
       "description": "Write compiler backend",
       "assigned": null
     },
     {
-      "origin_id": "5",
+      "origin_id": 5,
       "workspace": "city-dsl-compiler",
       "description": "Write compiler backend documentation",
       "assigned": "callec"
@@ -79,7 +79,7 @@
       "id": 1,
       "user": "callec",
       "workspace": "city-dsl-compiler",
-      "task": "1",
+      "task": 1,
       "date": "2016-08-01",
       "minutes": 90
     },
@@ -87,7 +87,7 @@
       "id": 2,
       "user": "callec",
       "workspace": "city-dsl-compiler",
-      "task": "1",
+      "task": 1,
       "date": "2016-08-01",
       "minutes": 135
     },
