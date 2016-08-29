@@ -35,6 +35,10 @@ export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceT
   };
 }
 
+export function fetchMultipleResources(resourceType, ids) {
+  return fetchResourceFiltered(resourceType, {id: ids});
+}
+
 export function fetchResourceFiltered(resourceType, filters) {
   var uri = new URI(getEndPoint(resourceType));
   uri.search(filters);

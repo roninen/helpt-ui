@@ -108,7 +108,11 @@ function mapStateToProps(state, ownProps) {
         entry.user == user.id &&
         entry.date == date);
     }),
-    tasks: state.data.task,
+    tasks: _.fromPairs(_.map(state.data.task, (task) => {
+      const workspaceId = task.workspace;
+      return [`${workspaceId}:${task.origin_id}`,
+              task.merge({workspace: state.data.workspace[task.workspace]})];
+    })),
     momentDate: moment(date)
   };
 }

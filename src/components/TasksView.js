@@ -5,6 +5,7 @@ import moment from 'moment';
 import { mapUserResourceDispatchToProps } from '../actions/index';
 import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
+import ExternalLinks from '../util/external-links';
 
 class TasksView extends React.Component {
   render() {
@@ -41,17 +42,22 @@ class TasksView extends React.Component {
   }
 }
 
-export const TaskItem = ({task, makeEntryFromTask}) => {
+export const TaskItem = ({task, makeEntryFromTask, workspaces}) => {
   const onClick = () => {
     makeEntryFromTask(task);
   };
+  const { workspace } = task;
+  let taskLink='#!';
+  if (workspace.system !== undefined) {
+    taskLink = ExternalLinks[workspace.system].link(task);
+  }
   return (
     <div className="task-listing-item row">
       <div className="task-listing-item-content col-xs-10">
         <div className="task-source">
-          <a href="#link-to-service" tabIndex="-1">
+          <a href={taskLink} tabIndex="-1">
             <span className="glyphicon glyphicon-tree-deciduous task-source-icon"></span>
-            <span className="task-source-header">Github/City-of-Helsinki/{ task.workspace } issue#{ task.origin_id }</span>
+            <span className="task-source-header">{ task.workspace.system }/{ task.workspace.id }/{ task.workspace.organization }/{ task.origin_id }</span>
           </a>
         </div>
         <div className="task-description">{ task.description }</div>
@@ -71,14 +77,19 @@ function mapStateToProps(state, ownProps) {
   if (!user) {
     return {tasks: []};
   }
+  const tasks = _.pickBy(state.data.task, (task) => {
+    return (
+      task.assigned == user.id &&
+        !dataUtils.findEntryForTask(state.data.entry, user.id, task, date));
+  });
   return {
     user: user,
-    tasks: _.pickBy(state.data.task, (task) => {
-      return (
-        task.assigned == user.id &&
-          !dataUtils.findEntryForTask(state.data.entry, user.id, task, date));
+    tasks: _.map(tasks, (task) => {
+      const workspace = state.data.workspace[task.workspace] || task.workspace;
+      return task.merge({workspace});
     }),
-    momentDate: moment(date)
+    momentDate: moment(date),
+    workspaces: state.data.workspace
   };
 }
 

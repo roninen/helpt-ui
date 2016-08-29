@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 import {
   fetchResource,
+  fetchMultipleResources,
   fetchUpdatedResourceForUser,
   makeEntryFromTask,
   undeleteEntry } from '../actions/index';
@@ -15,6 +16,17 @@ import {
 class AppComponent extends React.Component {
   componentWillMount() {
     this.props.fetchUserAndTasks(this.props.user);
+  }
+  componentWillReceiveProps(nextProps) {
+    // Todo: make this generic. (or use normalizr)
+    const reducer = (workspaces, task) => {
+      workspaces[task.workspace] = true;
+      return workspaces;
+    };
+    const workspaceIds = _.keys(_.reduce(nextProps.tasks, reducer, {}));
+    if (workspaceIds.length) {
+      this.props.fetchMultipleResources('workspace', workspaceIds);
+    }
   }
   render() {
     const mainComponent = React.cloneElement(
@@ -72,7 +84,8 @@ const mapStateToProps = (state) => {
   }
   return {
     user,
-    entries: state.data.entry
+    entries: state.data.entry,
+    tasks: state.data.task
   };
 };
 
@@ -90,6 +103,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     undeleteEntry: (entry) => {
       dispatch(undeleteEntry(entry));
+    },
+    fetchMultipleResources: (resourceType, ids) => {
+      dispatch(fetchMultipleResources(resourceType, ids));
     }
   };
 };

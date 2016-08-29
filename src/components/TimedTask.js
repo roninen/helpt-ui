@@ -1,6 +1,7 @@
 import React from 'react';
 
 import * as timeUtils from '../util/time';
+import ExternalLinks from '../util/external-links';
 
 const KEY_ENTER = 13;
 
@@ -211,7 +212,7 @@ export default class TimedTask extends React.Component {
     // Could be enabled when entryIndex == 0, if desired.
     const autoFocusPredicate = () => {return false;};
     var sourceServiceIcon = sourceSystemIcon(source);
-    const currentTask = tasks[`${entry.workspace}:${entry.task}`];
+    const currentTask = tasks[`${entry.workspace.id}:${entry.task}`];
     let taskDescription = currentTask ? currentTask.description : null;
     if (this.state.persistState != 'persisted') {
       taskDescription += ' *';
@@ -246,12 +247,16 @@ export default class TimedTask extends React.Component {
         </div>
       );
     }
+    let taskLink='#!';
+    if (currentTask) {
+      taskLink = ExternalLinks[entry.workspace.system].link(currentTask);
+    }
     return (
       <div className="panel panel-default">
           <div className="panel-body">
               <div className="col-sm-8">
                   <div className="task-source">
-                      <a href="#link-to-service" tabIndex="-1">
+                      <a href={taskLink} tabIndex="-1">
                           <span className={sourceServiceIcon}></span>
                           <span className="task-source-header">{source}/City-of-Helsinki/servicemap issue#514</span>
                       </a>
