@@ -26,9 +26,9 @@ const NumberChangeButton = ({operation, onClick, currentValue}) => {
   }
   let iconClass = 'glyphicon ';
   switch (operation) {
-    case 'add': iconClass += 'glyphicon-plus'; break;
-    case 'subtract': iconClass += 'glyphicon-minus'; break;
-    case 'remove': iconClass += 'glyphicon-trash'; break;
+  case 'add': iconClass += 'glyphicon-plus'; break;
+  case 'subtract': iconClass += 'glyphicon-minus'; break;
+  case 'remove': iconClass += 'glyphicon-trash'; break;
   }
   return (
     <span className="input-group-btn">
