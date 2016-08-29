@@ -186,7 +186,7 @@ export default class TimedTask extends React.Component {
   }
   incrementButtonClickListener (amount) {
     return () => {
-      if (parseFloat(this.state.hourString == 0)) {
+      if (parseFloat(this.state.hourString) == 0 && amount < 0) {
         this.setState({ deleted: true, persistState: 'pending'});
         return;
       }
