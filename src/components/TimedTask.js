@@ -186,6 +186,10 @@ export default class TimedTask extends React.Component {
   }
   incrementButtonClickListener (amount) {
     return () => {
+      if (parseFloat(this.state.hourString == 0)) {
+        this.setState({ deleted: true, persistState: 'pending'});
+        return;
+      }
       const roundedHours = timeUtils.round(
         parseFloat(this.state.hourString), 0.5);
       const delta = roundedHours - parseFloat(this.state.hourString);
@@ -195,12 +199,10 @@ export default class TimedTask extends React.Component {
         return;
       }
       const hoursFloat = parseFloat(this.state.hourString) + amount;
-      if (hoursFloat < 0) {
-        this.setState({ deleted: true, persistState: 'pending'});
-      }
-      else {
-        this.setState({ hourString: this.roundAndNormalize(new String(hoursFloat), {step: 0.5}), persistState: 'pending'});
-      }
+      this.setState({
+        hourString: this.roundAndNormalize(
+          new String(hoursFloat), {step: 0.5}),
+        persistState: 'pending'});
     };
   }
   render () {
