@@ -57,7 +57,6 @@ body {
 
 .task-listing-item-actions {
   .time-task-button {
-    color: #6ec97f;
   }
 }
 
@@ -66,7 +65,9 @@ body {
     @extend small;
     color: $gray-light;
   }
-
+  .task-source-icon {
+    font-size: 1.25em;
+  }
   .task-source-header {
     margin-left: .5em;
   }
@@ -94,6 +95,12 @@ body {
 
   .glyphicon-trash {
     //color: #c94646;
+  }
+
+  .alert {
+    margin-bottom: 0;
+    padding: $padding-base-vertical $padding-base-horizontal;
+    text-align: center;
   }
 }
 

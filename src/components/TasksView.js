@@ -56,7 +56,7 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
       <div className="task-listing-item-content col-xs-10">
         <div className="task-source">
           <a href={taskLink} tabIndex="-1">
-            <span className="glyphicon glyphicon-tree-deciduous task-source-icon"></span>
+            <i className="fa fa-github-square task-source-icon" aria-hidden="true"></i>
             <span className="task-source-header">{ task.workspace.system }/{ task.workspace.id }/{ task.workspace.organization }/{ task.origin_id }</span>
           </a>
         </div>
@@ -64,7 +64,7 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
       </div>
       <div className="task-listing-item-actions col-xs-2 text-right">
         <a className="btn btn-default btn-lg time-task-button" href="#" onClick={onClick} role="button" data-toggle="tooltip" data-placement="left" title="Add to day">
-          <span className="glyphicon glyphicon-time"></span>
+          <span className="fa fa-calendar-plus-o"></span>
         </a>
       </div>
     </div>

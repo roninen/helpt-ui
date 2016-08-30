@@ -8,8 +8,8 @@ const KEY_ENTER = 13;
 
 function sourceSystemIcon(source) {
   //using this as default and placemarker for github
-  if (source == 'Trello') return 'glyphicon glyphicon-signal task-source-icon';
-  return 'glyphicon glyphicon-tree-deciduous task-source-icon';
+  if (source == 'Trello') return 'fa fa-trello task-source-icon';
+  return 'fa fa-github-square task-source-icon';
 }
 
 function autoFocus(predicate) {
@@ -29,8 +29,8 @@ const NumberChangeButton = ({operation, onClick, currentValue}) => {
   let iconClass = 'glyphicon ';
   let buttonType = 'btn btn-';
   switch (operation) {
-  case 'add': iconClass += 'glyphicon-plus'; buttonType += 'primary'; break;
-  case 'subtract': iconClass += 'glyphicon-minus'; buttonType += 'primary'; break;
+  case 'add': iconClass += 'glyphicon-plus'; buttonType += 'info'; break;
+  case 'subtract': iconClass += 'glyphicon-minus'; buttonType += 'info'; break;
   case 'remove': iconClass += 'glyphicon-trash'; buttonType += 'danger'; break;
   }
   return (
@@ -211,9 +211,6 @@ export default class TimedTask extends React.Component {
     var sourceServiceIcon = sourceSystemIcon(source);
     const currentTask = tasks[`${entry.workspace.id}:${entry.task}`];
     let taskDescription = currentTask ? currentTask.description : null;
-    if (this.state.persistState != 'persisted') {
-      taskDescription += ' *';
-    }
     const INCREMENT_STEP_HOURS = 0.5;
     const currentValue = parseFloat(this.state.hourString);
     let innerContents;
@@ -230,7 +227,8 @@ export default class TimedTask extends React.Component {
                    onChange={this.onChange.bind(this)}
                    onKeyUp={this.onKeyUp.bind(this)}
                    onBlur={this.validateAndPersist.bind(this)}
-                   ref={autoFocus(autoFocusPredicate)} />
+                   ref={autoFocus(autoFocusPredicate)}
+                   disabled={this.state.persistState != 'persisted'} />
             <NumberChangeButton
                  operation="add"
                  currentValue={currentValue}
@@ -240,7 +238,7 @@ export default class TimedTask extends React.Component {
     else {
       innerContents = (
         <div className="input-group input-group-lg col-sm-4 hours-entry">
-            <div className="alert alert-info" role="alert">Deleting entry</div>
+            <div className="alert alert-warning" role="alert">Deleting entry</div>
         </div>
       );
     }
