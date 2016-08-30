@@ -89,7 +89,7 @@ var DayFooter = ({totalMinutes}) => {
   return (
     <div className="day-footer panel-body">
       <div className="col-sm-8">Total of the day</div>
-      <div className="col-sm-4"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} hours</div></div>
+      <div className="col-sm-4"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} h</div></div>
     </div>
   );
 };
