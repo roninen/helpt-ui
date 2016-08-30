@@ -7,6 +7,7 @@ let defaultSettings = require('./defaults');
 
 // Add needed plugins here
 let BowerWebpackPlugin = require('bower-webpack-plugin');
+const DotenvPlugin = require('webpack-dotenv-plugin');
 
 let config = Object.assign({}, baseConfig, {
   entry: [
@@ -25,6 +26,10 @@ let config = Object.assign({}, baseConfig, {
       }),
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
+    }),
+    new DotenvPlugin({
+      sample: './.env.example',
+      path: './.env'
     })
   ],
   module: defaultSettings.getDefaultModules()
