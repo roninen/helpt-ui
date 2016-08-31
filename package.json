@@ -14,7 +14,7 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "serve": "node server.js --env=dev",
     "serve:dist": "node server.js --env=dist",
-    "start": "cp -n .env.example .env && node server.js --env=dev",
+    "start": "cp -n .env.example .env; node server.js --env=dev",
     "mock-api": "json-server --watch mock-api/db.json",
     "test": "karma start",
     "test:watch": "karma start --autoWatch=true --singleRun=false"
