@@ -25,7 +25,7 @@ class AppComponent extends React.Component {
     };
     const workspaceIds = _.keys(_.reduce(nextProps.tasks, reducer, {}));
     if (workspaceIds.length) {
-      this.props.fetchMultipleResources('workspace', workspaceIds);
+      this.props.fetchMultipleResources(['workspace', 'data_source'], workspaceIds);
     }
   }
   render() {
@@ -93,9 +93,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchUserAndTasks: (user) => {
       if (user.id) {
-        dispatch(fetchResource('user', user.id));
-        dispatch(fetchResourceFiltered('task', {'filter{assigned_users}': user.id}));
-        dispatch(fetchResourceFiltered('entry', {'filter{user}': user.id}));
+        dispatch(fetchResource(['user'], user.id));
+        dispatch(fetchResourceFiltered(['task'], {'filter{assigned_users}': user.id}));
+        dispatch(fetchResourceFiltered(['entry'], {'filter{user}': user.id}));
       }
     },
     makeEntryFromTask: (userId, entry, momentDate) => {
@@ -104,8 +104,8 @@ const mapDispatchToProps = (dispatch) => {
     undeleteEntry: (entry) => {
       dispatch(undeleteEntry(entry));
     },
-    fetchMultipleResources: (resourceType, ids) => {
-      dispatch(fetchMultipleResources(resourceType, ids));
+    fetchMultipleResources: (resourceTypes, ids) => {
+      dispatch(fetchMultipleResources(resourceTypes, ids));
     }
   };
 };

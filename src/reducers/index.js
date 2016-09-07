@@ -6,6 +6,7 @@ const initialDataState = Immutable({
   entry: {},
   task: {},
   workspace: {},
+  data_source: {},
   system: {},
   project: {},
   organisation: {},
@@ -33,30 +34,37 @@ export function getDataObject (state, type, id) {
 // Utility functions
 
 function mergeData(state, newData, meta, actionType) {
-  const { resourceType, multiple, endpoint } = meta;
+  const { resourceTypes, multiple, endpoint } = meta;
   //return state.setIn(['_apiEndpoints', endpoint], action.type);
-  if (resourceType in state) {
-    if (multiple) {
-      const toMerge = (
-        _.fromPairs(
+  _.each(resourceTypes, (r) => {
+    if (!(r in state)) {
+      throw new TypeError(`A received resource type is not part of the data model: ${r}`);
+    }
+  });
+  if (!multiple) {
+    // A single resource fetched by id is a special
+    // case -> map to the general case
+    const singularResource = resourceTypes[0];
+    newData[singularResource] = [newData[singularResource]];
+  }
+  const toMerge = (
+    _.fromPairs(
+      _.map(resourceTypes, (resourceType) => {
+        return [resourceType, _.fromPairs(
           _.map(newData[resourceType], (el) => {
             let id = el.id;
             if (resourceType == 'task') {
               id = `${el.workspace}:${el.origin_id}`;
             }
-            return [id, el];})));
-      return state.merge(
-        {[resourceType]: toMerge},
-        {_apiEndpoints: {[endpoint]: actionType}});
-    }
-    return state.merge(
-      {[resourceType]: state[resourceType].merge({[newData[resourceType].id]: newData[resourceType]})},
-      {_apiEndpoints: {[endpoint]: actionType}}
-    );
-  }
-  else {
-    throw new TypeError('The received resource type is not part of the newData model.');
-  }
+            return [id, el];
+          })
+        )];
+      })
+    )
+  );
+  return state.merge(
+    toMerge,
+    {_apiEndpoints: {[endpoint]: actionType}});
 }
 
 // Reducers

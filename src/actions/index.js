@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { CALL_API, getJSON } from 'redux-api-middleware';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
@@ -18,15 +19,24 @@ function shouldBailOut(state, endpoint) {
   return state.data._apiEndpoints[endpoint];
 }
 
-export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceType, id)) {
+function generateIncludeParameters(resourceTypes) {
+  return _.map(resourceTypes, (rType) => { return `${rType}.*`; });
+}
+
+export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id)) {
+  if (resourceTypes.length > 1) {
+    let uri = new URI(endpoint);
+    uri.search({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
+    endpoint = uri.toString();
+  }
   return {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'GET',
       types: [
-        {type: 'REQUEST', meta: { resourceType, endpoint }},
-        {type: 'SUCCESS', meta: { resourceType, multiple: !id, endpoint}},
-        {type: 'FAILURE', meta: { resourceType, endpoint }}
+        {type: 'REQUEST', meta: { resourceTypes, endpoint }},
+        {type: 'SUCCESS', meta: { resourceTypes, multiple: !id, endpoint}},
+        {type: 'FAILURE', meta: { resourceTypes, endpoint }}
       ],
       bailout: (state) => {
         return shouldBailOut(state, endpoint);
@@ -35,14 +45,14 @@ export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceT
   };
 }
 
-export function fetchMultipleResources(resourceType, ids) {
-  return fetchResourceFiltered(resourceType, {'filter{id.in}': ids});
+export function fetchMultipleResources(resourceTypes, ids) {
+  return fetchResourceFiltered(resourceTypes, {'filter{id.in}': ids});
 }
 
-export function fetchResourceFiltered(resourceType, filters) {
-  var uri = new URI(getEndPoint(resourceType));
+export function fetchResourceFiltered(resourceTypes, filters) {
+  var uri = new URI(getEndPoint(resourceTypes[0]));
   uri.search(filters);
-  return fetchResource(resourceType, null, uri.toString());
+  return fetchResource(resourceTypes, null, uri.toString());
 }
 
 export function modifyResource(resourceType, id, object) {
