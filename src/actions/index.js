@@ -10,7 +10,7 @@ const API_BASE_URL = process.env.API_URL;
 function getEndPoint(resourceType, id) {
   let base = `${API_BASE_URL}/${resourceType}/`;
   if (id) {
-    return base + id;
+    return base + id + '/';
   }
   return base;
 }
