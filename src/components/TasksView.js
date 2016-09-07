@@ -56,7 +56,7 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
         <div className="task-source">
           <a href={taskLink} tabIndex="-1">
             <i className="fa fa-github-square task-source-icon" aria-hidden="true"></i>
-            <span className="task-source-header">{ task.workspace.data_source? task.workspace.data_source.type || '' : '' }/{ task.workspace.origin_id }/{ task.origin_id }</span>
+            <span className="task-source-header">{ task.workspace.origin_id }/{ task.origin_id }</span>
           </a>
         </div>
         <div className="task-description">{ task.name }</div>
