@@ -29,12 +29,13 @@ class AppComponent extends React.Component {
     }
   }
   render() {
+    const { user } = this.props;
     const mainComponent = React.cloneElement(
       this.props.main,
-      {user: this.props.user});
+      {user});
     const sidebarComponent = React.cloneElement(
       this.props.sidebar,
-      {user: this.props.user,
+      {user,
        makeEntryFromTask: this.props.makeEntryFromTask,
        undeleteEntry: this.props.undeleteEntry,
        entries: this.props.entries
@@ -49,7 +50,7 @@ class AppComponent extends React.Component {
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" tabIndex="-1">
-                    { this.props.user.name }
+                    { user.first_name + ' ' + user.last_name }
                     <span className="caret"></span></a>
                 <ul className="dropdown-menu">
                   <li><a href="#">Reports</a></li>
