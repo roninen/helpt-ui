@@ -39,7 +39,7 @@ function mergeData(state, newData, meta, actionType) {
     if (multiple) {
       const toMerge = (
         _.fromPairs(
-          _.map(newData, (el) => {
+          _.map(newData[resourceType], (el) => {
             let id = el.id;
             if (resourceType == 'task') {
               id = `${el.workspace}:${el.origin_id}`;
@@ -50,7 +50,7 @@ function mergeData(state, newData, meta, actionType) {
         {_apiEndpoints: {[endpoint]: actionType}});
     }
     return state.merge(
-      {[resourceType]: state[resourceType].merge({[newData.id]: newData})},
+      {[resourceType]: state[resourceType].merge({[newData[resourceType].id]: newData[resourceType]})},
       {_apiEndpoints: {[endpoint]: actionType}}
     );
   }
