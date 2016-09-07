@@ -7,9 +7,8 @@ const initialDataState = Immutable({
   task: {},
   workspace: {},
   data_source: {},
-  system: {},
   project: {},
-  organisation: {},
+  organization: {},
   user: {},
   _apiEndpoints: {}
 });
