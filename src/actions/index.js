@@ -1,5 +1,4 @@
 import { CALL_API, getJSON } from 'redux-api-middleware';
-import { bindActionCreators } from 'redux';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
@@ -37,21 +36,13 @@ export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceT
 }
 
 export function fetchMultipleResources(resourceType, ids) {
-  return fetchResourceFiltered(resourceType, {id: ids});
+  return fetchResourceFiltered(resourceType, {'filter{id.in}': ids});
 }
 
 export function fetchResourceFiltered(resourceType, filters) {
   var uri = new URI(getEndPoint(resourceType));
   uri.search(filters);
   return fetchResource(resourceType, null, uri.toString());
-}
-
-export function fetchUpdatedResourceForUser (resource, user) {
-  return fetchResourceFiltered(resource, {user: user.id});
-}
-
-export function mapUserResourceDispatchToProps(dispatch) {
-  return bindActionCreators({fetchUpdatedResourceForUser}, dispatch);
 }
 
 export function modifyResource(resourceType, id, object) {

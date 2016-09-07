@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
-import { mapUserResourceDispatchToProps } from '../actions/index';
 import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
 import ExternalLinks from '../util/external-links';
@@ -60,7 +59,7 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
             <span className="task-source-header">{ task.workspace.system }/{ task.workspace.id }/{ task.workspace.organization }/{ task.origin_id }</span>
           </a>
         </div>
-        <div className="task-description">{ task.description }</div>
+        <div className="task-description">{ task.name }</div>
       </div>
       <div className="task-listing-item-actions col-xs-2 text-right">
         <a className="btn btn-default btn-lg time-task-button" href="#" onClick={onClick} role="button" data-toggle="tooltip" data-placement="left" title="Add to day">
@@ -79,7 +78,7 @@ function mapStateToProps(state, ownProps) {
   }
   const tasks = _.pickBy(state.data.task, (task) => {
     return (
-      task.assigned == user.id &&
+      task.assigned_users.includes(user.id) &&
         !dataUtils.findEntryForTask(state.data.entry, user.id, task, date));
   });
   return {
@@ -92,6 +91,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-
-
-export default connect(mapStateToProps, mapUserResourceDispatchToProps)(TasksView);
+export default connect(mapStateToProps, null)(TasksView);

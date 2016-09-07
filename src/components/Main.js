@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import {
   fetchResource,
   fetchMultipleResources,
-  fetchUpdatedResourceForUser,
+  fetchResourceFiltered,
   makeEntryFromTask,
   undeleteEntry } from '../actions/index';
 
@@ -94,8 +94,8 @@ const mapDispatchToProps = (dispatch) => {
     fetchUserAndTasks: (user) => {
       if (user.id) {
         dispatch(fetchResource('user', user.id));
-        dispatch(fetchUpdatedResourceForUser('task', user));
-        dispatch(fetchUpdatedResourceForUser('entry', user));
+        dispatch(fetchResourceFiltered('task', {'filter{assigned_users}': user.id}));
+        dispatch(fetchResourceFiltered('entry', {'filter{user}': user.id}));
       }
     },
     makeEntryFromTask: (userId, entry, momentDate) => {
