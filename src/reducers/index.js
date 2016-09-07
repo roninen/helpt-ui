@@ -14,7 +14,7 @@ const initialDataState = Immutable({
 });
 
 const initialAppState = Immutable({
-  loggedInUser: 'callec'
+  loggedInUser: 1
 });
 
 // Helper functions to select state
