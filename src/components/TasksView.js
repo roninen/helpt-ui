@@ -47,8 +47,8 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
   };
   const { workspace } = task;
   let taskLink='#!';
-  if (workspace.system !== undefined) {
-    taskLink = ExternalLinks[workspace.system].link(task);
+  if (workspace.data_source !== undefined && workspace.data_source.type !== undefined) {
+    taskLink = ExternalLinks[workspace.data_source.type].link(task);
   }
   return (
     <div className="task-listing-item row">
@@ -56,7 +56,7 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
         <div className="task-source">
           <a href={taskLink} tabIndex="-1">
             <i className="fa fa-github-square task-source-icon" aria-hidden="true"></i>
-            <span className="task-source-header">{ task.workspace.system }/{ task.workspace.id }/{ task.workspace.organization }/{ task.origin_id }</span>
+            <span className="task-source-header">{ task.workspace.data_source? task.workspace.data_source.type || '' : '' }/{ task.workspace.origin_id }/{ task.origin_id }</span>
           </a>
         </div>
         <div className="task-description">{ task.name }</div>
@@ -83,10 +83,7 @@ function mapStateToProps(state, ownProps) {
   });
   return {
     user: user,
-    tasks: _.map(tasks, (task) => {
-      const workspace = state.data.workspace[task.workspace] || task.workspace;
-      return task.merge({workspace});
-    }),
+    tasks: dataUtils.expandItems(state, tasks, ['workspace']),
     momentDate: moment(date)
   };
 }
