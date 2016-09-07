@@ -72,7 +72,7 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
 
 function mapStateToProps(state, ownProps) {
   const { user } = ownProps;
-  const date = ownProps.routeParams.date || timeUtils.today();
+  const date = ownProps.routeParams.date || timeUtils.today();
   if (!user) {
     return {tasks: []};
   }
