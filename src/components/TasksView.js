@@ -83,7 +83,8 @@ function mapStateToProps(state, ownProps) {
   });
   return {
     user: user,
-    tasks: dataUtils.expandItems(state, tasks, ['workspace']),
+    tasks: dataUtils.expandItems(
+      state, tasks, {workspace: {data_source: {}}}),
     momentDate: moment(date)
   };
 }

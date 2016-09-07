@@ -14,16 +14,19 @@ function getResourceItems(state, resourceType) {
   return state.data[resourceType];
 }
 
-function expandKey(state, unexpandedValue, key) {
+function expandKey(state, unexpandedValue, key, keysToExpand) {
   const multiple = Array.isArray(unexpandedValue);
   const subItemIds = multiple ? unexpandedValue : [unexpandedValue];
-  const expanded = _.filter(
+  let expanded = _.filter(
     getResourceItems(state, key),
     subitem => subItemIds.includes(subitem.id));
   if (subItemIds.length > expanded.length) {
     // If the related data hasn't been fetched
     // yet, don't expand to undefined.
     return unexpandedValue;
+  }
+  if (_.size(keysToExpand)) {
+    expanded = expandItems(state, expanded, keysToExpand);
   }
   return multiple ? expanded : expanded[0];
 }
@@ -32,8 +35,8 @@ function itemExpander(state, keysToExpand) {
   return (item) => {
     const expandedSubItems = _.fromPairs(
       _.map(
-        keysToExpand,
-        key => [key, expandKey(state, item[key], key)]));
+        _.keys(keysToExpand),
+        key => [key, expandKey(state, item[key], key, keysToExpand[key])]));
     return item.merge(expandedSubItems);
   };
 }
