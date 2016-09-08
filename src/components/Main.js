@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import {
   fetchResource,
   fetchMultipleResources,
-  fetchUpdatedResourceForUser,
+  fetchResourceFiltered,
   makeEntryFromTask,
   undeleteEntry } from '../actions/index';
 
@@ -25,16 +25,17 @@ class AppComponent extends React.Component {
     };
     const workspaceIds = _.keys(_.reduce(nextProps.tasks, reducer, {}));
     if (workspaceIds.length) {
-      this.props.fetchMultipleResources('workspace', workspaceIds);
+      this.props.fetchMultipleResources(['workspace', 'data_source'], workspaceIds);
     }
   }
   render() {
+    const { user } = this.props;
     const mainComponent = React.cloneElement(
       this.props.main,
-      {user: this.props.user});
+      {user});
     const sidebarComponent = React.cloneElement(
       this.props.sidebar,
-      {user: this.props.user,
+      {user,
        makeEntryFromTask: this.props.makeEntryFromTask,
        undeleteEntry: this.props.undeleteEntry,
        entries: this.props.entries
@@ -49,7 +50,7 @@ class AppComponent extends React.Component {
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" tabIndex="-1">
-                    { this.props.user.name }
+                    { user.first_name + ' ' + user.last_name }
                     <span className="caret"></span></a>
                 <ul className="dropdown-menu">
                   <li><a href="#">Reports</a></li>
@@ -93,9 +94,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchUserAndTasks: (user) => {
       if (user.id) {
-        dispatch(fetchResource('user', user.id));
-        dispatch(fetchUpdatedResourceForUser('task', user));
-        dispatch(fetchUpdatedResourceForUser('entry', user));
+        dispatch(fetchResource(['user'], user.id));
+        dispatch(fetchResourceFiltered(['task'], {'filter{assigned_users}': user.id}));
+        dispatch(fetchResourceFiltered(['entry'], {'filter{user}': user.id}));
       }
     },
     makeEntryFromTask: (userId, entry, momentDate) => {
@@ -104,8 +105,8 @@ const mapDispatchToProps = (dispatch) => {
     undeleteEntry: (entry) => {
       dispatch(undeleteEntry(entry));
     },
-    fetchMultipleResources: (resourceType, ids) => {
-      dispatch(fetchMultipleResources(resourceType, ids));
+    fetchMultipleResources: (resourceTypes, ids) => {
+      dispatch(fetchMultipleResources(resourceTypes, ids));
     }
   };
 };

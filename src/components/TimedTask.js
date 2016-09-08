@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 
 import * as timeUtils from '../util/time';
+import * as dataUtils from '../util/data';
 import ExternalLinks from '../util/external-links';
 
 const KEY_ENTER = 13;
@@ -135,7 +136,7 @@ export default class TimedTask extends React.Component {
             (nextState.deleted == true) != (this.state.deleted == true));
   }
   modifyResource (entry, newAttributes) {
-    const newEntry = entry.merge(newAttributes);
+    const newEntry = dataUtils.collapseItem(entry.merge(newAttributes), ['task']);
     this.props.modifyResource('entry', entry.id, newEntry);
   }
   componentWillUpdate (nextProps, nextState) {
@@ -209,8 +210,8 @@ export default class TimedTask extends React.Component {
     // Could be enabled when entryIndex == 0, if desired.
     const autoFocusPredicate = () => {return false;};
     var sourceServiceIcon = sourceSystemIcon(source);
-    const currentTask = tasks[`${entry.workspace.id}:${entry.task}`];
-    let taskDescription = currentTask ? currentTask.description : null;
+    const currentTask = entry.task;
+    let taskDescription = currentTask ? currentTask.name : null;
     const INCREMENT_STEP_HOURS = 0.5;
     const currentValue = parseFloat(this.state.hourString);
     let innerContents;
@@ -244,7 +245,7 @@ export default class TimedTask extends React.Component {
     }
     let taskLink='#!';
     if (currentTask) {
-      taskLink = ExternalLinks[entry.workspace.system].link(currentTask);
+      taskLink = ExternalLinks[currentTask.workspace.data_source ? currentTask.workspace.data_source.type : 'github'].link(currentTask);
     }
     return (
       <div className="panel panel-default">
@@ -253,7 +254,7 @@ export default class TimedTask extends React.Component {
                   <div className="task-source">
                       <a href={taskLink} tabIndex="-1">
                           <span className={sourceServiceIcon}></span>
-                          <span className="task-source-header">{source}/City-of-Helsinki/servicemap issue#514</span>
+                          <span className="task-source-header">{currentTask.workspace.origin_id}/{currentTask.origin_id}</span>
                       </a>
                   </div>
                   { taskDescription }

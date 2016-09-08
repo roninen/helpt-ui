@@ -1,5 +1,5 @@
+import _ from 'lodash';
 import { CALL_API, getJSON } from 'redux-api-middleware';
-import { bindActionCreators } from 'redux';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
@@ -10,7 +10,7 @@ const API_BASE_URL = process.env.API_URL;
 function getEndPoint(resourceType, id) {
   let base = `${API_BASE_URL}/${resourceType}/`;
   if (id) {
-    return base + id;
+    return base + id + '/';
   }
   return base;
 }
@@ -19,15 +19,24 @@ function shouldBailOut(state, endpoint) {
   return state.data._apiEndpoints[endpoint];
 }
 
-export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceType, id)) {
+function generateIncludeParameters(resourceTypes) {
+  return _.map(resourceTypes, (rType) => { return `${rType}.*`; });
+}
+
+export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id)) {
+  if (resourceTypes.length > 1) {
+    let uri = new URI(endpoint);
+    uri.search({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
+    endpoint = uri.toString();
+  }
   return {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'GET',
       types: [
-        {type: 'REQUEST', meta: { resourceType, endpoint }},
-        {type: 'SUCCESS', meta: { resourceType, multiple: !id, endpoint}},
-        {type: 'FAILURE', meta: { resourceType, endpoint }}
+        {type: 'REQUEST', meta: { resourceTypes, endpoint }},
+        {type: 'SUCCESS', meta: { resourceTypes, multiple: !id, endpoint}},
+        {type: 'FAILURE', meta: { resourceTypes, endpoint }}
       ],
       bailout: (state) => {
         return shouldBailOut(state, endpoint);
@@ -36,22 +45,14 @@ export function fetchResource(resourceType, id, endpoint = getEndPoint(resourceT
   };
 }
 
-export function fetchMultipleResources(resourceType, ids) {
-  return fetchResourceFiltered(resourceType, {id: ids});
+export function fetchMultipleResources(resourceTypes, ids) {
+  return fetchResourceFiltered(resourceTypes, {'filter{id.in}': ids});
 }
 
-export function fetchResourceFiltered(resourceType, filters) {
-  var uri = new URI(getEndPoint(resourceType));
+export function fetchResourceFiltered(resourceTypes, filters) {
+  var uri = new URI(getEndPoint(resourceTypes[0]));
   uri.search(filters);
-  return fetchResource(resourceType, null, uri.toString());
-}
-
-export function fetchUpdatedResourceForUser (resource, user) {
-  return fetchResourceFiltered(resource, {user: user.id});
-}
-
-export function mapUserResourceDispatchToProps(dispatch) {
-  return bindActionCreators({fetchUpdatedResourceForUser}, dispatch);
+  return fetchResource(resourceTypes, null, uri.toString());
 }
 
 export function modifyResource(resourceType, id, object) {
@@ -61,9 +62,10 @@ export function modifyResource(resourceType, id, object) {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'PUT',
+      credentials: 'same-origin',
       types: [
-        {type: 'REQUEST', meta: { resourceType, endpoint }},
-        {type: 'SUCCESS', meta: { resourceType, multiple: false, endpoint},
+        {type: 'REQUEST', meta: { resourceTypes: [resourceType], endpoint }},
+        {type: 'SUCCESS', meta: { resourceTypes: [resourceType], multiple: false, endpoint},
          payload: (action, state, res) => {
            return getJSON(res);
         }},
@@ -83,9 +85,10 @@ export function createResource(resourceType, object, bailout = false) {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'POST',
+      credentials: 'same-origin',
       types: [
-        {type: 'REQUEST', meta: { resourceType, endpoint }},
-        {type: 'SUCCESS', meta: { resourceType, multiple: false, endpoint},
+        {type: 'REQUEST', meta: { resourceTypes: [resourceType], endpoint }},
+        {type: 'SUCCESS', meta: { resourceTypes: [resourceType], multiple: false, endpoint},
          payload: (action, state, res) => {
            return getJSON(res);
         }},
@@ -102,8 +105,7 @@ export function makeEntryFromTask(userId, task, momentDate) {
   const date = momentDate.format(timeUtils.LINK_DATEFORMAT);
   const newEntry = {
     user: userId,
-    task: task.origin_id,
-    workspace: task.workspace,
+    task: task.id,
     minutes: 0,
     date
   };

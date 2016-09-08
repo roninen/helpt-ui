@@ -6,15 +6,15 @@ const initialDataState = Immutable({
   entry: {},
   task: {},
   workspace: {},
-  system: {},
+  data_source: {},
   project: {},
-  organisation: {},
+  organization: {},
   user: {},
   _apiEndpoints: {}
 });
 
 const initialAppState = Immutable({
-  loggedInUser: 'callec'
+  loggedInUser: 1
 });
 
 // Helper functions to select state
@@ -33,30 +33,34 @@ export function getDataObject (state, type, id) {
 // Utility functions
 
 function mergeData(state, newData, meta, actionType) {
-  const { resourceType, multiple, endpoint } = meta;
+  const { resourceTypes, multiple, endpoint } = meta;
   //return state.setIn(['_apiEndpoints', endpoint], action.type);
-  if (resourceType in state) {
-    if (multiple) {
-      const toMerge = (
-        _.fromPairs(
-          _.map(newData, (el) => {
-            let id = el.id;
-            if (resourceType == 'task') {
-              id = `${el.workspace}:${el.origin_id}`;
-            }
-            return [id, el];})));
-      return state.merge(
-        {[resourceType]: toMerge},
-        {_apiEndpoints: {[endpoint]: actionType}});
+  _.each(resourceTypes, (r) => {
+    if (!(r in state)) {
+      throw new TypeError(
+        `A received resource type is not part of the data model: ${r}`);
     }
-    return state.merge(
-      {[resourceType]: state[resourceType].merge({[newData.id]: newData})},
-      {_apiEndpoints: {[endpoint]: actionType}}
-    );
+  });
+  if (!multiple) {
+    // A single resource fetched by id is a special
+    // case -> map to the general case
+    const singularResource = resourceTypes[0];
+    newData[singularResource] = [newData[singularResource]];
   }
-  else {
-    throw new TypeError('The received resource type is not part of the newData model.');
-  }
+  const toMerge = (
+    _.fromPairs(
+      _.map(resourceTypes, (resourceType) => {
+        return [resourceType, state[resourceType].merge(_.fromPairs(
+          _.map(newData[resourceType], (el) => {
+            return [el.id, el];
+          })
+        ))];
+      })
+    )
+  );
+  return state.merge(
+    toMerge,
+    {_apiEndpoints: {[endpoint]: actionType}});
 }
 
 // Reducers

@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
-import { mapUserResourceDispatchToProps } from '../actions/index';
 import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
 import ExternalLinks from '../util/external-links';
@@ -24,7 +23,7 @@ class TasksView extends React.Component {
     };
     const taskItems = _.map(tasks, (task) => {
         return (
-          <li key={task.workspace + ':' + task.origin_id} className="list-group-item">
+          <li key={task.id} className="list-group-item">
               <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
           </li>);
     });
@@ -48,8 +47,8 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
   };
   const { workspace } = task;
   let taskLink='#!';
-  if (workspace.system !== undefined) {
-    taskLink = ExternalLinks[workspace.system].link(task);
+  if (workspace.data_source !== undefined && workspace.data_source.type !== undefined) {
+    taskLink = ExternalLinks[workspace.data_source.type].link(task);
   }
   return (
     <div className="task-listing-item row">
@@ -57,10 +56,10 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
         <div className="task-source">
           <a href={taskLink} tabIndex="-1">
             <i className="fa fa-github-square task-source-icon" aria-hidden="true"></i>
-            <span className="task-source-header">{ task.workspace.system }/{ task.workspace.id }/{ task.workspace.organization }/{ task.origin_id }</span>
+            <span className="task-source-header">{ task.workspace.origin_id }/{ task.origin_id }</span>
           </a>
         </div>
-        <div className="task-description">{ task.description }</div>
+        <div className="task-description">{ task.name }</div>
       </div>
       <div className="task-listing-item-actions col-xs-2 text-right">
         <a className="btn btn-default btn-lg time-task-button" href="#" onClick={onClick} role="button" data-toggle="tooltip" data-placement="left" title="Add to day">
@@ -73,25 +72,21 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
 
 function mapStateToProps(state, ownProps) {
   const { user } = ownProps;
-  const date = ownProps.routeParams.date || timeUtils.today();
+  const date = ownProps.routeParams.date || timeUtils.today();
   if (!user) {
     return {tasks: []};
   }
   const tasks = _.pickBy(state.data.task, (task) => {
     return (
-      task.assigned == user.id &&
+      task.assigned_users.includes(user.id) &&
         !dataUtils.findEntryForTask(state.data.entry, user.id, task, date));
   });
   return {
     user: user,
-    tasks: _.map(tasks, (task) => {
-      const workspace = state.data.workspace[task.workspace] || task.workspace;
-      return task.merge({workspace});
-    }),
+    tasks: dataUtils.expandItems(
+      state, tasks, {workspace: {data_source: {}}}),
     momentDate: moment(date)
   };
 }
 
-
-
-export default connect(mapStateToProps, mapUserResourceDispatchToProps)(TasksView);
+export default connect(mapStateToProps, null)(TasksView);
