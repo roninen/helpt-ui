@@ -210,8 +210,8 @@ export default class TimedTask extends React.Component {
     // Could be enabled when entryIndex == 0, if desired.
     const autoFocusPredicate = () => {return false;};
     var sourceServiceIcon = sourceSystemIcon(source);
-    const currentTask = tasks[entry.task];
-    let taskDescription = currentTask ? currentTask.description : null;
+    const currentTask = entry.task;
+    let taskDescription = currentTask ? currentTask.name : null;
     const INCREMENT_STEP_HOURS = 0.5;
     const currentValue = parseFloat(this.state.hourString);
     let innerContents;
@@ -245,7 +245,7 @@ export default class TimedTask extends React.Component {
     }
     let taskLink='#!';
     if (currentTask) {
-      taskLink = ExternalLinks[entry.workspace.system].link(currentTask);
+      taskLink = ExternalLinks[currentTask.workspace.data_source ? currentTask.workspace.data_source.type : 'github'].link(currentTask);
     }
     return (
       <div className="panel panel-default">
@@ -254,7 +254,7 @@ export default class TimedTask extends React.Component {
                   <div className="task-source">
                       <a href={taskLink} tabIndex="-1">
                           <span className={sourceServiceIcon}></span>
-                          <span className="task-source-header">{source}/City-of-Helsinki/servicemap issue#514</span>
+                          <span className="task-source-header">{currentTask.workspace.origin_id}/{currentTask.origin_id}</span>
                       </a>
                   </div>
                   { taskDescription }
