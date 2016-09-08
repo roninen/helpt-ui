@@ -37,7 +37,8 @@ function mergeData(state, newData, meta, actionType) {
   //return state.setIn(['_apiEndpoints', endpoint], action.type);
   _.each(resourceTypes, (r) => {
     if (!(r in state)) {
-      throw new TypeError(`A received resource type is not part of the data model: ${r}`);
+      throw new TypeError(
+        `A received resource type is not part of the data model: ${r}`);
     }
   });
   if (!multiple) {
@@ -49,11 +50,11 @@ function mergeData(state, newData, meta, actionType) {
   const toMerge = (
     _.fromPairs(
       _.map(resourceTypes, (resourceType) => {
-        return [resourceType, _.fromPairs(
+        return [resourceType, state[resourceType].merge(_.fromPairs(
           _.map(newData[resourceType], (el) => {
             return [el.id, el];
           })
-        )];
+        ))];
       })
     )
   );
