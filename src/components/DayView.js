@@ -10,17 +10,19 @@ import {modifyResource } from '../actions/index';
 
 import moment from 'moment';
 import * as timeUtils from '../util/time';
+import * as dataUtils from '../util/data';
 
 class DayView extends React.Component {
   render() {
     const { entries, momentDate, modifyResource } = this.props;
     const filteredEntries = _.filter(_.values(entries), (entry) => { return entry.state != 'deleted'; });
     const entryComponents = _.map(filteredEntries, (entry, index) => {
+      const source = (entry.task.workspace.data_source !== undefined) ? entry.task.workspace.data_source.type : 'github';
       return (<TimedTask
               key={entry.id}
               entryIndex={index}
               modifyResource={modifyResource}
-              source={entry.workspace.source || 'github'}
+              source={source}
               entry={entry}
               tasks={this.props.tasks}
               persistedMinutes={entry.minutes} />);
@@ -101,16 +103,10 @@ function mapStateToProps(state, ownProps) {
     return {entries: []};
   }
   return {
-    entries: _.pickBy(state.data.entry, (entry) => {
-      return (
-        entry.user == user.id &&
-        entry.date == date);
-    }),
-    tasks: _.fromPairs(_.map(state.data.task, (task) => {
-      const workspaceId = task.workspace;
-      return [`${workspaceId}:${task.origin_id}`,
-              task.merge({workspace: state.data.workspace[task.workspace]})];
-    })),
+    entries: dataUtils.expandItems(state, _.pickBy(state.data.entry, entry => (
+      entry.user == user.id && entry.date == date
+    )), {task: {workspace: {data_source: {}}}}),
+    tasks: dataUtils.expandItems(state, state.data.task, {workspace: {}}),
     momentDate: moment(date)
   };
 }

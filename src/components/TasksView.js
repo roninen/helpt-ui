@@ -23,7 +23,7 @@ class TasksView extends React.Component {
     };
     const taskItems = _.map(tasks, (task) => {
         return (
-          <li key={task.workspace + ':' + task.origin_id} className="list-group-item">
+          <li key={task.id} className="list-group-item">
               <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
           </li>);
     });

@@ -51,11 +51,7 @@ function mergeData(state, newData, meta, actionType) {
       _.map(resourceTypes, (resourceType) => {
         return [resourceType, _.fromPairs(
           _.map(newData[resourceType], (el) => {
-            let id = el.id;
-            if (resourceType == 'task') {
-              id = `${el.workspace}:${el.origin_id}`;
-            }
-            return [id, el];
+            return [el.id, el];
           })
         )];
       })

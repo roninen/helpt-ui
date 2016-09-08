@@ -62,9 +62,10 @@ export function modifyResource(resourceType, id, object) {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'PUT',
+      credentials: 'same-origin',
       types: [
-        {type: 'REQUEST', meta: { resourceType, endpoint }},
-        {type: 'SUCCESS', meta: { resourceType, multiple: false, endpoint},
+        {type: 'REQUEST', meta: { resourceTypes: [resourceType], endpoint }},
+        {type: 'SUCCESS', meta: { resourceTypes: [resourceType], multiple: false, endpoint},
          payload: (action, state, res) => {
            return getJSON(res);
         }},
@@ -84,9 +85,10 @@ export function createResource(resourceType, object, bailout = false) {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'POST',
+      credentials: 'same-origin',
       types: [
-        {type: 'REQUEST', meta: { resourceType, endpoint }},
-        {type: 'SUCCESS', meta: { resourceType, multiple: false, endpoint},
+        {type: 'REQUEST', meta: { resourceTypes: [resourceType], endpoint }},
+        {type: 'SUCCESS', meta: { resourceTypes: [resourceType], multiple: false, endpoint},
          payload: (action, state, res) => {
            return getJSON(res);
         }},
@@ -103,8 +105,7 @@ export function makeEntryFromTask(userId, task, momentDate) {
   const date = momentDate.format(timeUtils.LINK_DATEFORMAT);
   const newEntry = {
     user: userId,
-    task: task.origin_id,
-    workspace: task.workspace,
+    task: task.id,
     minutes: 0,
     date
   };

@@ -3,8 +3,7 @@ import _ from 'lodash';
 export function findEntryForTask(entries, userId, task, date, options={findDeleted: false}) {
   return _.find(entries, (entry) => {
     return (entry.user == userId &&
-            entry.task == task.origin_id &&
-            entry.workspace.id == task.workspace &&
+            entry.task == task.id &&
             entry.date == date &&
             (entry.state != 'deleted' || (options.findDeleted === true)));
   });
@@ -43,4 +42,19 @@ function itemExpander(state, keysToExpand) {
 
 export function expandItems(state, items, keysToExpand) {
   return _.map(items, itemExpander(state, keysToExpand));
+}
+
+export function collapseItem(item, keysToCollapse) {
+  const collapsed = _.map(keysToCollapse, key => {
+    let value = item[key];
+    const multiple = Array.isArray(value);
+    if (!multiple) {
+      value = [value];
+    }
+    let ids = _.map(value, x => x.id || x);
+    const result = multiple ? ids : ids[0];
+    return [key, result];
+  });
+  const collapsedByKey = _.fromPairs(collapsed);
+  return item.merge(collapsedByKey);
 }
