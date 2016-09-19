@@ -21,6 +21,15 @@ const createStoreWithMiddleware = applyMiddleware(apiMiddleware)(createStore);
 let store = createStoreWithMiddleware(rootReducer);
 window.store = store;
 
+
+function loginStateListener() {
+  const loginState = store.getState().app.login.state;
+  if (loginState === 'FAILED') {
+    window.location = '/login/';
+  }
+}
+store.subscribe(loginStateListener);
+
 // Render the main component into the dom
 ReactDOM.render(
   <Provider store={store}>

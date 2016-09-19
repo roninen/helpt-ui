@@ -15,9 +15,21 @@ import {
 
 class AppComponent extends React.Component {
   componentWillMount() {
-    this.props.fetchUserAndTasks(this.props.user);
+    const { user, fetchUserTasks, fetchLoggedInUser } = this.props;
+    if (user === null) {
+      fetchLoggedInUser();
+      return;
+    }
   }
   componentWillReceiveProps(nextProps) {
+    if (nextProps.user === null) {
+      nextProps.fetchLoggedInUser();
+      return;
+    }
+    if (_.size(nextProps.task) == 0) {
+      nextProps.fetchUserTasks(nextProps.user);
+    }
+
     // Todo: make this generic. (or use normalizr)
     const reducer = (workspaces, task) => {
       workspaces[task.workspace] = true;
@@ -30,6 +42,9 @@ class AppComponent extends React.Component {
   }
   render() {
     const { user } = this.props;
+    if (user === null) {
+      return <div className="container-fluid">Authenticating...</div>;
+    }
     const mainComponent = React.cloneElement(
       this.props.main,
       {user});
@@ -55,7 +70,7 @@ class AppComponent extends React.Component {
                 <ul className="dropdown-menu">
                   <li><a href="#">Reports</a></li>
                   <li role="separator" className="divider"></li>
-                  <li><a href="#">Log Out</a></li>
+                  <li><a href="/logout/">Log Out</a></li>
                 </ul>
               </li>
             </ul>
@@ -81,7 +96,7 @@ import { loggedInUser } from '../reducers/index';
 const mapStateToProps = (state) => {
   const user = loggedInUser(state);
   if (!user) {
-    return { user: {name: '<not logged in>'}, tasks: [] };
+    return { user: null, tasks: [] };
   }
   return {
     user,
@@ -92,9 +107,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchUserAndTasks: (user) => {
+    fetchUserTasks: (user) => {
       if (user.id) {
-        dispatch(fetchResource(['user'], user.id));
         dispatch(fetchResourceFiltered(['task'], {'filter{assigned_users}': user.id}));
         dispatch(fetchResourceFiltered(['entry'], {'filter{user}': user.id}));
       }
@@ -107,6 +121,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     fetchMultipleResources: (resourceTypes, ids) => {
       dispatch(fetchMultipleResources(resourceTypes, ids));
+    },
+    fetchLoggedInUser: () => {
+      dispatch(fetchResourceFiltered(['user'], {current: true}, {intention: 'LOGIN'}));
     }
   };
 };

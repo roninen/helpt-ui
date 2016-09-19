@@ -13,13 +13,23 @@ const initialDataState = Immutable({
   _apiEndpoints: {}
 });
 
+
+/* Possible login states:
+ * INITIAL the app has just initialized
+ * PENDING the logged in user data is being retrieved
+ * FAILED a user is not logged in yet, login failed, or session has timed out
+ * SUCCESS a user is logged in
+ */
 const initialAppState = Immutable({
-  loggedInUser: 1
+  login: {userId: null, state: 'INITIAL'}
 });
 
 // Helper functions to select state
 export function loggedInUser (state) {
-  const userData = state.data.user[state.app.loggedInUser];
+  if (state.app.login.state != 'SUCCESS') {
+    return null;
+  }
+  const userData = state.data.user[state.app.login.userId];
   if (userData !== undefined) {
     return userData;
   }
@@ -80,9 +90,17 @@ function dataReducer(state = initialDataState, action) {
 }
 
 function appReducer(state = initialAppState, action) {
-  switch (action.type) {
-    case 'LOGIN':
-      return mergeData(state, {loggedInUser: action.user});
+  if (action.meta && action.meta.intention == 'LOGIN') {
+    switch (action.type) {
+    case 'SUCCESS':
+      const { user } = action.payload;
+      if (user.length === 0) {
+        return state.merge({login: {userId: null, state: 'FAILED'}});
+      }
+      else {
+        return state.merge({login: {userId: user[0].id, state: 'SUCCESS' }});
+      }
+    }
   }
   return state;
 }

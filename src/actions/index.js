@@ -23,20 +23,22 @@ function generateIncludeParameters(resourceTypes) {
   return _.map(resourceTypes, (rType) => { return `${rType}.*`; });
 }
 
-export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id)) {
+export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id), metadata) {
   if (resourceTypes.length > 1) {
     let uri = new URI(endpoint);
     uri.search({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
     endpoint = uri.toString();
   }
+  const intention = metadata ? metadata.intention : null;
   return {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'GET',
+      credentials: 'same-origin',
       types: [
-        {type: 'REQUEST', meta: { resourceTypes, endpoint }},
-        {type: 'SUCCESS', meta: { resourceTypes, multiple: !id, endpoint}},
-        {type: 'FAILURE', meta: { resourceTypes, endpoint }}
+        {type: 'REQUEST', meta: { resourceTypes, endpoint, intention  }},
+        {type: 'SUCCESS', meta: { resourceTypes, multiple: !id, endpoint, intention }},
+        {type: 'FAILURE', meta: { resourceTypes, endpoint, intention }}
       ],
       bailout: (state) => {
         return shouldBailOut(state, endpoint);
@@ -49,10 +51,10 @@ export function fetchMultipleResources(resourceTypes, ids) {
   return fetchResourceFiltered(resourceTypes, {'filter{id.in}': ids});
 }
 
-export function fetchResourceFiltered(resourceTypes, filters) {
+export function fetchResourceFiltered(resourceTypes, filters, metadata) {
   var uri = new URI(getEndPoint(resourceTypes[0]));
   uri.search(filters);
-  return fetchResource(resourceTypes, null, uri.toString());
+  return fetchResource(resourceTypes, null, uri.toString(), metadata);
 }
 
 export function modifyResource(resourceType, id, object) {
