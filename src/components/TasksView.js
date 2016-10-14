@@ -81,10 +81,11 @@ function mapStateToProps(state, ownProps) {
       task.assigned_users.includes(user.id) &&
         !dataUtils.findEntryForTask(state.data.entry, user.id, task, date));
   });
+  const sortedTasks = _.orderBy(tasks, ['updated_at'], ['desc']);
   return {
     user: user,
     tasks: dataUtils.expandItems(
-      state, tasks, {workspace: {data_source: {}}}),
+      state, sortedTasks, {workspace: {data_source: {}}}),
     momentDate: moment(date)
   };
 }
