@@ -4,16 +4,6 @@
       "id": "callec",
       "name": "Calle Coodari",
       "organisation": "ape-is-company"
-    },
-    {
-      "id": "viola",
-      "name": "Viola Paddington",
-      "organisation": "ape-is-company"
-    },
-    {
-      "id": "jack",
-      "name": "Jack Johnson",
-      "organisation": "city-of-helsinki"
     }
   ],
   "organisation": [
@@ -39,82 +29,75 @@
     {
       "system": "github",
       "id": "city-dsl-compiler",
-      "organization": "City-of-Helsinki"
+      "organization": "City-of-Helsinki",
+      "origin_id": "City-of-Helsinki/city-dsl-compiler"
     }
   ],
   "task": [
     {
       "origin_id": 1,
+      "id": 1,
       "workspace": "city-dsl-compiler",
-      "description": "Update readme.md",
-      "assigned": "callec"
+      "name": "Update readme.md",
+      "assigned_users": [
+        "callec"
+      ]
     },
     {
       "origin_id": 2,
+      "id": 2,
       "workspace": "city-dsl-compiler",
-      "description": "Add license",
-      "assigned": null
+      "name": "Add license",
+      "assigned_users": []
     },
     {
       "origin_id": 3,
+      "id": 3,
       "workspace": "city-dsl-compiler",
-      "description": "Write compiler frontend",
-      "assigned": "callec"
+      "name": "Write compiler frontend",
+      "assigned_users": [
+        "callec"
+      ]
     },
     {
       "origin_id": 4,
+      "id": 4,
       "workspace": "city-dsl-compiler",
-      "description": "Write compiler backend",
-      "assigned": null
+      "name": "Write compiler backend",
+      "assigned_users": []
     },
     {
       "origin_id": 5,
+      "id": 5,
       "workspace": "city-dsl-compiler",
-      "description": "Write compiler backend documentation",
-      "assigned": "callec"
+      "name": "Write compiler backend documentation",
+      "assigned_users": [
+        "callec"
+      ]
     }
   ],
   "entry": [
     {
-      "id": 1,
       "user": "callec",
-      "workspace": "city-dsl-compiler",
       "task": 1,
-      "date": "2016-08-01",
-      "minutes": 90
+      "minutes": 30,
+      "date": "2017-06-07",
+      "id": 287317
     },
     {
-      "id": 2,
       "user": "callec",
-      "workspace": "city-dsl-compiler",
-      "task": 1,
-      "date": "2016-08-01",
-      "minutes": 135
+      "task": 5,
+      "minutes": 150,
+      "date": "2017-06-07",
+      "id": 287318
     },
     {
-      "id": 3,
       "user": "callec",
-      "workspace": "city-dsl-compiler",
       "task": 3,
-      "date": "2016-08-02",
-      "minutes": 60
-    },
-    {
-      "id": 4,
-      "user": "callec",
-      "workspace": "city-dsl-compiler",
-      "task": 2,
-      "date": "2016-08-02",
       "minutes": 0,
+      "date": "2017-06-07",
+      "id": 287319,
       "state": "deleted"
-    },
-    {
-      "id": 5,
-      "user": "callec",
-      "workspace": "city-dsl-compiler",
-      "task": 1,
-      "date": "2016-08-02",
-      "minutes": 150
     }
   ]
 }
