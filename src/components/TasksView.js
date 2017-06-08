@@ -62,7 +62,7 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
         <div className="task-description">{ task.name }</div>
       </div>
       <div className="task-listing-item-actions col-xs-2 text-right">
-        <a className="btn btn-default btn-lg time-task-button" href="#" onClick={onClick} role="button" data-toggle="tooltip" data-placement="left" title="Add to day">
+        <a className="btn btn-default time-task-button" href="#" onClick={onClick} role="button" data-toggle="tooltip" data-placement="left" title="Add to day">
           <span className="fa fa-calendar-plus-o"></span>
         </a>
       </div>

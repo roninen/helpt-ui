@@ -217,7 +217,7 @@ export default class TimedTask extends React.Component {
     let innerContents;
     if (!this.state.deleted) {
       innerContents = (
-        <div className="input-group input-group-lg col-sm-4 hours-entry">
+        <div className="input-group hours-entry">
             <NumberChangeButton
                  operation="subtract"
                  currentValue={currentValue}
@@ -250,7 +250,8 @@ export default class TimedTask extends React.Component {
     return (
       <div className="panel panel-default">
           <div className="panel-body">
-              <div className="col-sm-8">
+            <div className="row">
+              <div className="col-sm-7">
                   <div className="task-source">
                       <a href={taskLink} tabIndex="-1">
                           <span className={sourceServiceIcon}></span>
@@ -259,7 +260,10 @@ export default class TimedTask extends React.Component {
                   </div>
                   { taskDescription }
               </div>
+              <div className="col-sm-5">
               { innerContents }
+              </div>
+            </div>
           </div>
       </div>
     );
