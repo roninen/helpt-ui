@@ -35,7 +35,7 @@ class DayView extends React.Component {
               { entryComponents }
               <EmptyTaskPrompt taskCount={filteredEntries.length} />
           </div>
-          <div className="panel-footer day-footer"><DayFooter totalMinutes={totalMinutes} /></div>
+          <DayFooter totalMinutes={totalMinutes} />
       </div>
     );
   }
@@ -71,9 +71,11 @@ var NextDateLink = ({momentDate}) => {
 var DayNavigation = ({momentDate}) => {
   return (
     <div className="calendar-navigation-header clearfix">
-      <div className="col-xs-2 prev"><PreviousDateLink momentDate={momentDate} /></div>
-      <div className="col-xs-8 current-date"><h4>{timeUtils.formatHumanDate(momentDate)}</h4></div>
-      <div className="col-xs-2 next text-right"><NextDateLink momentDate={momentDate} /></div>
+      <div className="row">
+        <div className="col-xs-2 prev"><PreviousDateLink momentDate={momentDate} /></div>
+        <div className="col-xs-8 current-date"><h4>{timeUtils.formatHumanDate(momentDate)}</h4></div>
+        <div className="col-xs-2 next text-right"><NextDateLink momentDate={momentDate} /></div>
+      </div>
     </div>
   );
 }
@@ -89,9 +91,11 @@ var EmptyTaskPrompt = ({taskCount}) => {
 
 var DayFooter = ({totalMinutes}) => {
   return (
-    <div className="day-footer panel-body">
-      <div className="col-sm-8">Total of the day</div>
-      <div className="col-sm-4"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} h</div></div>
+    <div className="day-footer panel-footer">
+      <div className="row">
+        <div className="col-sm-8">Total of the day</div>
+        <div className="col-sm-4"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} h</div></div>
+      </div>
     </div>
   );
 };

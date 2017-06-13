@@ -51,8 +51,11 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
     taskLink = ExternalLinks[workspace.data_source.type].link(task);
   }
   return (
-    <div className="task-listing-item row">
-      <div className="task-listing-item-content col-xs-10">
+    <div className="task-listing-item">
+      <a className="btn btn-default time-task-button pull-right" href="#" onClick={onClick} role="button" data-toggle="tooltip" data-placement="left" title="Add to day">
+        <span className="fa fa-calendar-plus-o"></span>
+      </a>
+      <div className="task-listing-item-content">
         <div className="task-source">
           <a href={taskLink} tabIndex="-1">
             <i className="fa fa-github-square task-source-icon" aria-hidden="true"></i>
@@ -60,11 +63,6 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
           </a>
         </div>
         <div className="task-description">{ task.name }</div>
-      </div>
-      <div className="task-listing-item-actions col-xs-2 text-right">
-        <a className="btn btn-default btn-lg time-task-button" href="#" onClick={onClick} role="button" data-toggle="tooltip" data-placement="left" title="Add to day">
-          <span className="fa fa-calendar-plus-o"></span>
-        </a>
       </div>
     </div>
   );
