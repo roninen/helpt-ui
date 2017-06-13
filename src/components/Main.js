@@ -39,7 +39,6 @@ class AppComponent extends React.Component {
     if (this.props.location.pathname !== '/callback' && user === null) {
       return <LoginPage />;
     }
-    console.log(this.props.main);
     if (!this.props.main) {
       return <div>error</div>;
     }
