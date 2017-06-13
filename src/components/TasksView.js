@@ -5,6 +5,7 @@ import moment from 'moment';
 import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
 import ExternalLinks from '../util/external-links';
+import { DropdownButton, MenuItem, FormControl, Glyphicon, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 class TasksView extends React.Component {
   render() {
@@ -23,33 +24,35 @@ class TasksView extends React.Component {
     };
     const taskItems = _.map(tasks, (task) => {
         return (
-          <li key={task.id} className="list-group-item">
+          <ListGroupItem key={task.id}>
               <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
-          </li>);
+          </ListGroupItem>);
     });
+    const tasksTitle = _.size(tasks) + " tasks assigned to you";
     return (
-      <div className="panel panel-default">
-          <div className="panel-heading">
-              <h5 class="panel-title">{ _.size(tasks) } tasks assigned to you</h5>
+      <Panel header={tasksTitle}>
+          <form>
+              <DropdownButton bsStyle="default" title="Trello/helpt-ui" id="" className="workspace-select">
+                <MenuItem>Show all</MenuItem>
+                <MenuItem divider />
+                <MenuItem header>GitHub</MenuItem>
+                <MenuItem>helpt-ui</MenuItem>
+                <MenuItem>digi.hel.fi</MenuItem>
+                <MenuItem divider />
+                <MenuItem header>Trello</MenuItem>
+                <MenuItem active>helpt-ui</MenuItem>
+                <MenuItem>digi.hel.fi</MenuItem>
+              </DropdownButton>
+          </form>
+
+          <div className="form-group has-feedback tasks-search">
+              <FormControl type="text" placeholder="Search" />
+              <Glyphicon glyph="search" className="form-control-feedback" />
           </div>
-          <div className="panel-body">
-              <div className="filters">
-                  <div className="form-group has-feedback">
-                      <input className="form-control" placeholder="Search"></input>
-                      <i className="glyphicon glyphicon-search form-control-feedback"></i>
-                  </div>
-                  <div className="dropdown pull-right">
-                      <button className="btn btn-default dropdown-toggle">
-                          Order <span className="caret"></span>
-                      </button>
-                      {/* Add bootstrap dropdown element here with the sorting options */}
-                  </div>
-              </div>
-          </div>
-          <ul className="list-group">
+          <ListGroup fill>
               { taskItems }
-          </ul>
-      </div>
+          </ListGroup>
+      </Panel>
     );
   }
 }
