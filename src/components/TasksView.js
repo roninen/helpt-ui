@@ -11,14 +11,14 @@ class TasksView extends React.Component {
     let { user, entries, tasks, momentDate, makeEntryFromTask, undeleteEntry } = this.props;
     const makeOrReuseEntryFromTask = (task) => {
       const deletedEntry = dataUtils.findEntryForTask(
-        entries, user.id, task,
+        entries, user.profile.sub, task,
         momentDate.format(timeUtils.LINK_DATEFORMAT),
         {findDeleted: true});
       if (deletedEntry) {
         undeleteEntry(deletedEntry);
       }
       else {
-        makeEntryFromTask(user.id, task, momentDate);
+        makeEntryFromTask(user.profile.sub, task, momentDate);
       }
     };
     const taskItems = _.map(tasks, (task) => {
@@ -76,8 +76,8 @@ function mapStateToProps(state, ownProps) {
   }
   const tasks = _.pickBy(state.data.task, (task) => {
     return (
-      task.assigned_users.includes(user.id) &&
-        !dataUtils.findEntryForTask(state.data.entry, user.id, task, date));
+      task.assigned_users.includes(user.profile.sub) &&
+        !dataUtils.findEntryForTask(state.data.entry, user.profile.sub, task, date));
   });
   const sortedTasks = _.orderBy(tasks, ['updated_at'], ['desc']);
   return {

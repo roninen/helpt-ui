@@ -108,9 +108,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchUserTasks: (user) => {
-      if (user.id) {
-        dispatch(fetchResourceFiltered(['task'], {'filter{assigned_users}': user.id, 'sort[]': '-updated_at'}));
-        dispatch(fetchResourceFiltered(['entry'], {'filter{user}': user.id}));
+      if (user.profile.sub) {
+        dispatch(fetchResourceFiltered(['task'], {'filter{assigned_users}': user.profile.sub, 'sort[]': '-updated_at'}));
+        dispatch(fetchResourceFiltered(['entry'], {'filter{user}': user.profile.sub}));
       }
     },
     makeEntryFromTask: (userId, entry, momentDate) => {

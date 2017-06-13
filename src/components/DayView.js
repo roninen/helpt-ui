@@ -108,7 +108,7 @@ function mapStateToProps(state, ownProps) {
   }
   return {
     entries: dataUtils.expandItems(state, _.pickBy(state.data.entry, entry => (
-      entry.user == user.id && entry.date == date
+      entry.user == user.profile.sub && entry.date == date
     )), {task: {workspace: {data_source: {}}}}),
     tasks: dataUtils.expandItems(state, state.data.task, {workspace: {}}),
     momentDate: moment(date)
