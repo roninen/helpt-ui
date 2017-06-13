@@ -6,7 +6,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import 'bootstrap-sass';
 import { apiMiddleware } from 'redux-api-middleware';
-import { createUserManager, loadUser, OidcProvider } from 'redux-oidc';
+import { loadUser, OidcProvider } from 'redux-oidc';
 
 import userManager from './util/user-manager';
 
