@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import React from 'react';
 import { connect } from 'react-redux';
+import LoginPage from './LoginPage';
 
 import {
   fetchResource,
@@ -14,13 +15,6 @@ import {
   undeleteEntry } from '../actions/index';
 
 class AppComponent extends React.Component {
-  componentWillMount() {
-    const { user, fetchUserTasks, fetchLoggedInUser } = this.props;
-    if (user === null) {
-      fetchLoggedInUser();
-      return;
-    }
-  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.user === null) {
       nextProps.fetchLoggedInUser();
@@ -42,19 +36,25 @@ class AppComponent extends React.Component {
   }
   render() {
     const { user } = this.props;
-    if (user === null) {
-      return <div className="container-fluid">Authenticating...</div>;
+    if (this.props.location.pathname !== '/callback' && user === null) {
+      return <LoginPage />;
+    }
+    if (!this.props.main) {
+      return <div>error</div>;
     }
     const mainComponent = React.cloneElement(
       this.props.main,
       {user});
-    const sidebarComponent = React.cloneElement(
-      this.props.sidebar,
-      {user,
-       makeEntryFromTask: this.props.makeEntryFromTask,
-       undeleteEntry: this.props.undeleteEntry,
-       entries: this.props.entries
-      });
+    let sidebarComponent = null;
+    if (this.props.sidebar) {
+      sidebarComponent = React.cloneElement(
+        this.props.sidebar,
+        {user,
+         makeEntryFromTask: this.props.makeEntryFromTask,
+         undeleteEntry: this.props.undeleteEntry,
+         entries: this.props.entries
+        });
+    }
     return (
       <div className="index">
       <nav className="navbar navbar-inverse navbar-fixed-top">
@@ -65,7 +65,7 @@ class AppComponent extends React.Component {
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" tabIndex="-1">
-                    { user.first_name + ' ' + user.last_name }
+                    { user && user.profile ? user.profile.nickname : '' }
                     <span className="caret"></span></a>
                 <ul className="dropdown-menu">
                   <li><a href="#">Reports</a></li>
@@ -95,7 +95,7 @@ import { loggedInUser } from '../reducers/index';
 
 const mapStateToProps = (state) => {
   const user = loggedInUser(state);
-  if (!user) {
+  if (!user || user.expired) {
     return { user: null, tasks: [] };
   }
   return {

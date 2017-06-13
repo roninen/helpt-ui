@@ -6,41 +6,37 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import 'bootstrap-sass';
 import { apiMiddleware } from 'redux-api-middleware';
+import { createUserManager, loadUser, OidcProvider } from 'redux-oidc';
+
+import userManager from './util/user-manager';
 
 import rootReducer from './reducers/index';
 
 import App from './components/Main';
 import DayView from './components/DayView';
 import TasksView from './components/TasksView';
-
-var User = () => {
-  return <div>Being a user's profile</div>;
-};
+import CallbackPage from './components/CallbackPage';
 
 const createStoreWithMiddleware = applyMiddleware(apiMiddleware)(createStore);
 let store = createStoreWithMiddleware(rootReducer);
 window.store = store;
 
 
-function loginStateListener() {
-  const loginState = store.getState().app.login.state;
-  if (loginState === 'FAILED') {
-    window.location = '/login/';
-  }
-}
-store.subscribe(loginStateListener);
+loadUser(store, userManager);
 
 // Render the main component into the dom
 ReactDOM.render(
   <Provider store={store}>
-    <Router history={browserHistory}>
-        <Route path="/" component={App}>
-            <IndexRedirect to="today" />
-            <Route path="user/:userId" components={{main: User}} />
-            <Route path="user/:userId/tasks" components={{main: TasksView}} />
-            <Route path="date/:date" components={{main: DayView, sidebar: TasksView}} />
-            <Route path="today" components={{main: DayView, sidebar: TasksView}} />
-        </Route>
-    </Router>
+      <OidcProvider store={store} userManager={userManager}>
+          <Router history={browserHistory}>
+              <Route path="/" component={App}>
+                  <IndexRedirect to="today" />
+                  <Route path="user/:userId/tasks" components={{main: TasksView}} />
+                  <Route path="date/:date" components={{main: DayView, sidebar: TasksView}} />
+                  <Route path="today" components={{main: DayView, sidebar: TasksView}} />
+                  <Route path="callback" components={{main: CallbackPage}} />
+              </Route>
+          </Router>
+      </ OidcProvider>
   </Provider>, document.getElementById('app')
 );

@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { reducer as oidc } from 'redux-oidc';
 import Immutable from 'seamless-immutable';
 import _ from 'lodash';
 
@@ -14,26 +15,9 @@ const initialDataState = Immutable({
 });
 
 
-/* Possible login states:
- * INITIAL the app has just initialized
- * PENDING the logged in user data is being retrieved
- * FAILED a user is not logged in yet, login failed, or session has timed out
- * SUCCESS a user is logged in
- */
-const initialAppState = Immutable({
-  login: {userId: null, state: 'INITIAL'}
-});
-
 // Helper functions to select state
 export function loggedInUser (state) {
-  if (state.app.login.state != 'SUCCESS') {
-    return null;
-  }
-  const userData = state.data.user[state.app.login.userId];
-  if (userData !== undefined) {
-    return userData;
-  }
-  return {id: state.app.loggedInUser, _fetchState: 'INITIAL'};
+  return state.oidc.user;
 }
 
 export function getDataObject (state, type, id) {
@@ -89,20 +73,4 @@ function dataReducer(state = initialDataState, action) {
   return state;
 }
 
-function appReducer(state = initialAppState, action) {
-  if (action.meta && action.meta.intention == 'LOGIN') {
-    switch (action.type) {
-    case 'SUCCESS':
-      const { user } = action.payload;
-      if (user.length === 0) {
-        return state.merge({login: {userId: null, state: 'FAILED'}});
-      }
-      else {
-        return state.merge({login: {userId: user[0].id, state: 'SUCCESS' }});
-      }
-    }
-  }
-  return state;
-}
-
-export default combineReducers({data: dataReducer, app: appReducer});
+export default combineReducers({oidc, data: dataReducer});
