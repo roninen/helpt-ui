@@ -65,15 +65,12 @@ body {
 .hours-entry {
   input {
     text-align: center;
+    border-color: $theme-primary-dark;
   }
 
-  .glyphicon-plus,
-  .glyphicon-minus {
-    //color: $brand-primary;
-  }
-
-  .glyphicon-trash {
-    //color: #c94646;
+  .input-group-btn .btn {
+    border-bottom-width: 2px;
+    padding: 7px 12px 4px;
   }
 
   .alert {

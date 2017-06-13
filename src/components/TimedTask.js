@@ -30,8 +30,8 @@ const NumberChangeButton = ({operation, onClick, currentValue}) => {
   let iconClass = 'glyphicon ';
   let buttonType = 'btn btn-';
   switch (operation) {
-  case 'add': iconClass += 'glyphicon-plus'; buttonType += 'info'; break;
-  case 'subtract': iconClass += 'glyphicon-minus'; buttonType += 'info'; break;
+  case 'add': iconClass += 'glyphicon-plus'; buttonType += 'default'; break;
+  case 'subtract': iconClass += 'glyphicon-minus'; buttonType += 'default'; break;
   case 'remove': iconClass += 'glyphicon-trash'; buttonType += 'danger'; break;
   }
   return (
@@ -238,7 +238,7 @@ export default class TimedTask extends React.Component {
     }
     else {
       innerContents = (
-        <div className="input-group input-group-lg col-sm-4 hours-entry">
+        <div className="">
             <div className="alert alert-warning" role="alert">Deleting entry</div>
         </div>
       );
