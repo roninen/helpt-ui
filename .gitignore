@@ -30,3 +30,6 @@ node_modules
 
 # Bower
 bower_components/
+
+# Mock api live database
+mock-api/db-live.json

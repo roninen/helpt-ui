@@ -1,7 +1,7 @@
 // server.js
 const jsonServer = require('json-server')
 const server = jsonServer.create()
-const router = jsonServer.router('mock-api/db.json')
+const router = jsonServer.router('mock-api/db-live.json')
 const middlewares = jsonServer.defaults()
 
 router.render = (req, res) => {
