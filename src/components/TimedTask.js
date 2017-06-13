@@ -205,7 +205,7 @@ export default class TimedTask extends React.Component {
     };
   }
   render () {
-    const {source, entry, tasks/*, entryIndex, modifyEntry*/} = this.props;
+    const {source, entry} = this.props;
     // Uncoditionally disable autofocus for now.
     // Could be enabled when entryIndex == 0, if desired.
     const autoFocusPredicate = () => {return false;};

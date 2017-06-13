@@ -24,7 +24,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'center',
-    flexShrink: 1,
+    flexShrink: 1
   }
 }
 

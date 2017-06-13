@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import LoginPage from './LoginPage';
 
 import {
-  fetchResource,
   fetchMultipleResources,
   fetchResourceFiltered,
   makeEntryFromTask,
