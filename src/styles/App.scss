@@ -34,6 +34,14 @@ body {
   background: #cdcdcd;
 }
 
+.workspace-select {
+  margin-bottom: $line-height-computed / 2;
+}
+
+.tasks-search {
+  margin-bottom: 0;
+}
+
 .task-listing-item-actions {
   .time-task-button {
   }

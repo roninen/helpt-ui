@@ -5,6 +5,7 @@ import moment from 'moment';
 import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
 import ExternalLinks from '../util/external-links';
+import { DropdownButton, MenuItem, FormControl, Glyphicon, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 class TasksView extends React.Component {
   render() {
@@ -23,20 +24,35 @@ class TasksView extends React.Component {
     };
     const taskItems = _.map(tasks, (task) => {
         return (
-          <li key={task.id} className="list-group-item">
+          <ListGroupItem key={task.id}>
               <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
-          </li>);
+          </ListGroupItem>);
     });
+    const tasksTitle = _.size(tasks) + " tasks assigned to you";
     return (
-      <div className="panel panel-default task-listing-view">
-          <div className="panel-body">
-              <h4>Tasks assigned to you<br/>
-                  <small>You have { _.size(tasks) } active tasks that can be selected for this date.</small></h4>
-              <ul className="list-group">
-                  { taskItems }
-              </ul>
+      <Panel header={tasksTitle}>
+          <form>
+              <DropdownButton bsStyle="default" title="Trello/helpt-ui" id="" className="workspace-select">
+                <MenuItem>Show all</MenuItem>
+                <MenuItem divider />
+                <MenuItem header>GitHub</MenuItem>
+                <MenuItem>helpt-ui</MenuItem>
+                <MenuItem>digi.hel.fi</MenuItem>
+                <MenuItem divider />
+                <MenuItem header>Trello</MenuItem>
+                <MenuItem active>helpt-ui</MenuItem>
+                <MenuItem>digi.hel.fi</MenuItem>
+              </DropdownButton>
+          </form>
+
+          <div className="form-group has-feedback tasks-search">
+              <FormControl type="text" placeholder="Search" />
+              <Glyphicon glyph="search" className="form-control-feedback" />
           </div>
-      </div>
+          <ListGroup fill>
+              { taskItems }
+          </ListGroup>
+      </Panel>
     );
   }
 }
