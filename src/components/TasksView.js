@@ -9,6 +9,17 @@ import { DropdownButton, FormControl, Glyphicon, Panel, ListGroup, ListGroupItem
 import { selectWorkspaceFilter, clearSelectedWorkspaceFilter } from '../actions/index';
 
 class TasksView extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      fulltextQuery: ''
+    };
+  }
+  onFulltextQueryChange(event) {
+    this.setState({
+      fulltextQuery: event.target.value.toLowerCase()
+    });
+  }
   render() {
     let { user, entries, tasks, momentDate, makeEntryFromTask, undeleteEntry,
           workspaces, activeWorkspaces, dataSources, selectedWorkspace
@@ -26,7 +37,8 @@ class TasksView extends React.Component {
         makeEntryFromTask(user.profile.sub, task, momentDate);
       }
     };
-    const taskItems = _.map(tasks, (task) => {
+    const filteredTasks = _.filter(tasks, (t) => t.name.toLowerCase().match(this.state.fulltextQuery));
+    const taskItems = _.map(filteredTasks, (task) => {
         return (
           <ListGroupItem key={task.id}>
               <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
@@ -53,7 +65,7 @@ class TasksView extends React.Component {
     const menuitems = [<MenuItem onSelect={clearSelectedWorkspace} key={getIndex()}>Show all</MenuItem>];
     const workspaceFilters = _.reduce(activeWorkspaces, iteratee, menuitems);
     const selectedTitle =  selectedWorkspace ? selectedWorkspace.data_source.name + '/' + selectedWorkspace.origin_id : 'Filter by workspace';
-
+    const onFulltextQueryChange = _.bind(this.onFulltextQueryChange, this);
     return (
       <Panel header={tasksTitle}>
           <form>
@@ -63,7 +75,7 @@ class TasksView extends React.Component {
           </form>
 
           <div className="form-group has-feedback tasks-search">
-              <FormControl type="text" placeholder="Search" />
+              <FormControl type="text" placeholder="Search" value={this.state.fulltextQuery} onChange={onFulltextQueryChange} />
               <Glyphicon glyph="search" className="form-control-feedback" />
           </div>
           <ListGroup fill>
