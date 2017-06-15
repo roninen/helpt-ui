@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { CALL_API, getJSON } from 'redux-api-middleware';
+import { createAction } from 'redux-actions';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
@@ -22,6 +23,8 @@ function shouldBailOut(state, endpoint) {
 function generateIncludeParameters(resourceTypes) {
   return _.map(resourceTypes, (rType) => { return `${rType}.*`; });
 }
+
+export const selectWorkspaceFilter = createAction('USER_SELECT_WORKSPACE_FILTER');
 
 export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id), metadata) {
   if (resourceTypes.length > 1) {

@@ -40,6 +40,14 @@ function itemExpander(state, keysToExpand) {
   };
 }
 
+export function activeWorkspaces(state, tasks) {
+  function workspaceMatch(ws) {
+    return _.find(tasks, (t) => t.workspace == ws.id);
+  }
+  const workspaces = expandItems(state, _.filter(state.data.workspace, workspaceMatch), {data_source: {}});
+  return _.groupBy(workspaces, (ws) => ws.data_source.id);
+}
+
 export function expandItems(state, items, keysToExpand) {
   return _.map(items, itemExpander(state, keysToExpand));
 }

@@ -5,11 +5,15 @@ import moment from 'moment';
 import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
 import ExternalLinks from '../util/external-links';
-import { DropdownButton, MenuItem, FormControl, Glyphicon, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { DropdownButton, FormControl, Glyphicon, Panel, ListGroup, ListGroupItem, MenuItem } from 'react-bootstrap';
+import { selectWorkspaceFilter } from '../actions/index';
 
 class TasksView extends React.Component {
   render() {
-    let { user, entries, tasks, momentDate, makeEntryFromTask, undeleteEntry } = this.props;
+    let { user, entries, tasks, momentDate, makeEntryFromTask, undeleteEntry,
+          workspaces, activeWorkspaces, dataSources, selectedWorkspace
+        } = this.props;
+
     const makeOrReuseEntryFromTask = (task) => {
       const deletedEntry = dataUtils.findEntryForTask(
         entries, user.profile.sub, task,
@@ -28,20 +32,32 @@ class TasksView extends React.Component {
               <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
           </ListGroupItem>);
     });
-    const tasksTitle = _.size(tasks) + " tasks assigned to you";
+    const tasksTitle = _.size(tasks) + ' tasks assigned to you';
+
+    let index = 0;
+    function getIndex() {
+      return `inactive-${++index}`;
+    }
+
+    function onMenuItemSelect (key) {
+      this.props.selectWorkspace(key);
+    }
+
+    function iteratee(acc, value, key) {
+      return acc.concat(
+        [<MenuItem key={getIndex()} divider />,
+         <MenuItem key={getIndex()} header>{dataSources[key].name}</MenuItem>].concat(
+           _.map(value, (ws) => <MenuItem onSelect={onMenuItemSelect} eventKey={ws.id} key={ws.id}>{ws.origin_id}</MenuItem>)));
+    }
+    const menuitems = [<MenuItem key={getIndex()}>Show all</MenuItem>];
+    const workspaceFilters = _.reduce(activeWorkspaces, iteratee, menuitems);
+    const selectedTitle =  selectedWorkspace ? selectedWorkspace.data_source.name + '/' + selectedWorkspace.origin_id : 'Filter by workspace';
+
     return (
       <Panel header={tasksTitle}>
           <form>
-              <DropdownButton bsStyle="default" title="Trello/helpt-ui" id="" className="workspace-select">
-                <MenuItem>Show all</MenuItem>
-                <MenuItem divider />
-                <MenuItem header>GitHub</MenuItem>
-                <MenuItem>helpt-ui</MenuItem>
-                <MenuItem>digi.hel.fi</MenuItem>
-                <MenuItem divider />
-                <MenuItem header>Trello</MenuItem>
-                <MenuItem active>helpt-ui</MenuItem>
-                <MenuItem>digi.hel.fi</MenuItem>
+              <DropdownButton bsStyle="default" title={selectedTitle} id="" className="workspace-select">
+                  {workspaceFilters}
               </DropdownButton>
           </form>
 
@@ -95,13 +111,36 @@ function mapStateToProps(state, ownProps) {
       task.assigned_users.includes(user.profile.sub) &&
         !dataUtils.findEntryForTask(state.data.entry, user.profile.sub, task, date));
   });
-  const sortedTasks = _.orderBy(tasks, ['updated_at'], ['desc']);
+  let selectedWorkspace = null;
+  const wid = state.transient.selectedWorkspace;
+  if (wid) {
+    selectedWorkspace = state.data.workspace[wid];
+  }
+  let filteredTasks = tasks;
+  if (wid !== null) {
+    filteredTasks = _.filter(tasks, (t) => t.workspace == wid);
+  }
+  const sortedTasks = _.orderBy(filteredTasks, ['updated_at'], ['desc']);
+  const workspaces = dataUtils.expandItems(state, state.data.workspace, {data_source: {}});
   return {
     user: user,
     tasks: dataUtils.expandItems(
       state, sortedTasks, {workspace: {data_source: {}}}),
-    momentDate: moment(date)
+    activeWorkspaces: dataUtils.activeWorkspaces(state, tasks),
+    workspaces: workspaces,
+    dataSources: state.data.data_source,
+    momentDate: moment(date),
+    selectedWorkspace: selectedWorkspace ? selectedWorkspace.setIn(['data_source'], state.data.data_source[selectedWorkspace.data_source]) : null
   };
 }
 
-export default connect(mapStateToProps, null)(TasksView);
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    selectWorkspace: (workspaceId) => {
+      dispatch(selectWorkspaceFilter(workspaceId));
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TasksView);

@@ -73,4 +73,16 @@ function dataReducer(state = initialDataState, action) {
   return state;
 }
 
-export default combineReducers({oidc, data: dataReducer});
+const initialTransientState = {
+  selectedWorkspace: null
+};
+
+
+function transientState(state = initialTransientState, action) {
+  if (action.type == 'USER_SELECT_WORKSPACE_FILTER') {
+    return {selectedWorkspace: action.payload};
+  }
+  return state;
+}
+
+export default combineReducers({oidc, data: dataReducer, transient: transientState});
