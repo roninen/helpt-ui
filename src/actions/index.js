@@ -25,6 +25,7 @@ function generateIncludeParameters(resourceTypes) {
 }
 
 export const selectWorkspaceFilter = createAction('USER_SELECT_WORKSPACE_FILTER');
+export const clearSelectedWorkspaceFilter = createAction('USER_CLEAR_SELECTED_WORKSPACE_FILTER');
 
 export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id), metadata) {
   if (resourceTypes.length > 1) {

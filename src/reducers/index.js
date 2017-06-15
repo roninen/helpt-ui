@@ -79,8 +79,11 @@ const initialTransientState = {
 
 
 function transientState(state = initialTransientState, action) {
-  if (action.type == 'USER_SELECT_WORKSPACE_FILTER') {
-    return {selectedWorkspace: action.payload};
+  switch (action.type) {
+    case 'USER_SELECT_WORKSPACE_FILTER':
+      return {selectedWorkspace: action.payload};
+    case 'USER_CLEAR_SELECTED_WORKSPACE_FILTER':
+      return {selectedWorkspace: null};
   }
   return state;
 }

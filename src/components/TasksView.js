@@ -6,7 +6,7 @@ import * as timeUtils from '../util/time';
 import * as dataUtils from '../util/data';
 import ExternalLinks from '../util/external-links';
 import { DropdownButton, FormControl, Glyphicon, Panel, ListGroup, ListGroupItem, MenuItem } from 'react-bootstrap';
-import { selectWorkspaceFilter } from '../actions/index';
+import { selectWorkspaceFilter, clearSelectedWorkspaceFilter } from '../actions/index';
 
 class TasksView extends React.Component {
   render() {
@@ -39,7 +39,7 @@ class TasksView extends React.Component {
       return `inactive-${++index}`;
     }
 
-    const { selectWorkspace } = this.props;
+    const { selectWorkspace, clearSelectedWorkspace } = this.props;
     function onMenuItemSelect (key) {
       selectWorkspace(key);
     }
@@ -50,7 +50,7 @@ class TasksView extends React.Component {
          <MenuItem key={getIndex()} header>{dataSources[key].name}</MenuItem>].concat(
            _.map(value, (ws) => <MenuItem onSelect={onMenuItemSelect} eventKey={ws.id} key={ws.id}>{ws.origin_id}</MenuItem>)));
     }
-    const menuitems = [<MenuItem key={getIndex()}>Show all</MenuItem>];
+    const menuitems = [<MenuItem onSelect={clearSelectedWorkspace} key={getIndex()}>Show all</MenuItem>];
     const workspaceFilters = _.reduce(activeWorkspaces, iteratee, menuitems);
     const selectedTitle =  selectedWorkspace ? selectedWorkspace.data_source.name + '/' + selectedWorkspace.origin_id : 'Filter by workspace';
 
@@ -140,7 +140,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     selectWorkspace: (workspaceId) => {
       dispatch(selectWorkspaceFilter(workspaceId));
-    }
+    },
+    clearSelectedWorkspace: () => { dispatch(clearSelectedWorkspaceFilter()); }
   };
 };
 
