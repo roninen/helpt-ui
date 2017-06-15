@@ -39,8 +39,9 @@ class TasksView extends React.Component {
       return `inactive-${++index}`;
     }
 
+    const { selectWorkspace } = this.props;
     function onMenuItemSelect (key) {
-      this.props.selectWorkspace(key);
+      selectWorkspace(key);
     }
 
     function iteratee(acc, value, key) {
