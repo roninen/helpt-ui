@@ -16,6 +16,7 @@ import App from './components/Main';
 import DayView from './components/DayView';
 import TasksView from './components/TasksView';
 import CallbackPage from './components/CallbackPage';
+import LoginPage from './components/LoginPage';
 
 const createStoreWithMiddleware = applyMiddleware(apiMiddleware)(createStore);
 let store = createStoreWithMiddleware(rootReducer);
@@ -35,6 +36,7 @@ ReactDOM.render(
                   <Route path="date/:date" components={{main: DayView, sidebar: TasksView}} />
                   <Route path="today" components={{main: DayView, sidebar: TasksView}} />
                   <Route path="callback" components={{main: CallbackPage}} />
+                  <Route path="logout" components={{main: LoginPage}} />
               </Route>
           </Router>
       </ OidcProvider>

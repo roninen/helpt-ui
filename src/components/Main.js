@@ -34,7 +34,7 @@ class AppComponent extends React.Component {
     }
   }
   render() {
-    const { user } = this.props;
+    const { user, location } = this.props;
     if (this.props.location.pathname !== '/callback' && user === null) {
       return <LoginPage />;
     }
@@ -43,7 +43,7 @@ class AppComponent extends React.Component {
     }
     const mainComponent = React.cloneElement(
       this.props.main,
-      {user});
+      {user, location});
     let sidebarComponent = null;
     if (this.props.sidebar) {
       sidebarComponent = React.cloneElement(

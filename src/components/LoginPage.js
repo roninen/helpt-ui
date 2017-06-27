@@ -2,10 +2,16 @@ import React from 'react';
 import userManager from '../util/user-manager';
 
 class LoginPage extends React.Component {
-  onLoginButtonClick = (event) => {
+  onLoginButtonClick(event) {
     event.preventDefault();
     userManager.signinRedirect();
-  };
+  }
+
+  componentDidMount() {
+    if (this.props.location && this.props.location.pathname == '/logout/') {
+      userManager.removeUser();
+    }
+  }
 
   render() {
     return (
