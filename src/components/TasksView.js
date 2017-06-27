@@ -22,7 +22,7 @@ class TasksView extends React.Component {
   }
   render() {
     let { user, entries, tasks, momentDate, makeEntryFromTask, undeleteEntry,
-          workspaces, activeWorkspaces, dataSources, selectedWorkspace
+          activeWorkspaces, dataSources, selectedWorkspace
         } = this.props;
 
     const makeOrReuseEntryFromTask = (task) => {
