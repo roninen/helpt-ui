@@ -60,7 +60,7 @@ class TasksView extends React.Component {
       return acc.concat(
         [<MenuItem key={getIndex()} divider />,
          <MenuItem key={getIndex()} header>{dataSources[key].name}</MenuItem>].concat(
-           _.map(value, (ws) => <MenuItem onSelect={onMenuItemSelect} eventKey={ws.id} key={ws.id}>{ws.origin_id}</MenuItem>)));
+           _.map(value, (ws) => <MenuItem onSelect={onMenuItemSelect} eventKey={ws.id} key={ws.id}>{ws.name}</MenuItem>)));
     }
     const menuitems = [<MenuItem onSelect={clearSelectedWorkspace} key={getIndex()}>Show all</MenuItem>];
     const workspaceFilters = _.reduce(activeWorkspaces, iteratee, menuitems);
@@ -102,9 +102,9 @@ export const TaskItem = ({task, makeEntryFromTask}) => {
       </a>
       <div className="task-listing-item-content">
         <div className="task-source">
-          <a href={taskLink} tabIndex="-1">
+          <a href={taskLink.url} tabIndex="-1">
             <i className="fa fa-github-square task-source-icon" aria-hidden="true"></i>
-            <span className="task-source-header">{ task.workspace.origin_id }/{ task.origin_id }</span>
+            <span className="task-source-header">{ taskLink.text }</span>
           </a>
         </div>
         <div className="task-description">{ task.name }</div>
