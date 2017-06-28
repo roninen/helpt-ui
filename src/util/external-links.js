@@ -6,5 +6,8 @@ export default {
     }
   },
   trello: {
+    link: (task) => {
+      return `https://trello.com/c/${task.origin_id}`;
+    }
   }
 };
