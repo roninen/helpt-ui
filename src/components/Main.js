@@ -11,15 +11,22 @@ import {
   fetchMultipleResources,
   fetchResourceFiltered,
   makeEntryFromTask,
-  undeleteEntry } from '../actions/index';
+  undeleteEntry,
+  fetchApiToken } from '../actions/index';
 
 class AppComponent extends React.Component {
   componentWillReceiveProps(nextProps) {
-    if (nextProps.user === null) {
+    if (nextProps.user === null && nextProps.apiToken) {
       nextProps.fetchLoggedInUser();
       return;
     }
-    if (_.size(nextProps.task) == 0) {
+    if (nextProps.user !== null &&
+        nextProps.user.access_token !== null &&
+        !nextProps.apiToken) {
+      nextProps.fetchApiToken(nextProps.user.access_token);
+      return;
+    }
+    if (_.size(nextProps.task) == 0 && nextProps.apiToken) {
       nextProps.fetchUserTasks(nextProps.user);
     }
 
@@ -34,7 +41,7 @@ class AppComponent extends React.Component {
     }
   }
   render() {
-    const { user, location } = this.props;
+    const { user, location, apiToken } = this.props;
     if (this.props.location.pathname !== '/callback' && user === null) {
       return <LoginPage />;
     }
@@ -43,7 +50,7 @@ class AppComponent extends React.Component {
     }
     const mainComponent = React.cloneElement(
       this.props.main,
-      {user, location});
+      {user, location, apiToken});
     let sidebarComponent = null;
     if (this.props.sidebar) {
       sidebarComponent = React.cloneElement(
@@ -100,7 +107,8 @@ const mapStateToProps = (state) => {
   return {
     user,
     entries: state.data.entry,
-    tasks: state.data.task
+    tasks: state.data.task,
+    apiToken: state.apiToken
   };
 };
 
@@ -123,6 +131,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     fetchLoggedInUser: () => {
       dispatch(fetchResourceFiltered(['user'], {current: true}, {intention: 'LOGIN'}));
+    },
+    fetchApiToken: (accessToken) => {
+      dispatch(fetchApiToken(accessToken));
     }
   };
 };

@@ -88,4 +88,17 @@ function transientState(state = initialTransientState, action) {
   return state;
 }
 
-export default combineReducers({oidc, data: dataReducer, transient: transientState});
+const initialApiTokenState = null;
+
+function apiToken(state = initialApiTokenState, action) {
+  switch (action.type) {
+    case 'TOKEN_SUCCESS':
+      return action.payload;
+    case 'TOKEN_REQUEST':
+    case 'TOKEN_FAILURE':
+  }
+  return state;
+}
+
+
+export default combineReducers({oidc, data: dataReducer, transient: transientState, apiToken});

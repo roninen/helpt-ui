@@ -19,9 +19,8 @@ import CallbackPage from './components/CallbackPage';
 import LoginPage from './components/LoginPage';
 
 const createStoreWithMiddleware = applyMiddleware(apiMiddleware)(createStore);
-let store = createStoreWithMiddleware(rootReducer);
+export let store = createStoreWithMiddleware(rootReducer);
 window.store = store;
-
 
 loadUser(store, userManager);
 

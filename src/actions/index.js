@@ -4,6 +4,7 @@ import { createAction } from 'redux-actions';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
+import { store } from '../index';
 
 require('process');
 const API_BASE_URL = process.env.API_URL;
@@ -24,6 +25,10 @@ function generateIncludeParameters(resourceTypes) {
   return _.map(resourceTypes, (rType) => { return `${rType}.*`; });
 }
 
+function makeAuthHeader() {
+  return `Bearer ${store.getState().apiToken['https://api.hel.fi/auth/projects']}`;
+}
+
 export const selectWorkspaceFilter = createAction('USER_SELECT_WORKSPACE_FILTER');
 export const clearSelectedWorkspaceFilter = createAction('USER_CLEAR_SELECTED_WORKSPACE_FILTER');
 
@@ -39,6 +44,7 @@ export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resource
       endpoint: endpoint,
       method: 'GET',
       credentials: 'same-origin',
+      headers: { 'Authorization': makeAuthHeader() },
       types: [
         {type: 'REQUEST', meta: { resourceTypes, endpoint, intention  }},
         {type: 'SUCCESS', meta: { resourceTypes, multiple: !id, endpoint, intention }},
@@ -68,7 +74,6 @@ export function modifyResource(resourceType, id, object) {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'PUT',
-      credentials: 'same-origin',
       types: [
         {type: 'REQUEST', meta: { resourceTypes: [resourceType], endpoint }},
         {type: 'SUCCESS', meta: { resourceTypes: [resourceType], multiple: false, endpoint},
@@ -78,7 +83,10 @@ export function modifyResource(resourceType, id, object) {
         {type: 'FAILURE', meta: { resourceType, endpoint }}
       ],
       body: body,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': makeAuthHeader()
+      },
       bailout: false
     }
   };
@@ -91,7 +99,6 @@ export function createResource(resourceType, object, bailout = false) {
     [CALL_API]: {
       endpoint: endpoint,
       method: 'POST',
-      credentials: 'same-origin',
       types: [
         {type: 'REQUEST', meta: { resourceTypes: [resourceType], endpoint }},
         {type: 'SUCCESS', meta: { resourceTypes: [resourceType], multiple: false, endpoint},
@@ -101,8 +108,30 @@ export function createResource(resourceType, object, bailout = false) {
         {type: 'FAILURE', meta: { resourceType, endpoint }}
       ],
       body: body,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': makeAuthHeader()
+      },
       bailout
+    }
+  };
+}
+
+export function fetchApiToken(token) {
+  const endpoint = 'https://api.hel.fi/sso-test/api-tokens/';
+  return {
+    [CALL_API]: {
+      endpoint,
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+      types: [
+        'TOKEN_REQUEST',
+        'TOKEN_SUCCESS',
+        'TOKEN_FAILURE'
+      ],
+      bailout: (state) => {
+        return shouldBailOut(state, endpoint);
+      }
     }
   };
 }
