@@ -245,7 +245,7 @@ export default class TimedTask extends React.Component {
     }
     let taskLink='#!';
     if (currentTask) {
-      taskLink = ExternalLinks[currentTask.workspace.data_source ? currentTask.workspace.data_source.type : 'github'].link(currentTask);
+      taskLink = ExternalLinks[(currentTask.workspace && currentTask.workspace.data_source) ? currentTask.workspace.data_source.type : 'github'].link(currentTask);
     }
     return (
       <div className="panel panel-default">
@@ -253,9 +253,9 @@ export default class TimedTask extends React.Component {
             <div className="row">
               <div className="col-sm-7">
                   <div className="task-source">
-                      <a href={taskLink} tabIndex="-1">
+                      <a href={taskLink.url} tabIndex="-1">
                           <span className={sourceServiceIcon}></span>
-                          <span className="task-source-header">{currentTask.workspace.origin_id}/{currentTask.origin_id}</span>
+                          <span className="task-source-header">{ taskLink.text }</span>
                       </a>
                   </div>
                   { taskDescription }

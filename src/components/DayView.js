@@ -17,7 +17,7 @@ class DayView extends React.Component {
     const { entries, momentDate, modifyResource } = this.props;
     const filteredEntries = _.filter(_.values(entries), (entry) => { return entry.state != 'deleted'; });
     const entryComponents = _.map(filteredEntries, (entry, index) => {
-      const source = (entry.task.workspace.data_source !== undefined) ? entry.task.workspace.data_source.type : 'github';
+      const source = (entry.task.workspace !== undefined && entry.task.workspace.data_source !== undefined) ? entry.task.workspace.data_source.type : 'github';
       return (<TimedTask
               key={entry.id}
               entryIndex={index}
