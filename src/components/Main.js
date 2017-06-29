@@ -116,8 +116,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchUserTasks: (user) => {
       if (user.profile.sub) {
-        dispatch(fetchResourceFiltered(['task'], {'user_uuid': user.profile.sub, 'sort[]': '-updated_at'}));
-        dispatch(fetchResourceFiltered(['entry'], {'filter{user.uuid}': user.profile.sub}));
+        dispatch(fetchResourceFiltered(['task'], {'user': user.profile.sub, 'sort[]': '-updated_at'}));
+        dispatch(fetchResourceFiltered(['entry'], {'filter{user.id}': user.profile.sub}));
       }
     },
     makeEntryFromTask: (userId, entry, momentDate) => {
