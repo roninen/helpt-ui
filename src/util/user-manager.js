@@ -8,7 +8,7 @@ const userManagerConfig = {
   redirect_uri: `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/callback`,
   response_type: 'id_token token',
   scope: 'openid profile https://api.hel.fi/auth/projects',
-  authority: 'https://api.hel.fi/sso-test/openid/',
+  authority: 'https://api.hel.fi/sso/openid/',
   silent_redirect_uri: `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/silent_renew.html`,
   automaticSilentRenew: true,
   filterProtocolClaims: true,

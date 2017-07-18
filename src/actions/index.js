@@ -118,7 +118,7 @@ export function createResource(resourceType, object, bailout = false) {
 }
 
 export function fetchApiToken(token) {
-  const endpoint = 'https://api.hel.fi/sso-test/api-tokens/';
+  const endpoint = 'https://api.hel.fi/sso/api-tokens/';
   return {
     [CALL_API]: {
       endpoint,
