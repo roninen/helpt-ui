@@ -172,3 +172,33 @@ body {
   margin-left: 0;
   margin-right: 0;
 }
+
+.report-filters {
+  margin: $line-height-computed * 2 0;
+
+  .dropdown {
+    width: 100%;
+    background: $white;
+
+    .btn {
+      text-align: left;
+    }
+  }
+}
+
+.timespan-icon {
+  text-align: center;
+}
+
+.report-contents {
+  background-color: $white;
+  padding: $line-height-computed * 2 0;
+}
+
+.report-table {
+  background: $white;
+}
+
+.header-section {
+  background-color: $hel-suomenlinna;
+}

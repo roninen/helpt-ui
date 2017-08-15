@@ -9,6 +9,7 @@ import App from './Main';
 import DayView from './DayView';
 import TasksView from './TasksView';
 import CallbackPage from './CallbackPage';
+import ReportPage from './ReportPage';
 import LoginPage from './LoginPage';
 
 import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
@@ -25,6 +26,7 @@ export default (
                   <Route path="date/:date" components={{main: DayView, sidebar: TasksView}} />
                   <Route path="today" components={{main: DayView, sidebar: TasksView}} />
                   <Route path="callback" components={{main: CallbackPage}} />
+                  <Route path="report" components={{main: ReportPage}} />
                   <Route path="logout" components={{main: LoginPage}} />
               </Route>
           </Router>

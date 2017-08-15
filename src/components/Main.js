@@ -1,5 +1,6 @@
 require('normalize.css/normalize.css');
 require('styles/App.scss');
+require('react-datetime/css/react-datetime.css');
 
 import _ from 'lodash';
 
@@ -7,6 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import LoginPage from './LoginPage';
 import { Nav, Navbar, NavDropdown, MenuItem } from 'react-bootstrap';
+import ReportPage from './ReportPage';
 
 import {
   fetchMultipleResources,
@@ -52,6 +54,10 @@ class AppComponent extends React.Component {
     const { user, location, apiToken } = this.props;
     if (this.props.location.pathname !== '/callback' && user === null) {
       return <LoginPage />;
+    }
+    // TODO: this is just a hack to get report page showing without sidebar.
+    if (this.props.location.pathname == '/report') {
+      return <ReportPage />;
     }
     if (!this.props.main) {
       return <div>error</div>;
