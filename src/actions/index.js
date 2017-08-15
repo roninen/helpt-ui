@@ -4,7 +4,7 @@ import { createAction } from 'redux-actions';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
-import { store } from '../index';
+import store from '../stores/index';
 
 require('process');
 const API_BASE_URL = process.env.API_URL;
