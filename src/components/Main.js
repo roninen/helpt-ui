@@ -142,6 +142,7 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 AppComponent.defaultProps = {
+    className: 'index'
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppComponent);

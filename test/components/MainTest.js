@@ -10,11 +10,13 @@ import createComponent from 'helpers/shallowRenderHelper';
 
 import Main from 'components/Main';
 
+import store from 'stores/index';
+
 describe('MainComponent', () => {
   let MainComponent;
 
   beforeEach(() => {
-    MainComponent = createComponent(Main);
+    MainComponent = createComponent(Main, {store});
   });
 
   it('should have its component name as default className', () => {
