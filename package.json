@@ -17,7 +17,8 @@
     "start": "cp -n .env.example .env; node server.js --env=dev",
     "mock-api": ". ./.env && sed -e \"s/\\\"callec\\\"/\\\"$TEST_USER_UUID\\\"/\" mock-api/db.json >mock-api/db-live.json; node mock-api/server.js",
     "test": "karma start",
-    "test:watch": "karma start --autoWatch=true --singleRun=false"
+    "test:watch": "karma start --autoWatch=true --singleRun=false",
+    "codecov": "cat coverage/*/lcov.info | codecov"
   },
   "repository": "",
   "keywords": [],
