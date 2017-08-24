@@ -15,23 +15,22 @@ class LoginPage extends React.Component {
 
   render() {
     return (
-      <div style={styles.root}>
-        <h3>Tervetuloa Helsingin kaupungin projektinseurantaan</h3>
-        <p>Kirjaudu sisään jatkaaksesi</p>
-        <button onClick={this.onLoginButtonClick}>Kirjaudu</button>
+      <div className="container">
+        <div className="col-md-8 col-md-offset-2">
+          <div className="login-box">
+            <div className="login-box--content">
+              <div className="helsinki-logo" />
+              <h3>Tervetuloa Helsingin kaupungin projektinseurantaan</h3>
+              <p>Kirjaudu sisään jatkaaksesi</p>
+              <button className="btn btn-default" onClick={this.onLoginButtonClick}>Kirjaudu</button>
+            </div>
+            <div className="login-koro" />
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-const styles = {
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexShrink: 1
-  }
-}
 
 export default LoginPage;

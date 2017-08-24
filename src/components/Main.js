@@ -71,7 +71,7 @@ class AppComponent extends React.Component {
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" tabIndex="-1">
-                    { user && user.profile ? user.profile.nickname : '' }
+                    <span className="glyphicon glyphicon-user" />&nbsp; { user && user.profile ? user.profile.nickname : '' }
                     <span className="caret"></span></a>
                 <ul className="dropdown-menu">
                   <li><a href="#">Reports</a></li>

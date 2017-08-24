@@ -29,7 +29,7 @@ class DayView extends React.Component {
     });
     const totalMinutes = _.reduce(filteredEntries, (sum, entry) => { return sum + entry.minutes; }, 0);
     return (
-      <div className="panel panel-primary">
+      <div className="panel panel-danger">
           <div className="panel-heading"><DayNavigation momentDate={momentDate} /></div>
           <div className="panel-body">
               { entryComponents }
@@ -44,7 +44,7 @@ class DayView extends React.Component {
 var DateLink = ({to, direction}) => {
   const iconClass = `glyphicon glyphicon-triangle-${direction == 'past' ? 'left' : 'right'}`;
   return (
-    <Link to={to} className="btn btn-primary" tabIndex="-1"><span className={iconClass}></span></Link>
+    <Link to={to} className="btn btn-header" tabIndex="-1"><span className={iconClass} /></Link>
   );
 };
 
@@ -93,8 +93,8 @@ var DayFooter = ({totalMinutes}) => {
   return (
     <div className="day-footer panel-footer">
       <div className="row">
-        <div className="col-sm-8">Total of the day</div>
-        <div className="col-sm-4"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} h</div></div>
+        <div className="col-sm-7">Total of the day</div>
+        <div className="col-sm-5"><div className="day-total">{timeUtils.minutesToHours(totalMinutes)} h</div></div>
       </div>
     </div>
   );

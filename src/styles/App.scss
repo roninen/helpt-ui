@@ -28,10 +28,44 @@ body {
   }
 }
 
+.login-box {
+  background-color: $hel-suomenlinna;
+  text-align: center;
+  position: relative;
+  box-shadow: 3px 3px 3px rgba($black, 0.5);
+
+  .login-box--content {
+    padding: $line-height-computed $line-height-computed $line-height-computed * 4;
+  }
+
+  .helsinki-logo {
+    @include helsinki-logo($black);
+    height: $line-height-computed * 2;
+    margin-bottom: $line-height-computed * 2;
+    width: 100%;
+    background-position: right;
+  }
+
+  .login-koro {
+    @include koro("beat", $hel-metro, 200);
+    width: 100%;
+    height: $line-height-computed * 3;
+    position: absolute;
+    bottom: 0;
+  }
+}
+
+
+.main-content {
+  margin-top: $line-height-computed * 3;
+}
+
 // Task Listing View
 
-.task-listing-view {
-  background: #cdcdcd;
+.tasks-panel {
+  .panel-heading {
+    font-weight: 700;
+  }
 }
 
 .workspace-select {
@@ -51,6 +85,7 @@ body {
   a {
     @extend small;
     color: $gray-light;
+    text-decoration: none;
   }
   .task-source-icon {
     font-size: 1.25em;
@@ -70,15 +105,23 @@ body {
   }
 }
 
+.btn-header {
+  padding: 3px 6px;
+
+  .glyphicon {
+    font-size: 24px;
+  }
+}
+
+.timed-task {
+  margin-bottom: $line-height-computed / 2;
+}
+
 .hours-entry {
   input {
     text-align: center;
-    border-color: $theme-primary-dark;
-  }
-
-  .input-group-btn .btn {
-    border-bottom-width: 2px;
-    padding: 7px 12px 4px;
+    color: $black;
+    font-weight: 700;
   }
 
   .alert {
@@ -94,13 +137,13 @@ body {
 }
 
 .day-footer {
-  background-color: $gray;
+  background-color: $black;
   color: #fff;
 
   .day-total {
-    border: 1px solid $gray-light;
+    border: 2px solid $white;
     font-size: $font-size-large;
-    font-weight: 600;
+    font-weight: 700;
     padding: 6px;
     text-align: center;
   }
