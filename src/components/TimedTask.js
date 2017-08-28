@@ -242,7 +242,7 @@ export default class TimedTask extends React.Component {
       taskLink = ExternalLinks[(currentTask.workspace && currentTask.workspace.data_source) ? currentTask.workspace.data_source.type : 'github'].link(currentTask);
     }
     return (
-      <div className="panel panel-default">
+      <div className="panel panel-default timed-task">
           <div className="panel-body">
             <div className="row">
               <div className="col-sm-7">

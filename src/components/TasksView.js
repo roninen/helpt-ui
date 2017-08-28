@@ -67,7 +67,7 @@ class TasksView extends React.Component {
     const selectedTitle =  selectedWorkspace ? selectedWorkspace.data_source.name + '/' + selectedWorkspace.origin_id : 'Filter by workspace';
     const onFulltextQueryChange = _.bind(this.onFulltextQueryChange, this);
     return (
-      <Panel header={tasksTitle}>
+      <Panel defaultExpanded header={tasksTitle} bsStyle="info">
           <form>
               <DropdownButton bsStyle="default" title={selectedTitle} id="" className="workspace-select">
                   {workspaceFilters}
@@ -78,9 +78,9 @@ class TasksView extends React.Component {
               <FormControl type="text" placeholder="Search" value={this.state.fulltextQuery} onChange={onFulltextQueryChange} />
               <Glyphicon glyph="search" className="form-control-feedback" />
           </div>
-          <ListGroup fill>
-              { taskItems }
-          </ListGroup>
+        <ListGroup fill>
+            { taskItems }
+        </ListGroup>
       </Panel>
     );
   }
