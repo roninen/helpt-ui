@@ -118,7 +118,6 @@ const mapDispatchToProps = (dispatch) => {
       if (user.profile.sub) {
         dispatch(fetchResourceFiltered(['task'], {
           'user': user.profile.sub,
-          'filter{state}': ['open', 'in_progress']
         }));
         dispatch(fetchResourceFiltered(['entry'], {'filter{user.id}': user.profile.sub}));
       }

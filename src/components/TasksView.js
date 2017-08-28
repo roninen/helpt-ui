@@ -44,7 +44,7 @@ class TasksView extends React.Component {
               <TaskItem task={task} makeEntryFromTask={makeOrReuseEntryFromTask} momentDate={momentDate} user={user}/>
           </ListGroupItem>);
     });
-    const tasksTitle = _.size(tasks) + ' tasks assigned to you';
+    const tasksTitle = 'Tasks assigned to you';
 
     let index = 0;
     function getIndex() {
