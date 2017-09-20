@@ -38,7 +38,7 @@ class ReportPage extends React.Component {
                   <FormGroup
                     controlId="formBasicText"
                   >
-                    <ControlLabel>User</ControlLabel>
+                    <ControlLabel>User/Organisation</ControlLabel>
                     <FormControl
                       type="text"
                       placeholder="Placeholder here / this should be predictive dropdown"
@@ -90,6 +90,11 @@ class ReportPage extends React.Component {
       </section>
       <section className="report-contents">
         <Grid>
+          <Well>
+            <h3>AOK 10.9.2017 - 23.9.2017</h3>
+            <p>Latest entry: Wed 20.9.2017 9:31</p>
+            <p>Total hours: 10</p>
+          </Well>
           <Table responsive className="report-table">
             <thead>
               <tr>
@@ -101,8 +106,8 @@ class ReportPage extends React.Component {
                 <th>User</th>
                 <th>Task</th>
                 <th>Status</th>
-                <th>Estimate</th>
-                <th>Hours</th>
+                <th className="text-right">Estimate</th>
+                <th className="text-right">Hours</th>
               </tr>
             </thead>
             <tbody>
