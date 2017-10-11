@@ -42,7 +42,7 @@ export const clearSelectedWorkspaceFilter = createAction('USER_CLEAR_SELECTED_WO
 export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id), metadata) {
   if (resourceTypes.length > 1) {
     let uri = new URI(endpoint);
-    uri.search({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
+    uri.addSearch({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
     endpoint = uri.toString();
   }
   const intention = metadata ? metadata.intention : null;
