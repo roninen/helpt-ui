@@ -123,7 +123,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchUserTasks: (user) => {
       if (user.profile.sub) {
         dispatch(fetchResourceFiltered(['task'], {
-          'user': user.profile.sub,
+          'user': user.profile.sub
         }));
         dispatch(fetchResourceFiltered(['entry'], {'filter{user.id}': user.profile.sub}));
       }
