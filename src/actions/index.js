@@ -26,7 +26,14 @@ function generateIncludeParameters(resourceTypes) {
 }
 
 function makeAuthHeader() {
-  return `Bearer ${store.getState().apiToken['https://api.hel.fi/auth/projects']}`;
+  if (store.getState().apiToken) {
+    return { Authorization:
+             `Bearer ${store.getState().apiToken['https://api.hel.fi/auth/projects']}`
+           };
+  }
+  else {
+    return { }
+  }
 }
 
 export const selectWorkspaceFilter = createAction('USER_SELECT_WORKSPACE_FILTER');
@@ -44,7 +51,7 @@ export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resource
       endpoint: endpoint,
       method: 'GET',
       credentials: 'same-origin',
-      headers: { 'Authorization': makeAuthHeader() },
+      headers: Object.assign({}, makeAuthHeader()),
       types: [
         {type: 'REQUEST', meta: { resourceTypes, endpoint, intention  }},
         {type: 'SUCCESS', meta: { resourceTypes, multiple: !id, endpoint, intention }},
@@ -83,10 +90,9 @@ export function modifyResource(resourceType, id, object) {
         {type: 'FAILURE', meta: { resourceType, endpoint }}
       ],
       body: body,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': makeAuthHeader()
-      },
+      headers: Object.assign(
+        {'Content-Type': 'application/json'},
+        makeAuthHeader()),
       bailout: false
     }
   };
@@ -108,10 +114,9 @@ export function createResource(resourceType, object, bailout = false) {
         {type: 'FAILURE', meta: { resourceType, endpoint }}
       ],
       body: body,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': makeAuthHeader()
-      },
+      headers: Object.assign(
+        {'Content-Type': 'application/json'},
+        makeAuthHeader()),
       bailout
     }
   };
