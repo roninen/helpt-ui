@@ -166,3 +166,23 @@ export function undeleteEntry(entry) {
   const undeletedEntry = entry.merge({state: 'public'});
   return modifyResource('entry', entry.id, undeletedEntry);
 }
+
+export function selectReportProject(key) {
+  return {
+    type: 'REPORT_FILTER_SET',
+    payload: {
+      project: key === 'clear' ? null : Number.parseInt(key)
+    }
+  }
+}
+
+export function filterEntriesForReport(filter) {
+  console.log(filter);
+  let queryFilters = {};
+  if (filter.project) {
+    queryFilters['filter{task.workspace.projects}'] = '' + filter.project;
+  }
+  console.log(queryFilters);
+  return fetchResourceFiltered(['entry', 'user'], queryFilters,
+                               {intent: 'report'});
+}
