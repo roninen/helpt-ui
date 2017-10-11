@@ -42,7 +42,9 @@ export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resource
   const multiple = !id;
   let uri = new URI(endpoint);
   if (resourceTypes.length > 1) {
-    uri.search({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
+    let uri = new URI(endpoint);
+    uri.addSearch({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
+    endpoint = uri.toString();
   }
   let paginatedUri = uri.clone();
   if (multiple) {
