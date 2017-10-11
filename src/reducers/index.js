@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { reducer as oidc } from 'redux-oidc';
 import Immutable from 'seamless-immutable';
 import _ from 'lodash';
+import moment from 'moment';
 
 const initialDataState = Immutable({
   entry: {},
@@ -100,5 +101,42 @@ function apiToken(state = initialApiTokenState, action) {
   return state;
 }
 
+const initialReportFilterState = Immutable({
+  user: null,
+  organization: null,
+  project: 3,
+  begin: '2017-10-01',
+  end: '2017-10-11'
+});
 
-export default combineReducers({oidc, data: dataReducer, transient: transientState, apiToken});
+function reportFilter(state = initialReportFilterState, action) {
+  if (action.type == 'REPORT_FILTER_SET') {
+    return state.merge(action.payload);
+  }
+  else if (action.type == 'REPORT_FILTER_CLEAR') {
+    return initialReportFilterState;
+  }
+  return state;
+}
+
+const initialReportRawData = Immutable({
+  entry: {},
+  latest: null
+});
+
+function reportData(state = initialReportRawData, action) {
+  if (action.type === 'SUCCESS' && action.meta.intent === 'report') {
+    let latest = moment('1970-01-01');
+    const entry = _.fromPairs(action.payload, (e) => {
+      if (moment(e.date).isAfter(latest)) {
+        latest = e.id;
+      }
+      return [e.id: true];
+    });
+    return state.merge({entry, latest});
+  }
+  return state;
+}
+
+export default combineReducers({oidc, data: dataReducer, transient: transientState, apiToken, reportFilter, reportData});
+
