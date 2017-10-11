@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Row, Col, FormGroup, FormControl, ControlLabel, Table, Panel, Well, Label, Glyphicon, ButtonToolbar, DropdownButton, MenuItem  } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, FormControl, ControlLabel, Table, Well, Label, Glyphicon, ButtonToolbar, DropdownButton, MenuItem  } from 'react-bootstrap';
 import Datetime from 'react-datetime';
 import 'moment/locale/fi';
 
