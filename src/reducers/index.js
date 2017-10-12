@@ -109,8 +109,8 @@ const initialReportFilterState = Immutable({
   user: null,
   organization: null,
   project: null,
-  begin: '2017-10-01',
-  end: '2017-10-11'
+  begin: null,
+  end: null
 });
 
 function reportFilter(state = initialReportFilterState, action) {

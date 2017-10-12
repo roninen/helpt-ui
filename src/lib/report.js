@@ -5,7 +5,7 @@ import { expandItems } from '../util/data'
   {
     total: <sumtotal all projects>
     latest:
-    projects: [
+    projects: [   // TODO: rename to children, add type tag (more generic)
       {
         id: <n>,
         total: <sum>,
