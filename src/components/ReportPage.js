@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { generateReport } from '../lib/report';
 import { fetchResourceFiltered, selectReportProject,
          filterEntriesForReport, setReportDates } from '../actions/index'
+import ProjectsSummary from './ProjectsSummary';
 
 class UserOrganizationSuggestions extends React.Component {
   constructor() {
@@ -155,11 +156,16 @@ function ReportHeader({filter, latest, total}) {
   }
   const latestEntry = latest ? `Latest entry: ${dateFmt(latest)}` : null;
   return (
+    <div className="results-header">
     <Well>
       <h3>{name} { dateRange }</h3>
       <p>{latest}</p>
       <p>Total hours: {total}</p>
     </Well>
+    <Well>
+      <ProjectsSummary/>
+    </Well>
+    </div>
   );
 }
 
