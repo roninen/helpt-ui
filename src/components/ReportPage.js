@@ -150,15 +150,47 @@ function ReportHeader({filter, latest, total}) {
   );
 }
 
-function Report({filter, report}) {
+function TaskReport({userName, taskLog}) {
   return (
-    <Grid>
-    <ReportHeader filter={filter} latest={report.latest} total={report.total} />
+    <tr>
+      <td>{userName}</td>
+      <td>
+        <div className="task-listing-item-content">
+          { /* <div className="task-source"><a tabIndex="-2" href="https://trello.com/c/598ae652f38d421a141f9b10"><i aria-hidden="true" className="fa task-source-icon fa-trello"></i><span className="task-source-header">Aok:n kanban</span></a></div> */ }
+          { /* TODO: add link to task <a tabIndex="-1" > href="https://trello.com/c/598ae652f38d421a141f9b10"*/ }
+          <div className="task-description">{taskLog.name}</div>
+        </div>
+      </td>
+      <td><Label bsStyle="success">Done</Label></td>
+      <td className="text-right">-</td>
+      <td className="text-right">{taskLog.total}</td>
+    </tr>
+  );
+}
+
+
+function UserReport({userLog}) {
+  const userName = userLog.name;
+  const taskReports = _.map(userLog.tasks, (t, i) => {
+    return <TaskReport key={i} userName={userLog.name} taskLog={t} />
+  });
+  return (
+    <tbody>
+      { taskReports }
+    </tbody>
+  );
+}
+
+function ProjectReport({projectLog}) {
+  const userReports = _.map(projectLog.users, (u) => {
+    return <UserReport userLog={u} />;
+  });
+  return (
     <Table responsive className="report-table">
       <thead>
         <tr>
           <th colSpan="5">
-            <h4>Project 2</h4>
+            <h4>{projectLog.name}</h4>
           </th>
         </tr>
         <tr>
@@ -169,50 +201,21 @@ function Report({filter, report}) {
           <th className="text-right">Hours</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Kaisa Kehittäjä</td>
-          <td>
-            <div className="task-listing-item-content">
-              <div className="task-source"><a tabIndex="-2" href="https://trello.com/c/598ae652f38d421a141f9b10"><i aria-hidden="true" className="fa task-source-icon fa-trello"></i><span className="task-source-header">Aok:n kanban</span></a></div>
-              <div className="task-description"><a tabIndex="-1" href="https://trello.com/c/598ae652f38d421a141f9b10">Helpt-kälin raportointinäkymien visuaalinen koodaus</a></div>
-            </div>
-          </td>
-          <td><Label bsStyle="success">Done</Label></td>
-          <td className="text-right">2.5</td>
-          <td className="text-right">5</td>
-        </tr>
-        <tr>
-          <td>Kaisa Kehittäjä</td>
-          <td>
-            <div className="task-listing-item-content">
-              <div className="task-source"><a tabIndex="-2" href="https://trello.com/c/598ae652f38d421a141f9b10"><i aria-hidden="true" className="fa task-source-icon fa-trello"></i><span className="task-source-header">Aok:n kanban</span></a></div>
-              <div className="task-description"><a tabIndex="-1" href="https://trello.com/c/598ae652f38d421a141f9b10">Helpt-kälin raportointinäkymien visuaalinen koodaus</a></div>
-            </div>
-          </td>
-          <td><Label bsStyle="success">Done</Label></td>
-          <td className="text-right">2.5</td>
-          <td className="text-right">5</td>
-        </tr>
-        <tr>
-          <td>Kaisa Kehittäjä</td>
-          <td>
-            <div className="task-listing-item-content">
-              <div className="task-source"><a tabIndex="-2" href="https://trello.com/c/598ae652f38d421a141f9b10"><i aria-hidden="true" className="fa task-source-icon fa-trello"></i><span className="task-source-header">Aok:n kanban</span></a></div>
-              <div className="task-description"><a tabIndex="-1" href="https://trello.com/c/598ae652f38d421a141f9b10">Helpt-kälin raportointinäkymien visuaalinen koodaus</a></div>
-            </div>
-          </td>
-          <td><Label bsStyle="success">Done</Label></td>
-          <td className="text-right">2.5</td>
-          <td className="text-right">5</td>
-        </tr>
-      </tbody>
+      { userReports }
       <tfoot>
         <tr>
           <td colSpan="4" className="text-right">Project total</td><td className="text-right">10</td>
         </tr>
       </tfoot>
     </Table>
+  );
+}
+
+function Report({filter, report}) {
+  return (
+    <Grid>
+    <ReportHeader filter={filter} latest={report.latest} total={report.total} />
+    <ProjectReport projectLog={report.projects[0]} />
     </Grid>
   );
 }

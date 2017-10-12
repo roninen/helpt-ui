@@ -176,11 +176,10 @@ export function selectReportProject(key) {
 
 export function filterEntriesForReport(filter) {
   console.log(filter);
-  let queryFilters = {};
+  let queryFilters = {per_page: 1000};
   if (filter.project) {
     queryFilters['filter{task.workspace.projects}'] = '' + filter.project;
   }
-  console.log(queryFilters);
   return fetchResourceFiltered(['entry', 'task', 'task.workspace'],
                                queryFilters, {intention: 'report'});
 }
