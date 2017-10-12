@@ -151,6 +151,13 @@ function ReportHeader({filter, latest, total}) {
 }
 
 function TaskReport({userName, taskLog}) {
+  let statusLabel = null;
+  if (taskLog.state == 'closed') {
+    statusLabel = <Label bsStyle="success">Done</Label>;
+  }
+  else {
+    statusLabel = <Label bsStyle="warning">Open</Label>;
+  }
   return (
     <tr>
       <td>{userName}</td>
@@ -161,7 +168,7 @@ function TaskReport({userName, taskLog}) {
           <div className="task-description">{taskLog.name}</div>
         </div>
       </td>
-      <td><Label bsStyle="success">Done</Label></td>
+      <td>{statusLabel}</td>
       <td className="text-right">-</td>
       <td className="text-right">{taskLog.total}</td>
     </tr>
