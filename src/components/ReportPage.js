@@ -7,8 +7,8 @@ import Datetime from 'react-datetime';
 
 import moment from 'moment';
 import 'moment/locale/fi';
+import _ from 'lodash';
 
-import { expandItems } from '../util/data';
 import { generateReport } from '../lib/report';
 import { fetchResourceFiltered, selectReportProject,
          filterEntriesForReport, setReportDates } from '../actions/index'
@@ -23,7 +23,6 @@ class UserOrganizationSuggestions extends React.Component {
   }
 
   onValueChange = (ev) => {
-    const oldMatching = this.state.matching;
     this.setState({
       value: ev.target.value,
       matching: ev.target.value.toLowerCase() == 'juha yrjölä'
@@ -190,7 +189,6 @@ function TaskReport({userName, taskLog}) {
 
 
 function UserReport({userLog}) {
-  const userName = userLog.name;
   const taskReports = _.map(userLog.tasks, (t, i) => {
     return <TaskReport key={i} userName={userLog.name} taskLog={t} />
   });
@@ -303,18 +301,13 @@ function calculateReport(state) {
   return generateReport(state, _.keys(state.reportData.entry));
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   return {
     filter: state.reportFilter,
     report: calculateReport(state),
     projects: _.values(state.data.project)
   }
 }
-
-const setReportFilter = null;
-const clearReportFilter = null;
-const updateReport = null;
-const clearReport = null;
 
 const mapDispatchToProps = (dispatch) => {
   return {
