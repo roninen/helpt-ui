@@ -71,7 +71,6 @@ function expandByProject(data, byProject) {
 
 export function generateReport(state, entryIds) {
   // TODO: memoize
-  let report = {};
   const entries = _.map(entryIds, (eid) => {
     return state.data.entry[eid];
   });
