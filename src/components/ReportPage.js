@@ -189,8 +189,8 @@ function UserReport({userLog}) {
 }
 
 function ProjectReport({projectLog}) {
-  const userReports = _.map(projectLog.users, (u) => {
-    return <UserReport userLog={u} />;
+  const userReports = _.map(projectLog.users, (u, i) => {
+    return <UserReport key={i} userLog={u} />;
   });
   return (
     <Table responsive className="report-table">
@@ -219,8 +219,8 @@ function ProjectReport({projectLog}) {
 }
 
 function Report({filter, report}) {
-  const projectReports = _.map(report.projects, (p) => {
-    return <ProjectReport projectLog={p} />
+  const projectReports = _.map(report.projects, (p, i) => {
+    return <ProjectReport key={i} projectLog={p} />
   });
   return (
     <Grid>
