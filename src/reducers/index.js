@@ -28,7 +28,11 @@ export function getDataObject (state, type, id) {
 // Utility functions
 
 function mergeData(state, newData, meta, actionType) {
-  const { resourceTypes, multiple, endpoint } = meta;
+  const { multiple, endpoint } = meta;
+  const resourceTypes = _.map(meta.resourceTypes, (r) => {
+    const split = r.split('.');
+    return split[split.length - 1];
+  });
   //return state.setIn(['_apiEndpoints', endpoint], action.type);
   _.each(resourceTypes, (r) => {
     if (!(r in state)) {
@@ -104,7 +108,7 @@ function apiToken(state = initialApiTokenState, action) {
 const initialReportFilterState = Immutable({
   user: null,
   organization: null,
-  project: 3,
+  project: null,
   begin: '2017-10-01',
   end: '2017-10-11'
 });
@@ -121,19 +125,28 @@ function reportFilter(state = initialReportFilterState, action) {
 
 const initialReportRawData = Immutable({
   entry: {},
-  latest: null
+  latest: null,
+  ready: false
 });
 
 function reportData(state = initialReportRawData, action) {
-  if (action.type === 'SUCCESS' && action.meta.intent === 'report') {
-    let latest = moment('1970-01-01');
-    const entry = _.fromPairs(action.payload, (e) => {
+  if (action.type === 'REQUEST' && action.meta.intention == 'report') {
+    // TODO: bailout messes with this
+    return initialReportRawData;
+  }
+  if (action.type === 'SUCCESS' && action.meta.intention == 'report') {
+    const epoch = moment('1970-01-01');
+    let latest = epoch;
+    const entry = _.fromPairs(_.map(action.payload.entry, (e) => {
       if (moment(e.date).isAfter(latest)) {
         latest = e.id;
       }
-      return [e.id: true];
-    });
-    return state.merge({entry, latest});
+      return [[e.id], true];
+    }));
+    if (epoch === latest) {
+      latest = null;
+    }
+    return state.merge({entry, latest, ready: true});
   }
   return state;
 }
