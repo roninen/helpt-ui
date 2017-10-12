@@ -5,6 +5,11 @@ import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
 
+/*
+  *  TODO: pagination
+   *
+    */
+
 require('process');
 const API_BASE_URL = process.env.API_URL;
 
@@ -183,6 +188,6 @@ export function filterEntriesForReport(filter) {
     queryFilters['filter{task.workspace.projects}'] = '' + filter.project;
   }
   console.log(queryFilters);
-  return fetchResourceFiltered(['entry', 'user'], queryFilters,
-                               {intent: 'report'});
+  return fetchResourceFiltered(['entry', 'task', 'task.workspace'],
+                               queryFilters, {intention: 'report'});
 }

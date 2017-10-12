@@ -9,6 +9,7 @@ import moment from 'moment';
 import 'moment/locale/fi';
 
 import { expandItems } from '../util/data';
+import { generateReport } from '../lib/report';
 import { fetchResourceFiltered, selectReportProject,
          filterEntriesForReport } from '../actions/index'
 
@@ -228,8 +229,9 @@ class ReportPage extends React.Component {
       return <div>Loading...</div>
     }
     let reportComponent = null;
+    console.log(report);
     if (report.ready) {
-      const reportComponent = <Report filter={filter} report={report} />;
+      reportComponent = <Report filter={filter} report={report} />;
     }
     return (
       <div className="report">
@@ -267,46 +269,14 @@ class ReportPage extends React.Component {
   }
 }
 
-/*
-  {
-    total: <sumtotal all projects>
-    latest:
-    projects: [
-      {
-        id: <n>,
-        total: <sum>,
-        users: [
-          {
-            name:
-            id:
-            total:
-            tasks: [
-              name:
-              id:
-              status:
-              estimate: undefined,
-              total:
-            ]
-          }
-        ]
-      }
-    ]
 
-
-
-*/
 function calculateReport(state) {
-  if (_.size(state.reportData.entry) == 0) {
+  if (state.reportData.ready === false) {
     return {
       ready: false
     };
   }
-  return {
-    ready: true,
-    total: 0,
-    latest: null,
-    projects: []
-  };
+  return generateReport(state, _.keys(state.reportData.entry));
 }
 
 function mapStateToProps(state, ownProps) {

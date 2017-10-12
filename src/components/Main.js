@@ -20,6 +20,9 @@ import {
 import userManager from '../util/user-manager';
 
 class AppComponent extends React.Component {
+  componentWillMount() {
+    this.props.fetchAllUsers();
+  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.user === null && nextProps.apiToken) {
       nextProps.fetchLoggedInUser();
@@ -152,6 +155,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     fetchApiToken: (accessToken) => {
       dispatch(fetchApiToken(accessToken));
+    },
+    fetchAllUsers: () => {
+      dispatch(fetchResourceFiltered(['user'], {}));
     }
   };
 };
