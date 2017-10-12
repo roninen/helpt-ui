@@ -82,7 +82,6 @@ class ProjectMenu extends React.Component {
 
 class ReportFilterForm extends React.Component {
   getReport = () => {
-    console.log(this.props);
     this.props.getReport(this.props.filter);
   }
   render() {
@@ -229,8 +228,8 @@ class ReportPage extends React.Component {
       return <div>Loading...</div>
     }
     let reportComponent = null;
-    console.log(report);
     if (report.ready) {
+      console.log(report);
       reportComponent = <Report filter={filter} report={report} />;
     }
     return (
