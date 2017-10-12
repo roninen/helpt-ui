@@ -153,10 +153,11 @@ function ReportHeader({filter, latest, total}) {
   if (filter.end) {
     dateRange += dateFmt(filter.end);
   }
+  const latestEntry = latest ? `Latest entry: ${dateFmt(latest)}` : null;
   return (
     <Well>
       <h3>{name} { dateRange }</h3>
-      <p>Latest entry: {dateFmt(latest)}</p>
+      <p>{latest}</p>
       <p>Total hours: {total}</p>
     </Well>
   );
