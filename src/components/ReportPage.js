@@ -204,7 +204,7 @@ function ProjectReport({projectLog}) {
       { userReports }
       <tfoot>
         <tr>
-          <td colSpan="4" className="text-right">Project total</td><td className="text-right">10</td>
+          <td colSpan="4" className="text-right">Project total</td><td className="text-right">{projectLog.total}</td>
         </tr>
       </tfoot>
     </Table>
@@ -212,10 +212,13 @@ function ProjectReport({projectLog}) {
 }
 
 function Report({filter, report}) {
+  const projectReports = _.map(report.projects, (p) => {
+    return <ProjectReport projectLog={p} />
+  });
   return (
     <Grid>
     <ReportHeader filter={filter} latest={report.latest} total={report.total} />
-    <ProjectReport projectLog={report.projects[0]} />
+    { projectReports }
     </Grid>
   );
 }
