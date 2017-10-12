@@ -44,20 +44,26 @@ function expandByTask(data, byTask) {
 
 function expandByUser(data, byUser) {
   return _.map(byUser, (entries, userId) => {
+    const tasks = _.sortBy(expandByTask(data, _.groupBy(entries, (e) => e.task.id)), (t) => { return -t.total; });
+    const userTotal = _.reduce(tasks, (sum, t) => (sum + t.total), 0);
     return {
       id: userId,
       name: userName(data.user[userId]),
-      tasks: expandByTask(data, _.groupBy(entries, (e) => e.task.id))
+      tasks: tasks,
+      total: userTotal
     }
   });
 }
 
 function expandByProject(data, byProject) {
   return _.map(byProject, (entries, projectId) => {
+    const users = expandByUser(data, _.groupBy(entries, (e) => e.user.id))
+    const projectTotal = _.reduce(users, (sum, u) => (sum + u.total), 0);
     return {
       id: projectId,
       name: projectId && projectId !== 'undefined' ? data.project[projectId].name : 'unknown',
-      users: expandByUser(data, _.groupBy(entries, (e) => e.user.id))
+      users: users,
+      total: projectTotal
     }
   });
 }
