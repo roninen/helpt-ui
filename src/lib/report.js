@@ -36,6 +36,7 @@ function expandByTask(data, byTask) {
     return {
       id: taskId,
       name: data.task[taskId].name,
+      state: data.task[taskId].state,
       total: _.reduce(entries, (sum, e) => (sum + e.minutes), 0)/60
     }
   });
