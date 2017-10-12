@@ -174,11 +174,27 @@ export function selectReportProject(key) {
   }
 }
 
-export function filterEntriesForReport(filter) {
-  console.log(filter);
+export function setReportDates(begin, end) {
+  const FORMAT = 'YYYY-MM-DD';
+  return {
+    type: 'REPORT_FILTER_SET',
+    payload: {
+      begin: begin && begin.format(FORMAT),
+      end: end && end.format(FORMAT)
+    }
+  }
+}
+
+export function filterEntriesForReport(filter, {begin, end}) {
   let queryFilters = {per_page: 1000};
   if (filter.project) {
     queryFilters['filter{task.workspace.projects}'] = '' + filter.project;
+  }
+  if (begin) {
+    queryFilters['filter{date.gte}'] = begin && begin.format('YYYY-MM-DD');
+  }
+  if (end) {
+    queryFilters['filter{date.lte}'] = end && end.format('YYYY-MM-DD');
   }
   return fetchResourceFiltered(['entry', 'task', 'task.workspace'],
                                queryFilters, {intention: 'report'});

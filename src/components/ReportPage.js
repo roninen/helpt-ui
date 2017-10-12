@@ -11,7 +11,7 @@ import 'moment/locale/fi';
 import { expandItems } from '../util/data';
 import { generateReport } from '../lib/report';
 import { fetchResourceFiltered, selectReportProject,
-         filterEntriesForReport } from '../actions/index'
+         filterEntriesForReport, setReportDates } from '../actions/index'
 
 class UserOrganizationSuggestions extends React.Component {
   constructor() {
@@ -82,7 +82,10 @@ class ProjectMenu extends React.Component {
 
 class ReportFilterForm extends React.Component {
   getReport = () => {
-    this.props.getReport(this.props.filter);
+    const begin = this.beginInput.state.selectedDate;
+    const end = this.endInput.state.selectedDate;
+    this.props.setReportDates(begin, end);
+    this.props.getReport(this.props.filter, {begin, end});
   }
   render() {
     const { filter } = this.props;
@@ -104,7 +107,7 @@ class ReportFilterForm extends React.Component {
                 <Col xs={5}>
                   <FormGroup>
                     <ControlLabel>Starting</ControlLabel>
-                    <Datetime timeFormat={false} locale="fi" input={true} />
+                    <Datetime ref={(input) => this.beginInput = input} timeFormat={false} locale="fi" input={true} />
                   </FormGroup>
                 </Col>
                 <Col xs={2}>
@@ -113,7 +116,7 @@ class ReportFilterForm extends React.Component {
                 <Col xs={5}>
                   <FormGroup>
                     <ControlLabel>Ending</ControlLabel>
-                    <Datetime timeFormat={false} locale="fi" />
+                    <Datetime ref={(input) => this.endInput = input} timeFormat={false} locale="fi" />
                   </FormGroup>
                 </Col>
               </Row>
@@ -141,9 +144,19 @@ function ReportHeader({filter, latest, total}) {
   function dateFmt(date) {
     return moment(date).format('ddd ll');
   }
+  let dateRange = null;
+  if (filter.begin) {
+    dateRange = dateFmt(filter.begin);
+    if (filter.end) {
+      dateRange += ' – ';
+    }
+  }
+  if (filter.end) {
+    dateRange += dateFmt(filter.end);
+  }
   return (
     <Well>
-      <h3>{name} {dateFmt(filter.begin)} &ndash; {dateFmt(filter.end)}</h3>
+      <h3>{name} { dateRange }</h3>
       <p>Latest entry: {dateFmt(latest)}</p>
       <p>Total hours: {total}</p>
     </Well>
@@ -242,7 +255,6 @@ class ReportPage extends React.Component {
     }
     let reportComponent = null;
     if (report.ready) {
-      console.log(report);
       reportComponent = <Report filter={filter} report={report} />;
     }
     return (
@@ -269,7 +281,7 @@ class ReportPage extends React.Component {
 
       <section className="header-section">
         <Grid>
-          <ReportFilterForm filter={filter} projects={projects} selectReportProject={this.props.selectReportProject} getReport={this.props.getReport} />
+          <ReportFilterForm filter={filter} projects={projects} selectReportProject={this.props.selectReportProject} getReport={this.props.getReport} setReportDates={this.props.setReportDates} />
         </Grid>
       </section>
       <section className="report-contents">
@@ -312,8 +324,11 @@ const mapDispatchToProps = (dispatch) => {
     selectReportProject: (key) => {
       dispatch(selectReportProject(key));
     },
-    getReport: (filter) => {
-      dispatch(filterEntriesForReport(filter));
+    getReport: (filter, opts) => {
+      dispatch(filterEntriesForReport(filter, opts));
+    },
+    setReportDates: (begin, end) => {
+      dispatch(setReportDates(begin, end));
     }
     // setReportFilter,
     // clearReportFilter,
