@@ -153,7 +153,7 @@ function ReportHeader({filter, latest, total}) {
 function Report({filter, report}) {
   return (
     <Grid>
-    <ReportHeader filter={filter} latest={'2019-01-01'} total={report.total} />
+    <ReportHeader filter={filter} latest={report.latest} total={report.total} />
     <Table responsive className="report-table">
       <thead>
         <tr>

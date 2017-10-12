@@ -139,7 +139,7 @@ function reportData(state = initialReportRawData, action) {
     let latest = epoch;
     const entry = _.fromPairs(_.map(action.payload.entry, (e) => {
       if (moment(e.date).isAfter(latest)) {
-        latest = e.id;
+        latest = e.date;
       }
       return [[e.id], true];
     }));

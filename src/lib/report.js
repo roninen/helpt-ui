@@ -63,6 +63,7 @@ function expandByProject(data, byProject) {
 
 
 export function generateReport(state, entryIds) {
+  // TODO: memoize
   let report = {};
   const entries = _.map(entryIds, (eid) => {
     return state.data.entry[eid];
@@ -74,7 +75,7 @@ export function generateReport(state, entryIds) {
   return {
     ready: true,
     total: fullTotal / 60,
-    latest: null,
+    latest: state.reportData.latest,
     projects: expandByProject(state.data, groupedByProject)
   };
 }
