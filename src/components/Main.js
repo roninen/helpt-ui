@@ -6,6 +6,7 @@ import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import LoginPage from './LoginPage';
+import { Nav, Navbar, NavDropdown, MenuItem } from 'react-bootstrap';
 
 import {
   fetchMultipleResources,
@@ -13,6 +14,8 @@ import {
   makeEntryFromTask,
   undeleteEntry,
   fetchApiToken } from '../actions/index';
+
+import userManager from '../util/user-manager';
 
 class AppComponent extends React.Component {
   componentWillReceiveProps(nextProps) {
@@ -40,6 +43,11 @@ class AppComponent extends React.Component {
       this.props.fetchMultipleResources(['workspace', 'data_source'], workspaceIds);
     }
   }
+
+  logOut() {
+    userManager.removeUser();
+  }
+
   render() {
     const { user, location, apiToken } = this.props;
     if (this.props.location.pathname !== '/callback' && user === null) {
@@ -61,37 +69,39 @@ class AppComponent extends React.Component {
          entries: this.props.entries
         });
     }
+
+    let dropdownTitle = (
+      <span>
+        <span className="glyphicon glyphicon-user" />{' '}{user && user.profile ? user.profile.nickname : ''}
+      </span>);
+
+    const logOut = _.bind(this.logOut, this);
+
     return (
       <div className="index">
-      <nav className="navbar navbar-inverse navbar-fixed-top">
+        <Navbar inverse fixedTop>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a href="#">Helpt</a>
+            </Navbar.Brand>
+          </Navbar.Header>
+          <Nav pullRight>
+            <NavDropdown title={dropdownTitle} id="navbar-user-dropdown">
+              <MenuItem onClick={logOut}>Log out</MenuItem>
+            </NavDropdown>
+          </Nav>
+        </Navbar>
+
         <div className="container-fluid">
-          <div className="navbar-header">
-            <div className="navbar-brand" href="#">Helpt</div>
-          </div>
-            <ul className="nav navbar-nav navbar-right">
-              <li className="dropdown">
-                <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" tabIndex="-1">
-                    <span className="glyphicon glyphicon-user" />&nbsp; { user && user.profile ? user.profile.nickname : '' }
-                    <span className="caret"></span></a>
-                <ul className="dropdown-menu">
-                  <li><a href="#">Reports</a></li>
-                  <li role="separator" className="divider"></li>
-                  <li><a href="/logout/">Log Out</a></li>
-                </ul>
-              </li>
-            </ul>
-        </div>
-      </nav>
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-sm-7 hours-panel">
-            { mainComponent }
-          </div>
-          <div className="col-sm-5 tasks-panel">
-            { sidebarComponent }
+          <div className="row">
+            <div className="col-sm-7 hours-panel">
+              { mainComponent }
+            </div>
+            <div className="col-sm-5 tasks-panel">
+              { sidebarComponent }
+            </div>
           </div>
         </div>
-      </div>
       </div>
     );
   }
@@ -117,7 +127,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchUserTasks: (user) => {
       if (user.profile.sub) {
         dispatch(fetchResourceFiltered(['task'], {
-          'user': user.profile.sub,
+          'user': user.profile.sub
         }));
         dispatch(fetchResourceFiltered(['entry'], {'filter{user.id}': user.profile.sub}));
       }

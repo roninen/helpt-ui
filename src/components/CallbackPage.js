@@ -12,7 +12,7 @@ class CallbackPage extends React.Component {
     // just redirect to '/' in both cases
     const successCallback = _.bind(this.successCallback, this);
     return (
-      <CallbackComponent userManager={userManager} successCallback={successCallback} errorCallback={this.successCallback}>
+      <CallbackComponent userManager={userManager} successCallback={successCallback} errorCallback={successCallback}>
         <div>
           Redirecting...
         </div>
