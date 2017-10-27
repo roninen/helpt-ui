@@ -1,12 +1,14 @@
 var webpackCfg = require('./webpack.config');
 
+process.env.CHROME_BIN = require('puppeteer').executablePath();
 // Set node environment to testing
 process.env.NODE_ENV = 'test';
+
 
 module.exports = function(config) {
   config.set({
     basePath: '',
-    browsers: [ 'PhantomJS' ],
+    browsers: [ 'ChromeHeadless' ],
     files: [
       'test/loadtests.js'
     ],
