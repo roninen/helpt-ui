@@ -1,5 +1,4 @@
 import { fetchResource } from '../actions/index';
-import _ from 'lodash';
 
 const paginator = ({ dispatch }) => next => action => {
   const result = next(action);
