@@ -17,8 +17,8 @@ export default {
         return { url: '', text: '' };
       }
       return {
-        url: `https://github.com/${task.workspace.origin_id}/issues/${task.origin_id}`,
-        text: `task.workspace.origin_id/${task.origin_id}`,
+        url: null,
+        text: `${task.workspace.name}/${task.origin_id}`,
         icon: sourceSystemIcon('github')
       };
     }

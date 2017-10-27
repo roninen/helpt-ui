@@ -64,7 +64,7 @@ class TasksView extends React.Component {
     }
     const menuitems = [<MenuItem onSelect={clearSelectedWorkspace} key={getIndex()}>Show all</MenuItem>];
     const workspaceFilters = _.reduce(activeWorkspaces, iteratee, menuitems);
-    const selectedTitle =  selectedWorkspace ? selectedWorkspace.data_source.name + '/' + selectedWorkspace.origin_id : 'Filter by workspace';
+    const selectedTitle =  selectedWorkspace ? selectedWorkspace.data_source.name + '/' + selectedWorkspace.name : 'Filter by workspace';
     const onFulltextQueryChange = _.bind(this.onFulltextQueryChange, this);
     return (
       <Panel defaultExpanded header={tasksTitle} bsStyle="info">
