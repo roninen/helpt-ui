@@ -16,8 +16,9 @@ function getEndPoint(resourceType, id) {
   return base;
 }
 
-function shouldBailOut(state, endpoint) {
-  return state.data._apiEndpoints[endpoint];
+export function shouldBailOut(state, endpoint) {
+  const status = state.data._apiEndpoints[endpoint];
+  return status !== undefined && status !== null;
 }
 
 function generateIncludeParameters(resourceTypes) {
