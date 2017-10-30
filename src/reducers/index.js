@@ -65,6 +65,10 @@ function mergeData(state, newData, meta, actionType) {
 // Reducers
 
 function dataReducer(state = initialDataState, action) {
+  if(action.error) {
+    console.error(action);
+    throw action.payload;
+  }
   switch (action.type) {
     case 'FAILURE':
     case 'REQUEST':
