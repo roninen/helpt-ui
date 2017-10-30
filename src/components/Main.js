@@ -12,6 +12,7 @@ import ReportPage from './ReportPage';
 
 import {
   fetchMultipleResources,
+  fetchResource,
   fetchResourceFiltered,
   makeEntryFromTask,
   undeleteEntry,
@@ -21,6 +22,7 @@ import userManager from '../util/user-manager';
 
 class AppComponent extends React.Component {
   componentWillMount() {
+    this.props.fetchResource(['workspace', 'data_source']);
     this.props.fetchAllUsers();
   }
   componentWillReceiveProps(nextProps) {
@@ -36,16 +38,6 @@ class AppComponent extends React.Component {
     }
     if (_.size(nextProps.task) == 0 && nextProps.apiToken) {
       nextProps.fetchUserTasks(nextProps.user);
-    }
-
-    // Todo: make this generic. (or use normalizr)
-    const reducer = (workspaces, task) => {
-      workspaces[task.workspace] = true;
-      return workspaces;
-    };
-    const workspaceIds = _.keys(_.reduce(nextProps.tasks, reducer, {}));
-    if (workspaceIds.length) {
-      this.props.fetchMultipleResources(['workspace', 'data_source'], workspaceIds);
     }
   }
 
@@ -158,6 +150,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     fetchAllUsers: () => {
       dispatch(fetchResourceFiltered(['user'], {}));
+    },
+    fetchResource: (resourceTypes) => {
+      dispatch(fetchResource(resourceTypes));
     }
   };
 };
