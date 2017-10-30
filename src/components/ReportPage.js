@@ -158,7 +158,7 @@ function ReportHeader({filter, latest, total}) {
   return (
     <Well>
       <h3>{name} { dateRange }</h3>
-      <p>{latest}</p>
+      <p>{latestEntry}</p>
       <p>Total hours: {total}</p>
     </Well>
   );
