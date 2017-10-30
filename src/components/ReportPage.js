@@ -6,7 +6,8 @@ import { Grid, Row, Col, FormGroup, FormControl, ControlLabel, Table, Well, Labe
 import Datetime from 'react-datetime';
 
 import moment from 'moment';
-import 'moment/locale/fi';
+
+// import 'moment/locale/fi';
 import _ from 'lodash';
 
 import { generateReport } from '../lib/report';
@@ -106,7 +107,7 @@ class ReportFilterForm extends React.Component {
                 <Col xs={5}>
                   <FormGroup>
                     <ControlLabel>Starting</ControlLabel>
-                    <Datetime ref={(input) => this.beginInput = input} timeFormat={false} locale="fi" input={true} />
+                    <Datetime ref={(input) => this.beginInput = input} timeFormat={false} locale="en" input={true} />
                   </FormGroup>
                 </Col>
                 <Col xs={2}>
@@ -115,7 +116,7 @@ class ReportFilterForm extends React.Component {
                 <Col xs={5}>
                   <FormGroup>
                     <ControlLabel>Ending</ControlLabel>
-                    <Datetime ref={(input) => this.endInput = input} timeFormat={false} locale="fi" />
+                    <Datetime ref={(input) => this.endInput = input} timeFormat={false} locale="en" />
                   </FormGroup>
                 </Col>
               </Row>
