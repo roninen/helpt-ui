@@ -13,7 +13,7 @@ import LoginPage from './LoginPage';
 
 import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
 
-import store from '../stores/index.js'
+import store from '../stores/index.js';
 
 export default (
         <Provider store={store}>
@@ -29,4 +29,4 @@ export default (
               </Route>
           </Router>
       </ OidcProvider>
-    </Provider>)
+    </Provider>);

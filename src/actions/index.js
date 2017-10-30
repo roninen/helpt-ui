@@ -4,7 +4,6 @@ import { createAction } from 'redux-actions';
 import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
-import store from '../stores/index';
 
 require('process');
 const API_BASE_URL = process.env.API_URL;
@@ -17,41 +16,54 @@ function getEndPoint(resourceType, id) {
   return base;
 }
 
-function shouldBailOut(state, endpoint) {
-  return state.data._apiEndpoints[endpoint];
+export function shouldBailOut(state, endpoint) {
+  const status = state.data._apiEndpoints[endpoint];
+  return status !== undefined && status !== null;
 }
 
 function generateIncludeParameters(resourceTypes) {
   return _.map(resourceTypes, (rType) => { return `${rType}.*`; });
 }
 
-function makeAuthHeader() {
-  return `Bearer ${store.getState().apiToken['https://api.hel.fi/auth/projects']}`;
+function makeAuthHeader(apiToken) {
+  return `Bearer ${apiToken['https://api.hel.fi/auth/projects']}`;
+}
+
+function createHeaders(state, defaults = {}) {
+  return Object.assign(defaults, {
+    'Authorization': makeAuthHeader(state.apiToken)
+  });
 }
 
 export const selectWorkspaceFilter = createAction('USER_SELECT_WORKSPACE_FILTER');
 export const clearSelectedWorkspaceFilter = createAction('USER_CLEAR_SELECTED_WORKSPACE_FILTER');
 
-export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id), metadata) {
+export function fetchResource(resourceTypes, id, endpoint = getEndPoint(resourceTypes[0], id), metadata, page = 1) {
+  const multiple = !id;
+  let uri = new URI(endpoint);
   if (resourceTypes.length > 1) {
-    let uri = new URI(endpoint);
     uri.search({'include[]': generateIncludeParameters(resourceTypes.slice(1))});
-    endpoint = uri.toString();
   }
+  let paginatedUri = uri.clone();
+  if (multiple) {
+    paginatedUri.addSearch({page});
+  }
+  endpoint = uri.toString();
+  const paginatedEndpoint = paginatedUri.toString();
   const intention = metadata ? metadata.intention : null;
   return {
     [CALL_API]: {
-      endpoint: endpoint,
+      endpoint: paginatedEndpoint,
       method: 'GET',
       credentials: 'same-origin',
-      headers: { 'Authorization': makeAuthHeader() },
+      headers: createHeaders,
       types: [
-        {type: 'REQUEST', meta: { resourceTypes, endpoint, intention  }},
-        {type: 'SUCCESS', meta: { resourceTypes, multiple: !id, endpoint, intention }},
-        {type: 'FAILURE', meta: { resourceTypes, endpoint, intention }}
+        {type: 'REQUEST', meta: { bareEndpoint: endpoint, page, multiple, id, resourceTypes, endpoint: paginatedEndpoint, intention, metadata }},
+        {type: 'SUCCESS', meta: { bareEndpoint: endpoint, resourceTypes, multiple, id, endpoint: paginatedEndpoint, intention, metadata }},
+        {type: 'FAILURE', meta: { bareEndpoint: endpoint, resourceTypes, endpoint: paginatedEndpoint, id, intention, metadata }}
       ],
       bailout: (state) => {
-        return shouldBailOut(state, endpoint);
+        return shouldBailOut(state, paginatedEndpoint);
       }
     }
   };
@@ -72,7 +84,7 @@ export function modifyResource(resourceType, id, object) {
   const body = JSON.stringify(object);
   return {
     [CALL_API]: {
-      endpoint: endpoint,
+      endpoint,
       method: 'PUT',
       types: [
         {type: 'REQUEST', meta: { resourceTypes: [resourceType], endpoint }},
@@ -82,10 +94,9 @@ export function modifyResource(resourceType, id, object) {
         }},
         {type: 'FAILURE', meta: { resourceType, endpoint }}
       ],
-      body: body,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': makeAuthHeader()
+      body,
+      headers: (state) => {
+        return createHeaders(state, { 'Content-Type': 'application/json' });
       },
       bailout: false
     }
@@ -108,9 +119,8 @@ export function createResource(resourceType, object, bailout = false) {
         {type: 'FAILURE', meta: { resourceType, endpoint }}
       ],
       body: body,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': makeAuthHeader()
+      headers: (state) => {
+        return createHeaders(state, { 'Content-Type': 'application/json' });
       },
       bailout
     }
