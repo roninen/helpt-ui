@@ -5,16 +5,7 @@ import { Table } from 'react-bootstrap';
 class ProjectsSummary extends React.Component {
   render () {
 
-    // TODO: use real data
-    const data = [
-      {name: 'Project Name A', hours: 230},
-      {name: 'Project Name B', hours: 540},
-      {name: 'Project Name C', hours: 940},
-      {name: 'Project Name D', hours: 25},
-      {name: 'Project Name E', hours: 3},
-      {name: 'Project Name F', hours: 410},
-      {name: 'Project Name G', hours: 120}
-    ];
+    const { report } = this.props;
 
     // TODO: choose more harmonious color combination from Helsinki palette
     const COLORS = ['#0072c6', '#009246','#bd2719','#ffc61e', '#00d7a7', '#f5a3c7', '#ffe977','#c2a251'];
@@ -53,7 +44,7 @@ class ProjectsSummary extends React.Component {
           <tbody>
           {
             payload.map((entry, index) => (
-              <tr key={`item-${index}`}>{renderSwatch(entry)}<td>{entry.value}</td><td>({entry.payload.hours}h)</td></tr>
+              <tr key={`item-${index}`}>{renderSwatch(entry)}<td>{entry.value}</td><td>({entry.payload.total} h)</td></tr>
             ))
           }
           </tbody>
@@ -67,17 +58,17 @@ class ProjectsSummary extends React.Component {
         <h5>Hours per Project</h5>
     	  <PieChart width={600} height={400}>
           <Pie
-            data={data}
+            data={report.projects}
             cx={150}
             cy={150}
             outerRadius={120}
-            dataKey="hours"
+            dataKey="total"
             nameKey="name"
             labelLine={false}
             label={renderCustomizedLabel}
           >
             {
-              data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>)
+              report.projects.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>)
             }
           </Pie>
           <Tooltip />

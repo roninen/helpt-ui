@@ -196,7 +196,7 @@ export function setReportDates(begin, end) {
 }
 
 export function filterEntriesForReport(filter, {begin, end}) {
-  let queryFilters = {per_page: 1000, 'filter{-state}': 'deleted'};
+  let queryFilters = {'filter{-state}': 'deleted'};
   if (filter.project) {
     queryFilters['filter{task.workspace.projects}'] = '' + filter.project;
   }

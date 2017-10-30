@@ -7,7 +7,6 @@ import Datetime from 'react-datetime';
 
 import moment from 'moment';
 
-// import 'moment/locale/fi';
 import _ from 'lodash';
 
 import { generateReport } from '../lib/report';
@@ -134,16 +133,16 @@ class ReportFilterForm extends React.Component {
   }
 }
 
-function ReportHeader({filter, latest, total}) {
+function ReportHeader({filter, latest, total, report}) {
   let name = '';
   if (filter.user) {
-    name = `${filter.user.first_name} ${filter.user.last_name}`
+    name = `${filter.user.first_name} ${filter.user.last_name}`;
   }
   else if (filter.organization) {
     name = filter.organization.name;
   }
   function dateFmt(date) {
-    return moment(date).format('ddd ll');
+    return moment(date).format('ddd MM-DD-YYYY');
   }
   let dateRange = null;
   if (filter.begin) {
@@ -156,6 +155,10 @@ function ReportHeader({filter, latest, total}) {
     dateRange += dateFmt(filter.end);
   }
   const latestEntry = latest ? `Latest entry: ${dateFmt(latest)}` : null;
+  let projectsSummary = null;
+  if (report.projects.length > 1) {
+    projectsSummary = <Well><ProjectsSummary report={report}/></Well>;
+  }
   return (
     <div className="results-header">
     <Well>
@@ -163,9 +166,7 @@ function ReportHeader({filter, latest, total}) {
       <p>{latestEntry}</p>
       <p>Total hours: {total}</p>
     </Well>
-    <Well>
-      <ProjectsSummary/>
-    </Well>
+    { projectsSummary }
     </div>
   );
 }
@@ -243,7 +244,7 @@ function Report({filter, report}) {
   });
   return (
     <Grid>
-    <ReportHeader filter={filter} latest={report.latest} total={report.total} />
+    <ReportHeader report={report} filter={filter} latest={report.latest} total={report.total} />
     { projectReports }
     </Grid>
   );

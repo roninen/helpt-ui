@@ -66,7 +66,6 @@ function mergeData(state, newData, meta, actionType) {
 
 function dataReducer(state = initialDataState, action) {
   if(action.error) {
-    console.error(action);
     throw action.payload;
   }
   switch (action.type) {
@@ -136,13 +135,19 @@ const initialReportRawData = Immutable({
 function reportData(state = initialReportRawData, action) {
   if (action.type === 'REQUEST' && action.meta.intention == 'report') {
     // TODO: bailout messes with this
-    return initialReportRawData;
+    return state;
   }
   if (action.type === 'SUCCESS' && action.meta.intention == 'report') {
-    const epoch = moment('1970-01-01');
-    let latest = epoch;
+    const epoch = '1970-01-01';
+    let latest;
+    if (state.latest) {
+      latest = state.latest;
+    }
+    else {
+      latest = epoch;
+    }
     const entry = _.fromPairs(_.map(action.payload.entry, (e) => {
-      if (moment(e.date).isAfter(latest)) {
+      if (moment(e.date).isAfter(moment(latest))) {
         latest = e.date;
       }
       return [[e.id], true];
@@ -150,7 +155,7 @@ function reportData(state = initialReportRawData, action) {
     if (epoch === latest) {
       latest = null;
     }
-    return state.merge({entry, latest, ready: true});
+    return Immutable.update(state, 'entry', Immutable.merge, entry).merge({ready: true, latest});
   }
   return state;
 }
