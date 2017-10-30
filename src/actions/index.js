@@ -31,7 +31,11 @@ function generateIncludeParameters(resourceTypes) {
 }
 
 function makeAuthHeader(apiToken) {
-  return `Bearer ${apiToken['https://api.hel.fi/auth/projects']}`;
+  const token = apiToken['https://api.hel.fi/auth/projects'];
+  if (token) {
+    return `Bearer ${token}`;
+  }
+  return '';
 }
 
 function createHeaders(state, defaults = {}) {
