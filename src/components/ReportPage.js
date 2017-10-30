@@ -12,7 +12,7 @@ import _ from 'lodash';
 
 import { generateReport } from '../lib/report';
 import { fetchResourceFiltered, selectReportProject,
-         filterEntriesForReport, setReportDates } from '../actions/index'
+         filterEntriesForReport, setReportDates } from '../actions/index';
 
 class UserOrganizationSuggestions extends React.Component {
   constructor() {
@@ -33,7 +33,7 @@ class UserOrganizationSuggestions extends React.Component {
   render() {
     let validationState = null;
     if (this.state.value.length) {
-      validationState = this.state.matching ? 'success' : 'warning'
+      validationState = this.state.matching ? 'success' : 'warning';
     }
 
     return (
@@ -58,10 +58,10 @@ class ProjectMenu extends React.Component {
   render() {
     const { projects, selectedProject } = this.props;
     const menuItems = _.map(projects, (p) => {
-      return <MenuItem key={p.id} active={p.id === selectedProject} eventKey={p.id} onSelect={this.onProjectSelect}>{p.name}</MenuItem>
+      return <MenuItem key={p.id} active={p.id === selectedProject} eventKey={p.id} onSelect={this.onProjectSelect}>{p.name}</MenuItem>;
     });
     const selectedProjectObject = _.find(projects, (p) => selectedProject === p.id);
-    let dropdownButtonTitle = 'All projects'
+    let dropdownButtonTitle = 'All projects';
     if (selectedProjectObject) {
       dropdownButtonTitle = selectedProjectObject.name;
     }
