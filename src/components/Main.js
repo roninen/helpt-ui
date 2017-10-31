@@ -23,7 +23,8 @@ import userManager from '../util/user-manager';
 class AppComponent extends React.Component {
   componentWillMount() {
     this.props.fetchResource(['workspace', 'data_source']);
-    this.props.fetchAllUsers();
+    this.props.fetchResource(['user']);
+    this.props.fetchResource(['organization']);
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.user === null && nextProps.apiToken) {
@@ -147,9 +148,6 @@ const mapDispatchToProps = (dispatch) => {
     },
     fetchApiToken: (accessToken) => {
       dispatch(fetchApiToken(accessToken));
-    },
-    fetchAllUsers: () => {
-      dispatch(fetchResourceFiltered(['user'], {}));
     },
     fetchResource: (resourceTypes) => {
       dispatch(fetchResource(resourceTypes));
