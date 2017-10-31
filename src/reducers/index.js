@@ -160,5 +160,26 @@ function reportData(state = initialReportRawData, action) {
   return state;
 }
 
-export default combineReducers({oidc, data: dataReducer, transient: transientState, apiToken, reportFilter, reportData});
+const initialAutosuggestUsersOrganizations = Immutable({});
 
+function uniqueIndexKey(resourceType, obj) {
+  return `${resourceType}:${obj.id}`;
+}
+
+function autosuggestUsersOrganizations(state = initialAutosuggestUsersOrganizations, action) {
+  if (action.type === 'SUCCESS') {
+    const mainResourceType = action.meta.resourceTypes[0];
+    if (mainResourceType === 'user' ||
+        mainResourceType === 'organization') {
+      const keyValuePairs = _.map(
+        action.payload[mainResourceType], (x) =>
+          [uniqueIndexKey(mainResourceType, x), Object.assign(x, {type: mainResourceType})]);
+      return Immutable.merge(state, _.fromPairs(keyValuePairs));
+    }
+  }
+  return state;
+}
+
+export default combineReducers({
+  oidc, data: dataReducer, transient: transientState,
+  apiToken, reportFilter, reportData, autosuggestUsersOrganizations});
