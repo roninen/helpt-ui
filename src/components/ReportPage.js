@@ -95,10 +95,8 @@ class ReportFilterForm extends React.Component {
         <form className="report-filters">
           <Row>
             <Col sm={6}>
-              <UserOrganizationSuggestions />
             </Col>
             <Col sm={6}>
-              <ProjectMenu selectedProject={filter.project} projects={this.props.projects} selectReportProject={this.props.selectReportProject} />
             </Col>
           </Row>
           <Row>
@@ -125,6 +123,9 @@ class ReportFilterForm extends React.Component {
                 <Button onClick={this.getReport}>Create report</Button>
                 </Col>
               </Row>
+            </Col>
+            <Col sm={6}>
+              <ProjectMenu selectedProject={filter.project} projects={this.props.projects} selectReportProject={this.props.selectReportProject} />
             </Col>
           </Row>
         </form>
