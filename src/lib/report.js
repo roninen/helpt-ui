@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { expandItems } from '../util/data'
+import { expandItems } from '../util/data';
 
 /*
   {
@@ -38,7 +38,7 @@ function expandByTask(data, byTask) {
       name: data.task[taskId].name,
       state: data.task[taskId].state,
       total: _.reduce(entries, (sum, e) => (sum + e.minutes), 0)/60
-    }
+    };
   });
 }
 
@@ -51,20 +51,20 @@ function expandByUser(data, byUser) {
       name: userName(data.user[userId]),
       tasks: tasks,
       total: userTotal
-    }
+    };
   });
 }
 
 function expandByProject(data, byProject) {
   return _.map(byProject, (entries, projectId) => {
-    const users = expandByUser(data, _.groupBy(entries, (e) => e.user.id))
+    const users = expandByUser(data, _.groupBy(entries, (e) => e.user.id));
     const projectTotal = _.reduce(users, (sum, u) => (sum + u.total), 0);
     return {
       id: projectId,
       name: projectId && projectId !== 'undefined' ? data.project[projectId].name : 'unknown',
       users: users,
       total: projectTotal
-    }
+    };
   });
 }
 
