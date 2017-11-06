@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { reducer as oidc } from 'redux-oidc';
+import { GROUPINGS as REPORT_FILTER_GROUPINGS } from '../lib/report';
 import Immutable from 'seamless-immutable';
 import _ from 'lodash';
 import moment from 'moment';
@@ -112,12 +113,17 @@ const initialReportFilterState = Immutable({
   user: null,
   organization: null,
   project: null,
+  grouping: 'project.user',
   begin: null,
   end: null
 });
 
 function reportFilter(state = initialReportFilterState, action) {
   if (action.type == 'REPORT_FILTER_SET') {
+    if ('grouping' in action.payload &&
+        !_.find(REPORT_FILTER_GROUPINGS, (g) => g.id === action.payload.grouping)) {
+      throw new TypeError(`Grouping ${action.payload.grouping} not available.`);
+    }
     return state.merge(action.payload);
   }
   else if (action.type == 'REPORT_FILTER_CLEAR') {

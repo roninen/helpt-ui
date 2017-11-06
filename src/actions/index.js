@@ -176,7 +176,14 @@ export function selectReportProject(key) {
     payload: {
       project: key === 'clear' ? null : Number.parseInt(key)
     }
-  }
+  };
+}
+
+export function selectReportGrouping(key) {
+  return {
+    type: 'REPORT_FILTER_SET',
+    payload: { grouping: key }
+  };
 }
 
 export function setReportDates(begin, end) {
@@ -187,7 +194,7 @@ export function setReportDates(begin, end) {
       begin: begin && begin.format(FORMAT),
       end: end && end.format(FORMAT)
     }
-  }
+  };
 }
 
 export function filterEntriesForReport(filter, {begin, end}) {

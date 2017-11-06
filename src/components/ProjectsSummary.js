@@ -33,24 +33,21 @@ class ProjectsSummary extends React.Component {
       return (
         <td style={swatchStyle}>&nbsp;&nbsp;</td>
       );
-    }
+    };
 
     // Render custom legend as a table
     const renderLegend = (props) => {
       const { payload } = props;
+      const rows = payload.map((entry, index) => (
+        <tr key={`item-${index}`}>{renderSwatch(entry)}<td>{entry.value}</td><td>({entry.payload.total} h)</td></tr>
+      ));
 
       return (
         <Table condensed hover className="small">
-          <tbody>
-          {
-            payload.map((entry, index) => (
-              <tr key={`item-${index}`}>{renderSwatch(entry)}<td>{entry.value}</td><td>({entry.payload.total} h)</td></tr>
-            ))
-          }
-          </tbody>
+          <tbody>{ rows }</tbody>
         </Table>
       );
-    }
+    };
 
     // The project breakdown pie
     return (
@@ -58,7 +55,7 @@ class ProjectsSummary extends React.Component {
         <h5>Hours per Project</h5>
     	  <PieChart width={600} height={400}>
           <Pie
-            data={report.projects}
+            data={report.children}
             cx={150}
             cy={150}
             outerRadius={120}
@@ -68,7 +65,7 @@ class ProjectsSummary extends React.Component {
             label={renderCustomizedLabel}
           >
             {
-              report.projects.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>)
+              report.children.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>)
             }
           </Pie>
           <Tooltip />

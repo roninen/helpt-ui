@@ -9,8 +9,8 @@ import moment from 'moment';
 
 import _ from 'lodash';
 
-import { generateReport } from '../lib/report';
-import { fetchResourceFiltered, selectReportProject,
+import { generateReport, GROUPINGS } from '../lib/report';
+import { fetchResourceFiltered, selectReportProject, selectReportGrouping,
          filterEntriesForReport, setReportDates } from '../actions/index';
 import ProjectsSummary from './ProjectsSummary';
 
@@ -80,6 +80,30 @@ class ProjectMenu extends React.Component {
   }
 }
 
+class GroupingMenu extends React.Component {
+  onGroupingSelect = (key) => {
+    this.props.selectReportGrouping(key);
+  }
+  render() {
+    const { selectedGrouping } = this.props;
+    const menuItems = _.map(GROUPINGS, (g) => {
+      return <MenuItem key={g.id} active={g.id === selectedGrouping} eventKey={g.id} onSelect={this.onGroupingSelect}>{g.name}</MenuItem>;
+    });
+    const selectedGroupingObject = _.find(GROUPINGS, (g) => selectedGrouping === g.id);
+    const dropdownButtonTitle = selectedGroupingObject.name;
+    return (
+      <FormGroup controlId="formBasicText">
+      <ControlLabel>Group by</ControlLabel>
+      <ButtonToolbar>
+      <DropdownButton title={dropdownButtonTitle} id="dropdown-size-medium" block>
+        { menuItems }
+      </DropdownButton>
+      </ButtonToolbar>
+      </FormGroup>
+    );
+  }
+}
+
 class ReportFilterForm extends React.Component {
   getReport = () => {
     const begin = this.beginInput.state.selectedDate;
@@ -116,6 +140,11 @@ class ReportFilterForm extends React.Component {
                     <ControlLabel>Ending</ControlLabel>
                     <Datetime ref={(input) => this.endInput = input} timeFormat={false} locale="en" />
                   </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={6}>
+                <GroupingMenu selectedGrouping={filter.grouping} groupins={this.props.groupings} selectReportGrouping={this.props.selectReportGrouping} />
                 </Col>
               </Row>
               <Row>
@@ -157,7 +186,7 @@ function ReportHeader({filter, latest, total, report}) {
   }
   const latestEntry = latest ? `Latest entry: ${dateFmt(latest)}` : null;
   let projectsSummary = null;
-  if (report.projects.length > 1) {
+  if (report.children.length > 1 && report.type === 'project') {
     projectsSummary = <Well><ProjectsSummary report={report}/></Well>;
   }
   return (
@@ -199,7 +228,10 @@ function TaskReport({userName, taskLog}) {
 
 
 function UserReport({userLog}) {
-  const taskReports = _.map(userLog.tasks, (t, i) => {
+  if (userLog.type !== 'task') {
+    return null;
+  }
+  const taskReports = _.map(userLog.children, (t, i) => {
     return <TaskReport key={i} userName={userLog.name} taskLog={t} />;
   });
   return (
@@ -210,7 +242,10 @@ function UserReport({userLog}) {
 }
 
 function ProjectReport({projectLog}) {
-  const userReports = _.map(projectLog.users, (u, i) => {
+  if (projectLog.type !== 'user') {
+    return null;
+  }
+  const userReports = _.map(projectLog.children, (u, i) => {
     return <UserReport key={i} userLog={u} />;
   });
   return (
@@ -240,7 +275,7 @@ function ProjectReport({projectLog}) {
 }
 
 function Report({filter, report}) {
-  const projectReports = _.map(report.projects, (p, i) => {
+  const projectReports = _.map(report.children, (p, i) => {
     return <ProjectReport key={i} projectLog={p} />;
   });
   return (
@@ -289,7 +324,13 @@ class ReportPage extends React.Component {
 
       <section className="header-section">
         <Grid>
-          <ReportFilterForm filter={filter} projects={projects} selectReportProject={this.props.selectReportProject} getReport={this.props.getReport} setReportDates={this.props.setReportDates} />
+          <ReportFilterForm
+              filter={filter}
+              projects={projects}
+              selectReportProject={this.props.selectReportProject}
+              selectReportGrouping={this.props.selectReportGrouping}
+              getReport={this.props.getReport}
+              setReportDates={this.props.setReportDates} />
         </Grid>
       </section>
       <section className="report-contents">
@@ -326,6 +367,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     selectReportProject: (key) => {
       dispatch(selectReportProject(key));
+    },
+    selectReportGrouping: (key) => {
+      dispatch(selectReportGrouping(key));
     },
     getReport: (filter, opts) => {
       dispatch(filterEntriesForReport(filter, opts));

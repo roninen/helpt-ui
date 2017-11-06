@@ -1,6 +1,12 @@
 import _ from 'lodash';
 import { expandItems } from '../util/data';
 
+export const GROUPINGS = [
+  {id: 'project.user', name: 'Project → User'},
+  {id: 'user.date.project', name: 'User → Date → Project'},
+  {id: 'user.project.date', name: 'User → Project → Date'}
+];
+
 /*
   {
     total: <sumtotal all projects>
@@ -49,7 +55,8 @@ function expandByUser(data, byUser) {
     return {
       id: userId,
       name: userName(data.user[userId]),
-      tasks: tasks,
+      children: tasks,
+      type: 'task',
       total: userTotal
     };
   });
@@ -62,7 +69,8 @@ function expandByProject(data, byProject) {
     return {
       id: projectId,
       name: projectId && projectId !== 'undefined' ? data.project[projectId].name : 'unknown',
-      users: users,
+      children: users,
+      type: 'user',
       total: projectTotal
     };
   });
@@ -82,6 +90,7 @@ export function generateReport(state, entryIds) {
     ready: true,
     total: fullTotal / 60,
     latest: state.reportData.latest,
-    projects: expandByProject(state.data, groupedByProject)
+    type: 'project',
+    children: expandByProject(state.data, groupedByProject)
   };
 }
