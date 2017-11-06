@@ -200,7 +200,7 @@ function TaskReport({userName, taskLog}) {
 
 function UserReport({userLog}) {
   const taskReports = _.map(userLog.tasks, (t, i) => {
-    return <TaskReport key={i} userName={userLog.name} taskLog={t} />
+    return <TaskReport key={i} userName={userLog.name} taskLog={t} />;
   });
   return (
     <tbody>
@@ -241,7 +241,7 @@ function ProjectReport({projectLog}) {
 
 function Report({filter, report}) {
   const projectReports = _.map(report.projects, (p, i) => {
-    return <ProjectReport key={i} projectLog={p} />
+    return <ProjectReport key={i} projectLog={p} />;
   });
   return (
     <Grid>
@@ -259,7 +259,7 @@ class ReportPage extends React.Component {
   render() {
     const { filter, report, projects } = this.props;
     if (_.size(projects == 0)) {
-      return <div>Loading...</div>
+      return <div>Loading...</div>;
     }
     let reportComponent = null;
     if (report.ready) {
@@ -316,7 +316,7 @@ function mapStateToProps(state) {
     filter: state.reportFilter,
     report: calculateReport(state),
     projects: _.values(state.data.project)
-  }
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -337,7 +337,7 @@ const mapDispatchToProps = (dispatch) => {
     // clearReportFilter,
     // updateReport,
     // clearReport
-  }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReportPage);
