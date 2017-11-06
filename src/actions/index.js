@@ -5,11 +5,6 @@ import URI from 'urijs';
 import * as timeUtils from '../util/time';
 import { findEntryForTask } from '../util/data';
 
-/*
-  *  TODO: pagination
-   *
-    */
-
 require('process');
 const API_BASE_URL = process.env.API_URL;
 
