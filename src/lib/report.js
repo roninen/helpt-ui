@@ -3,7 +3,7 @@ import { expandItems } from '../util/data';
 
 export const GROUPINGS = [
   {id: 'project', name: 'Project'},
-  {id: 'user', name: 'User'},
+  {id: 'user', name: 'User'}
 ];
 
 function userName(user) {
@@ -14,7 +14,7 @@ const highLevelGroupings = {
   project: {
     // TODO: this should be grouped by the entry task project, not the workspace project
     // (the task will only have one project).
-    group: (e) => e.task.workspace.projects[0],
+    group: (e) => e.task.workspace.projects[0].id,
     presentation: (x) => x.name,
     resource: 'project'
   },
@@ -28,7 +28,13 @@ const highLevelGroupings = {
     resource: 'task',
     group: (e) => e.task.id,
     presentation: (x) => x.name,
-    toRow: ({name, state}) => {return {taskName: name, taskState: state};}
+    toRow: ({name, state, workspace}) => {
+      return {
+        taskName: name,
+        taskState: state,
+        projectName: workspace.projects[0].name
+      };
+    }
   }
 };
 
@@ -38,9 +44,9 @@ function expandFields(data, groupedEntries, grouping) {
      const entries = _.map(originalEntries, (entry) => {
        return _.reduce(entry, (acc, val, key) => {
          if (val instanceof Object) {
-           return Object.assign({}, acc, highLevelGroupings[key].toRow(val));
+           return Object.assign(acc, highLevelGroupings[key].toRow(val));
          }
-         return Object.assign({}, acc, {key: val});
+         return Object.assign(acc, {[key]: val});
        }, {});
      });
      return {name, entries};
@@ -52,8 +58,7 @@ export function generateReport(state, entryIds, groupingKey) {
   const entries = _.map(entryIds, (eid) => state.data.entry[eid]);
   const fullTotal = _.reduce(entries, (sum, e) => (sum + e.minutes), 0);
   const expandedEntries = expandItems(state, entries,
-                                      {task: {workspace: {projects: {}}}, user: {}});
-
+                                      {task: {workspace: {projects: {name: {}}}}, user: {}});
   const grouping = highLevelGroupings[groupingKey];
   const groupedEntries = _.groupBy(expandedEntries, grouping.group);
   return {

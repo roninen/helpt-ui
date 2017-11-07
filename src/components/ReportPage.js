@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, FormGroup, FormControl, ControlLabel, Table, Well, Label,
+import { Grid, Row, Col, FormGroup, FormControl, ControlLabel, Well,
          Glyphicon, ButtonToolbar, DropdownButton, MenuItem, Button  } from 'react-bootstrap';
 import Datetime from 'react-datetime';
 
@@ -204,87 +204,50 @@ function ReportHeader({filter, latest, total, report}) {
   );
 }
 
-function TaskReport({userName, taskLog}) {
-  let statusLabel = null;
-  if (taskLog.state == 'closed') {
-    statusLabel = <Label bsStyle="success">Done</Label>;
-  }
-  else {
-    statusLabel = <Label bsStyle="warning">Open</Label>;
-  }
-  return (
-    <tr>
-      <td>{userName}</td>
-      <td>
-        <div className="task-listing-item-content">
-          { /* <div className="task-source"><a tabIndex="-2" href="https://trello.com/c/598ae652f38d421a141f9b10"><i aria-hidden="true" className="fa task-source-icon fa-trello"></i><span className="task-source-header">Aok:n kanban</span></a></div> */ }
-          { /* TODO: add link to task <a tabIndex="-1" > href="https://trello.com/c/598ae652f38d421a141f9b10"*/ }
-          <div className="task-description">{taskLog.name}</div>
-        </div>
-      </td>
-      <td>{statusLabel}</td>
-      <td className="text-right">-</td>
-      <td className="text-right">{taskLog.total}</td>
-    </tr>
-  );
-}
+function ReportTable({projectLog, grouping}) {
 
-
-function UserReport({userLog}) {
-  if (userLog.type !== 'task') {
-    return null;
-  }
-  const taskReports = _.map(userLog.children, (t, i) => {
-    return <TaskReport key={i} userName={userLog.name} taskLog={t} />;
-  });
+  const columns = [
+    {
+      Header: 'User',
+      accessor: 'user',
+      show: (grouping !== 'user')
+    },
+    {
+      Header: 'Task',
+      accessor: 'taskName'
+    },
+    {
+      Header: 'Status',
+      accessor: 'taskState'
+    },
+    {
+      Header: 'Date',
+      accessor: 'date'
+    },
+    { Header: 'Project',
+      accessor: 'projectName',
+      show: (grouping !== 'project')
+    }
+  ];
   return (
-    <tbody>
-      { taskReports }
-    </tbody>
-  );
-}
-
-function ProjectReport({projectLog}) {
-  if (projectLog.type !== 'user') {
-    return null;
-  }
-  const userReports = _.map(projectLog.children, (u, i) => {
-    return <UserReport key={i} userLog={u} />;
-  });
-  return (
-    <Table responsive className="report-table">
-      <thead>
-        <tr>
-          <th colSpan="5">
-            <h4>{projectLog.name}</h4>
-          </th>
-        </tr>
-        <tr>
-          <th>User</th>
-          <th>Task</th>
-          <th>Status</th>
-          <th className="text-right">Estimate</th>
-          <th className="text-right">Hours</th>
-        </tr>
-      </thead>
-      { userReports }
-      <tfoot>
-        <tr>
-          <td colSpan="4" className="text-right">Project total</td><td className="text-right">{projectLog.total}</td>
-        </tr>
-      </tfoot>
-    </Table>
+    <div>
+        <h4>{projectLog.name}</h4>
+        <ReactTable
+            data={projectLog.entries}
+            columns={columns}
+            />
+    </div>
   );
 }
 
 function Report({filter, report}) {
-  const projectReports = _.map(report.children, (p, i) => {
-    return <ProjectReport key={i} projectLog={p} />;
+  const reports = _.map(report.children, (p, i) => {
+    return <ReportTable key={i} projectLog={p} grouping={filter.grouping} />;
   });
   return (
     <Grid>
     <ReportHeader report={report} filter={filter} latest={report.latest} total={report.total} />
-    { projectReports }
+    { reports }
     </Grid>
   );
 }

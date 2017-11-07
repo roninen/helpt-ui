@@ -10,7 +10,13 @@ export function findEntryForTask(entries, userId, task, date, options={findDelet
 }
 
 function getResourceItems(state, resourceType) {
-  return state.data[resourceType];
+  let attempt = state.data[resourceType];
+  if (attempt) return attempt;
+  if (resourceType[resourceType.length - 1] == 's') {
+    // TODO: rude attempt to remove plural
+    return state.data[resourceType.slice(0, resourceType.length - 1)];
+  }
+  return null;
 }
 
 function expandKey(state, unexpandedValue, key, keysToExpand) {
