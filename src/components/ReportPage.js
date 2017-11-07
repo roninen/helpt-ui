@@ -205,11 +205,12 @@ function ReportHeader({filter, latest, total, report}) {
 }
 
 function ReportTable({projectLog, grouping}) {
-
+  const uniquify = vals => _.uniq(vals).join(' & ');
   const columns = [
     {
       Header: 'User',
       accessor: 'user',
+      aggregate: uniquify,
       show: (grouping !== 'user')
     },
     {
@@ -218,19 +219,42 @@ function ReportTable({projectLog, grouping}) {
     },
     {
       Header: 'Status',
-      accessor: 'taskState'
+      accessor: 'taskState',
+      maxWidth: 100,
+      aggregate: uniquify
     },
     {
       Header: 'Date',
-      accessor: 'date'
+      accessor: 'date',
+      maxWidth: 200,
+      aggregate: (vals) => {
+        const moments = _.map(vals, (v) => {
+          return moment(v);
+        });
+        const max = moment.max(moments);
+        const min = moment.min(moments);
+        if (max.isSame(min)) {
+          return max.format('YYYY-MM-DD');
+        }
+        return `${min.format('YYYY-MM-DD')}…${max.format('YYYY-MM-DD')}`;
+      }
     },
     { Header: 'Project',
       accessor: 'projectName',
-      show: (grouping !== 'project')
+      show: (grouping !== 'project'),
+      aggregate: uniquify
     },
     {
       Header: 'Minutes',
-      accessor: 'minutes'
+      accessor: 'minutes',
+      maxWidth: 100,
+      aggregate: vals => _.sum(vals),
+      Footer: (
+        <span>
+            <strong>Total:</strong>{" "}
+            {_.sum(_.map(projectLog.entries, d => d.minutes))}
+        </span>
+      )
     }
   ];
   return (
@@ -239,6 +263,9 @@ function ReportTable({projectLog, grouping}) {
         <ReactTable
             data={projectLog.entries}
             columns={columns}
+            minRows={5}
+            pivotBy={['user'], ['taskName']}
+            showPageJump={false}
             />
     </div>
   );
