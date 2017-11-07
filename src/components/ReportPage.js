@@ -206,6 +206,14 @@ function ReportHeader({filter, latest, total, report}) {
 
 function ReportTable({projectLog, grouping}) {
   const uniquify = vals => _.uniq(vals).join(' & ');
+  const formatDuration = value => {
+    let duration = moment.duration(value, 'minutes');
+    let minutes = duration.minutes();
+    if (minutes == 0) {
+      minutes = '00';
+    }
+    return <span>{Math.floor(duration.asHours())}:{minutes}</span>;
+  };
   const columns = [
     {
       Header: 'User',
@@ -245,14 +253,16 @@ function ReportTable({projectLog, grouping}) {
       aggregate: uniquify
     },
     {
-      Header: 'Minutes',
+      Header: 'Time',
+      Cell: ({value}) => formatDuration(value),
       accessor: 'minutes',
       maxWidth: 100,
       aggregate: vals => _.sum(vals),
       Footer: (
         <span>
-            <strong>Total:</strong>{" "}
-            {_.sum(_.map(projectLog.entries, d => d.minutes))}
+            <strong>Sum {" "}
+            {formatDuration(_.sum(_.map(projectLog.entries, d => d.minutes)))}
+            </strong>
         </span>
       )
     }
