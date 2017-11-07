@@ -227,6 +227,10 @@ function ReportTable({projectLog, grouping}) {
     { Header: 'Project',
       accessor: 'projectName',
       show: (grouping !== 'project')
+    },
+    {
+      Header: 'Minutes',
+      accessor: 'minutes'
     }
   ];
   return (
