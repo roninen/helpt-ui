@@ -5,6 +5,9 @@ import { Grid, Row, Col, FormGroup, FormControl, ControlLabel, Table, Well, Labe
          Glyphicon, ButtonToolbar, DropdownButton, MenuItem, Button  } from 'react-bootstrap';
 import Datetime from 'react-datetime';
 
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
+
 import moment from 'moment';
 
 import _ from 'lodash';
