@@ -113,7 +113,7 @@ const initialReportFilterState = Immutable({
   user: null,
   organization: null,
   project: null,
-  grouping: 'project.user',
+  grouping: 'project',
   begin: null,
   end: null
 });

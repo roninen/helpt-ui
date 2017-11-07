@@ -2,97 +2,64 @@ import _ from 'lodash';
 import { expandItems } from '../util/data';
 
 export const GROUPINGS = [
-  {id: 'project.user', name: 'Project → User'},
-  {id: 'user.date.project', name: 'User → Date → Project'},
-  {id: 'user.project.date', name: 'User → Project → Date'}
+  {id: 'project', name: 'Project'},
+  {id: 'user', name: 'User'},
 ];
-
-/*
-  {
-    total: <sumtotal all projects>
-    latest:
-    type: project
-    children: [
-      {
-        id: <n>,
-        total: <sum>,
-        type: user,
-        children: [
-          {
-            name:
-            id:
-            total:
-            type: task
-            children: [
-              name:
-              id:
-              status:
-              estimate: undefined,
-              total:
-            ]
-          }
-        ]
-      }
-    ]
-*/
 
 function userName(user) {
   return `${user.first_name} ${user.last_name}`;
 }
 
-function expandByTask(data, byTask) {
-  return _.map(byTask, (entries, taskId) => {
-    return {
-      id: taskId,
-      name: data.task[taskId].name,
-      state: data.task[taskId].state,
-      total: _.reduce(entries, (sum, e) => (sum + e.minutes), 0)/60
-    };
-  });
+const highLevelGroupings = {
+  project: {
+    // TODO: this should be grouped by the entry task project, not the workspace project
+    // (the task will only have one project).
+    group: (e) => e.task.workspace.projects[0],
+    presentation: (x) => x.name,
+    resource: 'project'
+  },
+  user: {
+    resource: 'user',
+    group: (e) => e.user.id,
+    presentation: (x) => userName(x),
+    toRow: (x) => {return {user: userName(x)};}
+  },
+  task: {
+    resource: 'task',
+    group: (e) => e.task.id,
+    presentation: (x) => x.name,
+    toRow: ({name, state}) => {return {taskName: name, taskState: state};}
+  }
+};
+
+function expandFields(data, groupedEntries, grouping) {
+   return _.map(groupedEntries, (originalEntries, groupId) => {
+     const name = grouping.presentation(data[(grouping.resource)][groupId]);
+     const entries = _.map(originalEntries, (entry) => {
+       return _.reduce(entry, (acc, val, key) => {
+         if (val instanceof Object) {
+           return Object.assign({}, acc, highLevelGroupings[key].toRow(val));
+         }
+         return Object.assign({}, acc, {key: val});
+       }, {});
+     });
+     return {name, entries};
+   });
 }
 
-function expandByUser(data, byUser) {
-  return _.map(byUser, (entries, userId) => {
-    const tasks = _.sortBy(expandByTask(data, _.groupBy(entries, (e) => e.task.id)), (t) => { return -t.total; });
-    const userTotal = _.reduce(tasks, (sum, t) => (sum + t.total), 0);
-    return {
-      id: userId,
-      name: userName(data.user[userId]),
-      children: tasks,
-      type: 'task',
-      total: userTotal
-    };
-  });
-}
-
-function expandByProject(data, byProject) {
-  return _.map(byProject, (entries, projectId) => {
-    const users = expandByUser(data, _.groupBy(entries, (e) => e.user.id));
-    const projectTotal = _.reduce(users, (sum, u) => (sum + u.total), 0);
-    return {
-      id: projectId,
-      name: projectId && projectId !== 'undefined' ? data.project[projectId].name : 'unknown',
-      children: users,
-      type: 'user',
-      total: projectTotal
-    };
-  });
-}
-
-export function generateReport(state, entryIds) {
+export function generateReport(state, entryIds, groupingKey) {
   // TODO: memoize
-  const entries = _.map(entryIds, (eid) => {
-    return state.data.entry[eid];
-  });
-  const expandedEntries = expandItems(
-    state, entries, {task: {workspace: {projects: {}}}, user: {}});
-  let fullTotal = _.reduce(entries, (sum, e) => { return (sum + e.minutes) }, 0);
-  const groupedByProject = _.groupBy(expandedEntries, (e) => e.task.workspace.projects[0]);
+  const entries = _.map(entryIds, (eid) => state.data.entry[eid]);
+  const fullTotal = _.reduce(entries, (sum, e) => (sum + e.minutes), 0);
+  const expandedEntries = expandItems(state, entries,
+                                      {task: {workspace: {projects: {}}}, user: {}});
+
+  const grouping = highLevelGroupings[groupingKey];
+  const groupedEntries = _.groupBy(expandedEntries, grouping.group);
   return {
     ready: true,
     total: fullTotal / 60,
     latest: state.reportData.latest,
-    type: 'project',
-    children: expandByProject(state.data, groupedByProject)
+    children: expandFields(state.data, groupedEntries, grouping)
   };
 }

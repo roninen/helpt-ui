@@ -352,7 +352,7 @@ function calculateReport(state) {
       ready: false
     };
   }
-  return generateReport(state, _.keys(state.reportData.entry));
+  return generateReport(state, _.keys(state.reportData.entry), state.reportFilter.grouping);
 }
 
 function mapStateToProps(state) {
