@@ -11,16 +11,19 @@ export const GROUPINGS = [
   {
     total: <sumtotal all projects>
     latest:
-    projects: [   // TODO: rename to children, add type tag (more generic)
+    type: project
+    children: [
       {
         id: <n>,
         total: <sum>,
-        users: [
+        type: user,
+        children: [
           {
             name:
             id:
             total:
-            tasks: [
+            type: task
+            children: [
               name:
               id:
               status:
@@ -75,7 +78,6 @@ function expandByProject(data, byProject) {
     };
   });
 }
-
 
 export function generateReport(state, entryIds) {
   // TODO: memoize
