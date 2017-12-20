@@ -97,7 +97,7 @@ function transientState(state = initialTransientState, action) {
   return state;
 }
 
-const initialApiTokenState = {};
+const initialApiTokenState = null;
 
 function apiToken(state = initialApiTokenState, action) {
   switch (action.type) {
