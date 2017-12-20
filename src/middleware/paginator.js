@@ -3,7 +3,7 @@ import { fetchResource } from '../actions/index';
 const paginator = ({ dispatch }) => next => action => {
   const result = next(action);
   if (action.type === 'SUCCESS') {
-    if (action.payload.meta.page) {
+    if (action.payload.meta && action.payload.meta.page) {
       const nextPage = action.payload.meta.page + 1;
       if (nextPage <= action.payload.meta.total_pages) {
         const { resourceTypes, id, bareEndpoint: endpoint, metadata } = action.meta;
