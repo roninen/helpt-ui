@@ -7,15 +7,20 @@ export const GROUPINGS = [
 ];
 
 function userName(user) {
-  return `${user.first_name} ${user.last_name}`;
+  if ((user.first_name && user.first_name.length > 0) || (user.last_name && user.last_name.length > 0)) {
+    return `${user.first_name} ${user.last_name}`;
+  }
+  return user.email;
 }
+
+const MISSING_PROJECT_NAME = 'Missing project';
 
 const highLevelGroupings = {
   project: {
     // TODO: this should be grouped by the entry task project, not the workspace project
     // (the task will only have one project).
-    group: (e) => e.task.workspace.projects[0].id,
-    presentation: (x) => x.name,
+    group: (e) => e.task.workspace.projects.length > 0 ? e.task.workspace.projects[0].id : 'missing_project',
+    presentation: (x) => x ? x.name : MISSING_PROJECT_NAME,
     resource: 'project'
   },
   user: {
@@ -32,7 +37,7 @@ const highLevelGroupings = {
       return {
         taskName: name,
         taskState: state,
-        projectName: workspace.projects[0].name
+        projectName: workspace.projects.length > 0 ? workspace.projects[0].name : MISSING_PROJECT_NAME
       };
     }
   }
