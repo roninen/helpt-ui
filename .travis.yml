@@ -1,7 +1,16 @@
+sudo: required
+
+install: true
+
+services:
+  - docker
+
 language: node_js
 node_js:
   - "lts/*"
-  - "node"
+
+before_install:
+- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
 
 cache:
   directories:
@@ -12,3 +21,9 @@ install:
 
 after_success:
   - npm run codecov
+ 
+deploy:
+  - docker --version
+  - docker build -t helpt .
+  - docker tag helpt roninen/helpt:latest
+  - docker push roninen/helpt:latest
