@@ -12,7 +12,7 @@ function create() {
       // a real login flow
       TEST_USER_UUID: process.env.TEST_USER_UUID
     };
-    fs.writeFileSync('dist/assets/config.js', `window.CONFIG = ${JSON.stringify(config)}`, {encoding: 'utf8'});
+    fs.writeFileSync(process.env.WEB_ROOT + '/config.js', `window.CONFIG = ${JSON.stringify(config)}`, {encoding: 'utf8'});
     console.log("Environment configuration saved");
     return 0;
   } else {
