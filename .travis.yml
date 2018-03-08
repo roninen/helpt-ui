@@ -21,6 +21,8 @@ install:
 
 after_success:
   - npm run codecov
+  # at the moment build doesn't run without .env file
+  - cp .env.example .env
   - npm run dist
   - docker --version
   - docker build -t helpt .
