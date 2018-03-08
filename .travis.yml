@@ -21,6 +21,7 @@ install:
 
 after_success:
   - npm run codecov
+  - npm run dist
   - docker --version
   - docker build -t helpt .
   - docker tag helpt roninen/helpt:latest
